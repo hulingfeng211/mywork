@@ -1,0 +1,43 @@
+<div ng-controller="PermissionAddController">
+    <div class="bg-light lter b-b wrapper-md">
+        <h1 class="m-n font-thin h3">{{op}}权限</h1>
+    </div>
+    <ol class="breadcrumb">
+        <li>
+            <a style="color: #29154a" ui-sref="app.rbac.permission">权限列表</a>
+        </li>
+        <li class="active">{{op}}权限</li>
+    </ol>
+    <div class="panel panel-default">
+
+        <div class="panel-body">
+            <form class="form-validation" name="form" novalidate>
+                <legend>权限基本信息</legend>
+
+                <div class="form-group">
+                    <label>权限名:</label>
+                    <input type="hidden" name="id"  class="form-control" ng-model="permission._id" placeholder="id">
+                    <input type="text" name="name" required class="form-control" ng-model="permission.name" placeholder="权限名">
+
+                    <p ng-show="form.name.$invalid && !form.name.$pristine" class="help-block">权限名为必填项</p>
+                </div>
+                <div class="form-group">
+                    <label>权限描述:</label>
+                    <input type="text" name="desc" required class="form-control" ng-model="permission.desc"
+                           placeholder="权限描述">
+
+                    <p ng-show="form.desc.$invalid && !form.desc.$pristine" class="help-block">权限描述不能为空</p>
+                </div>
+                <div class="form-group">
+                    <label>备注：</label>
+                    <textarea class="form-control" ng-model="permission.remark"></textarea>
+                </div>
+
+                <button type="submit" ng-click="save()" ng-disabled='form.$invalid' class="btn btn-primary pull-right">
+                    保存
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+

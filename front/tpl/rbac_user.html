@@ -1,0 +1,43 @@
+<div class="bg-light lter b-b wrapper-md">
+  <h1 class="m-n font-thin h3">用户管理</h1>
+</div>
+<div class="wrapper-md">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      用户列表
+      <div class="pull-right">
+        <a ui-sref="app.rbac.user_add" >
+        <i class="icon-plus" translate="button.ADD">Add</i>
+          </a>
+      </div>
+    </div>
+    <div class="table-responsive" ng-controller="UserController as ctrl">
+        <table datatable="ng" dt-options="ctrl.dtOptions" class="table table-strip row-border hover">
+                <thead>
+                <tr>
+                    <th style="width:20%" translate="datatable.ID"></th>
+                    <th style="width:25%" translate="datatable.NAME"></th>
+                    <th style="width:25%" translate="datatable.EMAIL"></th>
+                    <th style="width:15%" translate="datatable.OP"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="u in ctrl.users">
+                    <td>{{ u._id }}</td>
+                    <td>{{ u.name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        <button class="btn btn-warning" ng-click="ctrl.edit(u._id)" has-permission="'user:edit'" >
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        &nbsp;
+                        <button class="btn btn-danger" ng-click="ctrl.delete(u._id )" has-permission="'user:delete'">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+    </div>
+  </div>
+</div>

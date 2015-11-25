@@ -1,0 +1,43 @@
+<div ng-controller="RoleAddController">
+    <div class="bg-light lter b-b wrapper-md">
+        <h1 class="m-n font-thin h3">{{op}}角色</h1>
+    </div>
+    <ol class="breadcrumb">
+        <li>
+            <a style="color: #29154a" ui-sref="app.rbac.role">角色列表</a>
+        </li>
+        <li class="active">{{op}}角色</li>
+    </ol>
+    <div class="panel panel-default">
+
+        <div class="panel-body">
+            <form class="form-validation" name="form" novalidate>
+                <legend>角色基本信息</legend>
+
+                <div class="form-group">
+                    <label>角色名:</label>
+                    <input type="hidden" name="id"  class="form-control" ng-model="role._id" placeholder="id">
+                    <input type="text" name="name" required class="form-control" ng-model="role.name" placeholder="角色名">
+
+                    <p ng-show="form.name.$invalid && !form.name.$pristine" class="help-block">角色名为必填项</p>
+                </div>
+                <div class="form-group">
+                    <label>角色描述:</label>
+                    <input type="text" name="desc" required class="form-control" ng-model="role.desc"
+                           placeholder="角色描述">
+
+                    <p ng-show="form.desc.$invalid && !form.desc.$pristine" class="help-block">角色描述不能为空</p>
+                </div>
+                <div class="form-group">
+                    <label>备注：</label>
+                    <textarea class="form-control" ng-model="role.remark"></textarea>
+                </div>
+
+                <button type="submit" ng-click="save()" ng-disabled='form.$invalid' class="btn btn-primary pull-right">
+                    保存
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+

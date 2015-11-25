@@ -1,0 +1,170 @@
+<div class="hbox hbox-auto-xs bg-light " ng-init="app.settings.asideFixed = true;app.settings.asideDock = false;app.settings.container = false;app.hideAside = false;app.hideFooter = true;" ng-controller="OACtrl">
+
+
+    <!-- column -->
+    <div class="col w-lg lt b-r">
+        <div class="vbox">
+            <div class="wrapper">
+                <!--toaster-container-->
+                <toaster-container
+                        toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}"></toaster-container>
+                <a href class="pull-right btn btn-sm btn-info m-t-n-xs" ng-click="createNote()">New</a>
+
+                <div class="h4">传阅列表</div>
+            </div>
+            <div class="wrapper b-t m-t-xxs">
+                <div class="input-group">
+                    <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
+                    <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
+                </div>
+                <div class="inline-splitter ">
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                </div>
+                <div class="btn-group" style="marqin-top:10px;">
+                    <label ng-repeat=" status in statuses" ng-model="status.value" ng-click="status_click(status)"
+                           class="btn btn-{{ status.color }}"
+                           uib-btn-checkbox>{{ status.name }}</label>
+                </div>
+            </div>
+            <div class="row-row">
+                <div class="cell scrollable hover">
+                    <div class="cell-inner">
+                        <div class="padder">
+                            <div class="list-group">
+                                <a ng-repeat="circulation in circulations | filter:query | orderBy:'date':true"
+                                   class="list-group-item  b-l-3x hover-anchor b-l-{{ circulation.color }} "
+                                   ng-class="{'active': circulation.selected }"
+                                   ng-click="selectCirculation(circulation)">
+                                    <span ng-click='deleteNote(circulation)' class="pull-right text-muted hover-action"><i
+                                            class="fa fa-times"></i></span>
+                                    <span class="block text-ellipsis">{{ circulation.Subject ? circulation.Subject : 'Empty note' }}</span>
+                                    <small class="text-muted">{{ circulation.CDate | fromNow }}</small>
+                                </a>
+                                <a ng-show="showMore" ng-click="show_more_click()" class="btn btn-primary" style="width: 100%">更多...</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /column -->
+
+    <!-- column -->
+    <div class="col ">
+        <div class="vbox">
+            <div class="wrapper bg-light lt b-b">
+                <span class="text-muted">Created on:</span>
+                <span>{{ circulation.CDate  | date:'MMM-dd-yyyy H:mm' }}</span>
+
+                <div class="m-l inline dropdown" dropdown>
+                    <a class="v-middle pos-rlt inline bg-{{ circulation.color }}" dropdown-toggle
+                       style="width:16px;height:16px;top:-2px"></a>
+
+                    <div class="dropdown-menu animated fadeInUp w wrapper">
+                        <a ng-repeat="color in colors" class="inline m-xs bg-{{ color }}" style="width:18px;height:18px"
+                           ng-click=" circulation.color = color "></a>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper bg-light lt b-b">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>{{ circulationDetail.Subject }}</h4>
+                        <small class="text-muted">{{ circulationDetail.EmpName }}({{ circulationDetail.EmpId }})</small>
+                    </div>
+                    <div class="panel-body">
+                        <div lazy-load="textAngular">
+                            <div text-angular ng-model="circulationDetail.Content " class="btn-groups"></div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading ">
+                                <h4>传阅人({{ totalItems?totalItems:0 }})</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="list-group list-group-lg">
+                                        <li ng-repeat="reciver in current_page_reciver"
+                                            class="list-group-item ">
+                                        <span class="badge "
+                                              ng-class="{'bg-success':reciver.ConfirmStatus=='已确认','bg-danger':reciver.ConfirmStatus=='未确认'}">{{ reciver.ConfirmStatus }}</span>
+                                        <span class="pull-left thumb-sm avatar m-r">
+                                            <img src="img/a4.jpg" alt="...">
+                                            <i class="on b-white bottom"></i>
+                                        </span>
+                                        <span class="clear">
+                                            <span>{{ reciver.EmpName }}({{ reciver.EmpId }})</span>
+                                            <pre ng-if="reciver.ConfirmStatus=='已确认'"
+                                                 class="wrap-text-auto-line">{{ reciver.Note }}&nbsp;&nbsp;&nbsp;{{ reciver.LabelNote }}</pre>
+                                        </span>
+                                        </li>
+
+                                    </div>
+                                    <div class="pull-right" ng-show="numPages>1">
+                                        <pagination total-items="totalItems"
+                                                    ng-model="current_page_no" max-size="maxSize"
+                                                    class="pagination-sm m-t-none m-b" boundary-links="true"
+                                                    rotate="false"
+                                                    num-pages="numPages"></pagination>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <tabset justified="true" class="tab-container">
+                            <tab heading="附件({{ circulationDetail.AttachFiles.length }})">
+                                <div class="row">
+                                    <div class="list-group list-group-lg">
+
+                                        <li ng-repeat="file in circulationDetail.AttachFiles"
+                                            class="list-group-item">
+                                            <a class="badge bg-success" style="cursor: hand"
+                                               ng-click="view_online_file(file)">查看</a>
+
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <a ng-click="view_online_file(file)"
+                                                       target="_blank">{{ file.FileName }}</a>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <span>{{ file.FileSize/1024.0 }}Kb</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </div>
+                                </div>
+                            </tab>
+                            <tab heading="讨论({{ comments.length }})">
+                                <div class="row">
+                                    <div class="list-group list-group-lg">
+                                        <li ng-repeat="comment in comments" class="list-group-item">
+                                          <span class="badge bg-success">
+                                              {{ comment.SendDate }}
+                                          </span>
+                                        <span class="clear">
+                                            <span class=" badge bg-danger pull-left">{{ comment.EmpName }}</span>
+                                            <pre class="wrap-text-auto-line">{{ comment.Content }} </pre>
+                                        </span>
+                                        </li>
+                                    </div>
+
+                                </div>
+                            </tab>
+
+                        </tabset>
+
+                    </div>
+
+                </div>
+                </div>
+
+        </div>
+        </div>
+    <!-- /column -->
+    </div>
+<!-- /hbox layout -->

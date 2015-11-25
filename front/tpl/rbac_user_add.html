@@ -1,0 +1,104 @@
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">{{op}}用户</h1>
+</div>
+<ol class="breadcrumb">
+    <li>
+        <a style="color: #29154a" ui-sref="app.rbac.user">用户列表</a>
+    </li>
+    <li class="active">{{op}}用户</li>
+</ol>
+<div  class="container">
+    <div class="row">
+        <div class="panel panel-default">
+
+            <div class="panel-body">
+                <form class="form-validation" name="form" novalidate>
+                    <legend>用户基本信息</legend>
+
+                    <div class="form-group">
+                        <label>用户名:</label>
+                        <input type="hidden"  class="form-control" ng-model="user._id"/>
+                        <input type="text" name="name" required class="form-control" ng-model="user.name"
+                               placeholder="用户名">
+
+                        <p ng-show="form.name.$invalid && !form.name.$pristine" class="help-block">用户名为必填项</p>
+                    </div>
+                    <div class="form-group">
+                        <label>邮箱:</label>
+                        <input type="email" name="email" required class="form-control" ng-model="user.email"
+                               placeholder="邮箱">
+
+                        <p ng-show="form.email.$invalid && !form.email.$pristine" class="help-block">
+                            邮箱格式为tester@163.com</p>
+                    </div>
+                    <div class="form-group">
+                        <label>密码：</label>
+                        <input type="text" name="password" class="form-control" ng-maxlength="32" ng-minlength="6"
+                               ng-model="user.password" value="111111" placeholder="密码">
+
+                        <p ng-show="form.password.$invalid && !form.password.$pristine" class="help-block">
+                            密码长度不能少于6个字符</p>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>所属角色:</label>
+
+                        <ui-select multiple ng-model="user.selected_roles" theme="bootstrap" ng-disabled="disabled" >
+                            <ui-select-match placeholder="选择角色...">{{$item.desc}}
+                                &lt;{{$item.name}}&gt;</ui-select-match>
+                            <ui-select-choices group-by="someGroupFn"
+                                               repeat="r in roles | propsFilter: {name: $select.search, desc: $select.search}">
+                                <div ng-bind-html="r.name | highlight: $select.search"></div>
+                                <small>
+                                    <span ng-bind-html="''+r.desc | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>权限范围:</label>
+
+                        <ui-select multiple ng-model="user.selected_permissons" theme="bootstrap" ng-disabled="disabled">
+                            <ui-select-match placeholder="选择权限...">{{$item.desc}}
+                                &lt;{{$item.name}}&gt;</ui-select-match>
+                            <ui-select-choices group-by="someGroupFn"
+                                               repeat="p in permissons | propsFilter: {name: $select.search, desc: $select.search}">
+                                <div ng-bind-html="p.name | highlight: $select.search"></div>
+                                <small>
+                                    <span ng-bind-html="''+p.desc | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>菜单列表:</label>
+
+                        <ui-select multiple ng-model="user.selected_menus" theme="bootstrap" ng-disabled="disabled">
+                            <ui-select-match placeholder="选择菜单...">{{$item.label}}
+                                &lt;{{$item.label}}&gt;</ui-select-match>
+                            <ui-select-choices group-by="someGroupFn"
+                                               repeat="m in menus | propsFilter: {label: $select.search, label: $select.search}">
+
+                            <div ng-bind-html="m.label | highlight: $select.search"></div>
+                                <small>
+                                    <span ng-bind-html="''+m.label | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+
+                    <button type="submit" ng-click="save()" ng-disabled='form.$invalid'
+                            class="btn btn-primary pull-right">保存
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+

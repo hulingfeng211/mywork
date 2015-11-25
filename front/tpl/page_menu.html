@@ -1,0 +1,61 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" >
+
+  <div class="col w-lg bg-light b-r bg-auto">
+
+    <div class="wrapper-md">
+      <div class="control-group">
+        <button ng-click="try_adding_a_branch()" class="btn btn-success btn-sm"><i class="fa fa-fw m-r-xs fa-plus"></i>添加菜单</button>
+        <button ng-click="try_delete_a_branch()" class="btn btn-danger btn-sm"><i class="fa fa-fw m-r-xs fa-plus"></i>删除(含子菜单)</button>
+
+      </div>
+
+      <div class="b-a bg-light dk r r-2x">
+        <span ng-if="doing_async">正在加载</span>
+        <abn-tree
+          tree-data         = "my_data" 
+          tree-control      = "my_tree" 
+          on-select         = "my_tree_handler(branch)" 
+          expand-level      = "2" 
+          initial-selection = "Granny Smith"
+          icon-leaf         = "fa fa-file-o"
+          icon-expand       = "fa fa-plus"
+          icon-collapse     = "fa fa-minus"
+          >
+        </abn-tree>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="wrapper-md">
+      <form class="form-validation" name="form">
+      	<legend>菜单信息</legend>
+
+      	<div class="form-group">
+      		<label >菜单名:</label>
+      		<input type="text" class="form-control" required ng-model="node.label" placeholder="菜单名">
+      	</div>
+        <div class="form-group">
+          <label >中文名:</label>
+          <input type="text" class="form-control" required ng-model="node.data.cn" placeholder="中文名">
+        </div>
+        <div class="form-group">
+          <label >英文名:</label>
+          <input type="text" class="form-control" required ng-model="node.data.en" placeholder="英文名">
+        </div>
+        <div class="form-group">
+          <label >链接地址:</label>
+          <input type="text" class="form-control" required ng-model="node.data.url" placeholder="链接地址">
+        </div>
+        <div class="form-group">
+          <label >备注:</label>
+          <input type="text" class="form-control" ng-model="node.data.remark" placeholder="备注">
+        </div>
+
+
+
+
+      	<button type="submit" class="btn btn-primary pull-right" ng-click="try_save_a_node()" ng-disabled='form.$invalid'>保存</button>
+      </form>
+    </div>
+  </div>
+</div>

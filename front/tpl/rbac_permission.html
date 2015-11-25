@@ -1,0 +1,47 @@
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">权限管理</h1>
+</div>
+<div class="wrapper-md">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            权限列表
+            <div class="pull-right">
+                <a ui-sref="app.rbac.permission_add">
+                    <i class="icon-plus" has-permission="'permission:add'">添加</i>
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive" ng-controller="PermissionController as ctrl">
+
+            <table datatable="ng" dt-options="ctrl.dtOptions" class="table table-strip row-border hover">
+                <thead>
+                <tr>
+                    <th style="width:20%">编号</th>
+                    <th style="width:25%">名字</th>
+                    <th style="width:25%">描述</th>
+                    <th style="width:15%">备注</th>
+                    <th style="width:15%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="permission in ctrl.permissions">
+                    <td>{{ permission._id }}</td>
+                    <td>{{ permission.name }}</td>
+                    <td>{{ permission.desc }}</td>
+                    <td>{{ permission.remark }}</td>
+                    <td>
+                        <button class="btn btn-warning" ng-click="ctrl.edit(permission._id)" has-permission="'permission:edit'">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        &nbsp;
+                        <button class="btn btn-danger" ng-click="ctrl.delete(permission._id )" has-permission="'permission:delete'">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
