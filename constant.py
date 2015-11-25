@@ -29,3 +29,6 @@ VIEW_FILE_ONLINE_URL='https://fd.chinasws.com/ReadAttachFile2/Service.svc/GetOnl
 # 获取传阅人员的URL模板
 RECIVER_LIST_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/user/%s'
 
+# 添加评论
+ADD_COMMENT_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/comment/%s'
+

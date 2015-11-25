@@ -10,6 +10,7 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
     var page_per=8;//每页显示8条记录
     $scope.circulations=[];
     $scope.showMore=true;
+    $scope.comment='';
 
     function get_cirulations(i_status,lastDate) {
 
@@ -95,6 +96,22 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
             toaster.clear();
             toaster.pop('warning','浏览附件','浏览附件失败，请联系管理员');
         });
+
+    };
+    $scope.add_comment=function(){
+        var url='/circulation/comments/'+$scope.circulationDetail.MsgserId;
+        var data ={'comment':$scope.comment};
+        $http.post(url,data).then(function(res){
+            toaster.pop('success','评论','评论成功');
+            $scope.comment='';
+            get_comments_list();
+        });
+
+    };
+    $scope.comment_tab_selected= function () {
+        toaster.pop('success','评论','selected');
+        $scope.comment='';
+
 
     };
     function get_criculation_detail(circulation){

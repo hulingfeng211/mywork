@@ -116,7 +116,7 @@
                         </div>
 
 
-                        <tabset justified="true" class="tab-container">
+                        <tabset  justified="true" onselect="comment_tab_selected()"  class="tab-container">
                             <tab heading="附件({{ circulationDetail.AttachFiles.length }})">
                                 <div class="row">
                                     <div class="list-group list-group-lg">
@@ -139,7 +139,7 @@
                                     </div>
                                 </div>
                             </tab>
-                            <tab heading="讨论({{ comments.length }})">
+                            <tab   heading="讨论({{ comments.length }})" >
                                 <div class="row">
                                     <div class="list-group list-group-lg">
                                         <li ng-repeat="comment in comments" class="list-group-item">
@@ -157,6 +157,14 @@
                             </tab>
 
                         </tabset>
+                        <form ng-hide="status.value==2" >
+                        	<legend>参与讨论:</legend>
+
+                        	<div class="form-group">
+                                <textarea class="form-control" ng-model="comment"></textarea>
+                        	</div>
+                        	<button ng-click="add_comment()" class="btn btn-primary">提交</button>
+                        </form>
 
                     </div>
 

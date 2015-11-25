@@ -50,7 +50,7 @@ app.controller('SigninFormController', ['$scope', '$http', '$state','subject', '
                 }
             }, function (error) {
                 console.log(error);
-                $scope.authError = 'Server Error';
+                $scope.authError = '服务器错误,请联系管理员';
             });
     };
   }])

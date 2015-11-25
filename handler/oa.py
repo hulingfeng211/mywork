@@ -9,6 +9,7 @@
 |
 |
 ============================================================="""
+import logging
 from requests.auth import HTTPDigestAuth
 from tornado.escape import json_encode, json_decode
 from tornado.gen import coroutine
@@ -55,6 +56,24 @@ class CirculationCommentHandler(BaseHandler):
         url=constant.COMMENT_URL%messageid
         result=yield self.send_request(url)
         self.write(result)
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        """
+        添加讨论
+        """
+        messageid=args[0] if len(args)>0 else 0
+        comment_dict=json_decode(self.request.body)
+        comment=comment_dict.get('comment',None)
+        if comment and messageid>0:
+            # post to oa db
+            url=constant.ADD_COMMENT_URL%messageid
+            res=yield self.send_request(url,method='POST',body=json_encode({
+                'comment':comment
+            }),headers={
+                'content-type':'application/json'
+            })
+            self.write(res)
 
 class CirculationFileHandler(BaseHandler):
     """
