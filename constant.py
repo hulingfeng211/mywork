@@ -32,3 +32,6 @@ RECIVER_LIST_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/us
 # 添加评论
 ADD_COMMENT_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/comment/%s'
 
+# 传阅确认
+CONFIRM_MESSAGE_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/%s'
+

@@ -38,34 +38,25 @@ var app =
 
         }]);
 
-angular.module('app').factory('redirectInterceptor', ['$rootScope', function ($rootScope) {
-    return {
-        'response': function (response) {
-            if (typeof response.data === 'string') {
-                var content_index = response.data.indexOf('<!DOCTYPE');
-                if (content_index > -1) {
-
-                    console.log('LOGIN');
-                    //进行本地的登出操作
-                    //$window.location.href='/f/index.html';
-                    //subject.logout();
-                    //$state.go('access.signin');
-                    //$location.path('access.signin');
-                    //$location.path('/f/index.html');
-                    //todo local logout
-                    //subject.logout();
+angular.module('app').factory('redirectInterceptor', ['$rootScope','$q', function ($rootScope,$q) {
+   return {
+            'response': function (response) {
+                if (response.status === 401) {
+                    console.log("Response 401");
                     $rootScope.logout();
-
-                } else {
-                    return response;
+                    return ;
                 }
+                return response || $q.when(response);
+            },
+            'responseError': function (rejection) {
+                if (rejection.status === 401) {
+                    console.log("Response Error 401");
+                    $rootScope.logout();
+                    return ;
+                }
+                return $q.reject(rejection);
             }
-            else {
-                return response;
-            }
-
-        }
-    }
+        };
 }]);
 angular.module('app').config(['$httpProvider', function ($httpProvider) {
     $httpProvider.interceptors.push('redirectInterceptor');

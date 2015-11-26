@@ -87,6 +87,11 @@ class LogoutHandler(BaseHandler):
     """用户登出"""
 
     @coroutine
+    def prepare(self):
+        #not execute BaseHandler prepare
+        pass
+
+    @coroutine
     def get(self, *args, **kwargs):
         logging.info(args)
         self.session.delete('user')

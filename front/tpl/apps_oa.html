@@ -78,6 +78,18 @@
                         <div lazy-load="textAngular">
                             <div text-angular ng-model="circulationDetail.Content " class="btn-groups"></div>
                         </div>
+
+                        <form ng-show="status.value==1" >
+                        	<legend>传阅确认</legend>
+
+                        	<div class="form-group">
+                                <textarea class="form-control" ng-model="confirmMsg" >已阅</textarea>
+                        	</div>
+                            <div class="form-group">
+                                <button class="btn btn-warning " ng-click="confirm_circulation()">确认</button>
+                            </div>
+
+                        </form>
                         <div class="panel panel-default">
                             <div class="panel-heading ">
                                 <h4>传阅人({{ totalItems?totalItems:0 }})</h4>

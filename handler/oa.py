@@ -43,6 +43,23 @@ class CirculationHandler(BaseHandler):
             #raise  e
             pass
 
+    @coroutine
+    def post(self, *args, **kwargs):
+        """
+        如果有传阅编号则进行传阅的确认，没有传阅编号则是进行新传阅的新增
+        """
+        msgserid=args[0] if len(args)>0 else None
+        content=json_decode(self.request.body)
+        if msgserid and content.get('content',None): #confirm ciruclation
+            url=constant.CONFIRM_MESSAGE_URL%msgserid
+            res=yield self.send_request(url=url,method='POST',body=json_encode({
+                'confirmContent':content.get('content')
+            }))
+            self.write(res)
+
+
+        pass
+
 
 
 class CirculationCommentHandler(BaseHandler):
@@ -70,9 +87,7 @@ class CirculationCommentHandler(BaseHandler):
             url=constant.ADD_COMMENT_URL%messageid
             res=yield self.send_request(url,method='POST',body=json_encode({
                 'comment':comment
-            }),headers={
-                'content-type':'application/json'
-            })
+            }))
             self.write(res)
 
 class CirculationFileHandler(BaseHandler):
@@ -88,9 +103,7 @@ class CirculationFileHandler(BaseHandler):
                 "path":body.get('filePath',None),
                 "fileEnternalName":body.get('fileName',None)
             }
-            response=yield  self.send_request(url=constant.VIEW_FILE_ONLINE_URL,method='POST',body=json_encode(data),headers={
-                'content-type':'application/json'
-            },request_timeout=180*1000)
+            response=yield  self.send_request(url=constant.VIEW_FILE_ONLINE_URL,method='POST',body=json_encode(data),request_timeout=180*1000)
             result=urllib.unquote(response)[1:-1]
             self.write(result)
 

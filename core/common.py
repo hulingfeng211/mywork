@@ -18,12 +18,20 @@ from torndsession.sessionhandler import SessionBaseHandler
 
 __author__ = 'george'
 
+DEFAULT_HEADERS={
+    'content-type':'application/json'
+}
 
 class BaseHandler(SessionBaseHandler):
+
+    @coroutine
     def prepare(self):
         current_user = self.current_user
         if not current_user:
-            self.redirect('/f/index.html',permanent=False)
+            #self.redirect('/f/index.html',permanent=False)
+            #self.set_status(status_code=401,reason='用户未授权')
+            self.send_error(status_code=401,reason='用户未授权')
+            #self.redirect('/f/index.html',permanent=False)
             #raise HTTPError(code=401,message='未授权')
             #self.finish()
 
@@ -31,7 +39,7 @@ class BaseHandler(SessionBaseHandler):
         return self.session.get('user', None)
 
     @coroutine
-    def send_request(self, url, body=None, method='GET', *args, **kwargs):
+    def send_request(self, url, body=None, method='GET',headers=DEFAULT_HEADERS,*args, **kwargs):
         """
         发送HTTP请求，并返回请求后的结果
         """
@@ -40,7 +48,7 @@ class BaseHandler(SessionBaseHandler):
         userCd = self.current_user.get('userCd', None)
         pwd = self.current_user.get('pwd', None)
         request = HTTPRequest(url=url, method=method, body=body, auth_username=userCd,
-                              auth_password=pwd, auth_mode='digest', validate_cert=False, **kwargs)
+                              auth_password=pwd, auth_mode='digest', validate_cert=False,headers=headers, **kwargs)
         response = yield AsyncHTTPClient().fetch(request)
         if response and response.code==200:
             raise gen.Return(response.body)

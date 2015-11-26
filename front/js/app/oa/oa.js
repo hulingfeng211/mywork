@@ -11,6 +11,7 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
     $scope.circulations=[];
     $scope.showMore=true;
     $scope.comment='';
+    $scope.confirmMsg='已阅';
 
     function get_cirulations(i_status,lastDate) {
 
@@ -98,6 +99,30 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
             $scope.comment='';
             get_comments_list();
         });
+
+    };
+    $scope.confirm_circulation=function(){
+        var url='/circulations/'+$scope.circulationDetail.MsgserId;
+        $http.post(url,{'content':$scope.confirmMsg}).then(function(res){
+            //remove current circulation from circulations
+            /**angular.forEach($scope.circulations,function(item){
+                 if(item.MsgserId==$scope.circulation.MsgserId){
+                     $scope.circulations.
+                 }
+            });*/
+            var eIndex=$scope.circulations.indexOf($scope.circulation);
+            if(eIndex>-1){
+                $scope.circulations.splice(eIndex,1);
+                if($scope.circulations.length>0){
+                    $scope.circulation=$scope.circulations[0];
+                    $scope.selectCirculation($scope.circulation);
+                    //$scope.circulation.selected=true;
+                }
+            }
+            toaster.pop('success','传阅确认','确认成功');
+
+        });
+
 
     };
     $scope.comment_tab_selected= function () {
