@@ -102,16 +102,18 @@ app.controller('MenuController',["$scope","$http","toaster","$log",function($sco
     };
 
 }]);
-app.controller('UserController', ['$scope', '$http', 'toaster', '$state', 'DTOptionsBuilder',
-    function ($scope, $http, toaster, $state, DTOptionsBuilder) {
+app.controller('UserController', ['$scope', '$http', 'toaster', '$state',
+    function ($scope, $http, toaster, $state ) {
+        //DTOptionsBuilder
         var vm = this;
-        vm.dtOptions = DTOptionsBuilder.newOptions()
+       /* vm.dtOptions = DTOptionsBuilder.newOptions()
             .withPaginationType('full_numbers')
             .withDisplayLength(10)
             .withLanguageSource('vendor/jquery/datatables/Chinese.json')
             //.withColReorder()
             .withColVis()
             .withTableTools('vendor/angular/angular-datatables/datatables-tabletools/swf/copy_csv_xls_pdf.swf');
+        */
         $http.get('/rbac/user').success(function(data,status,header,config){
             vm.users=data
         });

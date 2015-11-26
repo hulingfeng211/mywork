@@ -28,9 +28,31 @@ angular.module('app')
                           'vendor/jquery/spinner/jquery.bootstrap-touchspin.css'],
       wysiwyg:        ['vendor/jquery/wysiwyg/bootstrap-wysiwyg.js',
                           'vendor/jquery/wysiwyg/jquery.hotkeys.js'],
-      dataTable:      ['vendor/jquery/datatables/jquery.dataTables.min.js',
+      dataTable:      [   "vendor/jquery/datatables/jquery.dataTables.min.js",
                           'vendor/jquery/datatables/dataTables.bootstrap.js',
-                          'vendor/jquery/datatables/dataTables.bootstrap.css'],
+                           "vendor/angular/angular-datatables/angular-datatables.js",
+
+                            "vendor/angular/angular-datatables/datatables-colreorder/js/dataTables.colReorder.js",
+                            "vendor/angular/angular-datatables/datatables-colvis/js/dataTables.colVis.js",
+                            "vendor/angular/angular-datatables/datatables-tabletools/js/dataTables.tableTools.js",
+
+                            "vendor/angular/angular-datatables/datatables-responsive/js/dataTables.responsive.js",
+                            "vendor/angular/angular-datatables/datatables-scroller/js/dataTables.scroller.js",
+                            "vendor/angular/angular-datatables/datatables-columnfilter/js/dataTables.columnFilter.js",
+                            "vendor/angular/angular-datatables/datatables-fixedcolumns/js/dataTables.fixedColumns.js",
+                            "vendor/angular/angular-datatables/datatables-fixedheader/js/dataTables.fixedHeader.js",
+
+                            "vendor/angular/angular-datatables/plugins/bootstrap/angular-datatables.bootstrap.js",
+                            "vendor/angular/angular-datatables/plugins/colreorder/angular-datatables.colreorder.js",
+                            "vendor/angular/angular-datatables/plugins/columnfilter/angular-datatables.columnfilter.js",
+                            "vendor/angular/angular-datatables/plugins/colvis/angular-datatables.colvis.js",
+                            "vendor/angular/angular-datatables/plugins/fixedcolumns/angular-datatables.fixedcolumns.js",
+                            "vendor/angular/angular-datatables/plugins/fixedheader/angular-datatables.fixedheader.js",
+                            "vendor/angular/angular-datatables/plugins/scroller/angular-datatables.scroller.js",
+                            "vendor/angular/angular-datatables/plugins/tabletools/angular-datatables.tabletools.js",
+                            'vendor/jquery/datatables/dataTables.bootstrap.css',
+                            "vendor/angular/angular-datatables/datatables-tabletools/css/dataTables.tableTools.css",
+                            "vendor/angular/angular-datatables/datatables-colvis/css/dataTables.colVis.css"],
       vectorMap:      ['vendor/jquery/jvectormap/jquery-jvectormap.min.js', 
                           'vendor/jquery/jvectormap/jquery-jvectormap-world-mill-en.js',
                           'vendor/jquery/jvectormap/jquery-jvectormap-us-aea-en.js',
@@ -96,7 +118,9 @@ angular.module('app')
                   name: 'textAngular',
                   files: [
                       'vendor/modules/textAngular/textAngular-sanitize.min.js',
-                      'vendor/modules/textAngular/textAngular.min.js'
+                      'vendor/modules/textAngular/textAngular-rangy.min.js',
+                      'vendor/modules/textAngular/textAngular.min.js',
+                      'vendor/modules/textAngular/textAngular.css'
                   ]
               },
               {

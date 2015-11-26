@@ -37,8 +37,7 @@
                                    class="list-group-item  b-l-3x hover-anchor b-l-{{ circulation.color }} "
                                    ng-class="{'active': circulation.selected }"
                                    ng-click="selectCirculation(circulation)">
-                                    <span ng-click='deleteNote(circulation)' class="pull-right text-muted hover-action"><i
-                                            class="fa fa-times"></i></span>
+                                    
                                     <span class="block text-ellipsis">{{ circulation.Subject ? circulation.Subject : 'Empty note' }}</span>
                                     <small class="text-muted">{{ circulation.CDate | fromNow }}</small>
                                 </a>
@@ -163,7 +162,7 @@
                         	<div class="form-group">
                                 <textarea class="form-control" ng-model="comment"></textarea>
                         	</div>
-                        	<button ng-click="add_comment()" class="btn btn-primary">提交</button>
+                        	<button type="submit" ng-click="add_comment()" class="btn btn-primary">提交</button>
                         </form>
 
                     </div>

@@ -1,0 +1,7 @@
+{
+  "language": {
+    "url": "vendor/jquery/datatables/Chinese.json"
+  },
+  "serverSide": false,
+  "pageType": "full"
+}

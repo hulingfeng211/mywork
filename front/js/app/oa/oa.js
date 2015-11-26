@@ -65,14 +65,6 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
     $scope.colors = ['primary',  'warning', 'success'];
 
 
-    $scope.deleteNote = function (note) {
-        $scope.notes.splice($scope.notes.indexOf(note), 1);
-        if (note.selected) {
-            $scope.note = $scope.notes[0];
-            $scope.notes.length && ($scope.notes[0].selected = true);
-        }
-    };
-
     $scope.selectCirculation = function (circulation) {
         angular.forEach($scope.circulations, function (circulation) {
             circulation.selected = false;

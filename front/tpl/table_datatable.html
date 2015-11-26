@@ -7,8 +7,10 @@
       DataTables
     </div>
     <div class="table-responsive">
+      <!--//sAjaxSource: 'vendor/jquery/datatables/datatable.json',-->
       <table ui-jq="dataTable" ui-options="{
-          sAjaxSource: 'vendor/jquery/datatables/datatable.json',
+          ajax:'vendor/jquery/datatables/datatable_serverside.json',
+          sAjaxDataProp:'vendor/jquery/datatables/options.json',
           aoColumns: [
             { mData: 'engine' },
             { mData: 'browser' },

@@ -213,6 +213,14 @@ a:hover .caret-white {
   height: 45px;
 }
 
+.ta-editor {
+  min-height: 100px;
+  height: auto;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+}
+
 .input-group-addon {
   background-color: #edf1f2;
   border-color: #cfdadd;

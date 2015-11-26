@@ -90,8 +90,7 @@ class LogoutHandler(BaseHandler):
     def get(self, *args, **kwargs):
         logging.info(args)
         self.session.delete('user')
-        pass
-
+        self.write(json_encode({'status':'success'}))
 
 class SignupHandler(RequestHandler):
     """用户注册"""

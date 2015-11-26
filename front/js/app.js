@@ -13,8 +13,8 @@ angular.module('app', [
     'ui.validate',
     'oc.lazyLoad',
     'pascalprecht.translate',
-    'angularShiro',
-    'datatables',
-    'datatables.tabletools',
-    'datatables.colvis'
+    'angularShiro'
+   // 'datatables',
+    //'datatables.tabletools',
+    //'datatables.colvis'
 ]);
