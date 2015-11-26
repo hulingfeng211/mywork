@@ -88,7 +88,7 @@ class LogoutHandler(BaseHandler):
 
     @coroutine
     def prepare(self):
-        #not execute BaseHandler prepare
+        # skip  BaseHandler prepare  method
         pass
 
     @coroutine

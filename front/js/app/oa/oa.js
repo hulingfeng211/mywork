@@ -5,6 +5,8 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
         {"name":"未确认","color":"warning",'value':1},
         {"name":"已确认","color":"success",'value':2}
     ];
+    $scope.tabs = [false, true, false];
+
     $scope.status=$scope.statuses[1];
 
     var page_per=8;//每页显示8条记录
@@ -12,11 +14,12 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
     $scope.showMore=true;
     $scope.comment='';
     $scope.confirmMsg='已阅';
+    $scope.current_tab_no=1;
 
     function get_cirulations(i_status,lastDate) {
 
         var url = '/circulations?status=' + i_status.toString();
-        if(lastDate!=null||lastDate!=''){
+        if(lastDate!=undefined||lastDate!=''){
             url=url+'&last='+lastDate;
         }
         $http.get(url).then(function (resp) {
@@ -49,6 +52,15 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
 
 
     get_cirulations(1,'');
+    $scope.tab_selected = function (tab_no) {
+        angular.forEach($scope.tabs, function (i, v) {
+            $scope.tabs[v] = false;
+        });
+        $scope.tabs[tab_no] = true;
+        $scope.circulations=[];//clear list
+        $scope.current_tab_no=tab_no;
+        get_cirulations(tab_no,'');
+    };
     $scope.show_more_click=function(){
         if($scope.lastCirculation!=null){
             get_cirulations($scope.status.value,$scope.lastCirculation.CDate);

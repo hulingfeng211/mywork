@@ -1,10 +1,25 @@
-<div class="hbox hbox-auto-xs bg-light " ng-init="app.settings.asideFixed = true;app.settings.asideDock = false;app.settings.container = false;app.hideAside = false;app.hideFooter = true;" ng-controller="OACtrl">
+<div class="hbox hbox-auto-xs bg-light "
+     ng-init="
+     app.settings.asideFolded = true;
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false
 
+     "
+     ng-controller="OACtrl">
 
+    <!--
+    app.settings.asideFixed = true;
+      app.settings.asideDock = false;
+      app.settings.container = false;
+      app.hideAside = false;
+      app.hideFooter = true;
+    -->
     <!-- column -->
     <div class="col w-lg lt b-r">
         <div class="vbox">
-            <div class="wrapper">
+            <div class="wrapper b-b">
                 <!--toaster-container-->
                 <toaster-container
                         toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}"></toaster-container>
@@ -12,26 +27,30 @@
 
                 <div class="h4">传阅列表</div>
             </div>
+
             <div class="wrapper b-t m-t-xxs">
                 <div class="input-group">
                     <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
                     <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
                 </div>
-                <div class="inline-splitter ">
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                </div>
-                <div class="btn-group" style="marqin-top:10px;">
-                    <label ng-repeat=" status in statuses" ng-model="status.value" ng-click="status_click(status)"
-                           class="btn btn-{{ status.color }}"
-                           uib-btn-checkbox>{{ status.name }}</label>
-                </div>
+            </div>
+            <div class="nav-tabs-alt">
+                <ul class="nav nav-tabs nav-justified">
+                    <li  ng-class="{'bg-danger': tabs[0]}">
+                        <a  ng-click="tab_selected(0)">未开封</a>
+                    </li>
+                    <li ng-class="{'bg-danger': tabs[1]}">
+                        <a  ng-click="tab_selected(1)">未确认</a>
+                    </li>
+                    <li ng-class="{'bg-danger': tabs[2]}">
+                        <a  ng-click="tab_selected(2)">已确认</a>
+                    </li>
+                </ul>
             </div>
             <div class="row-row">
                 <div class="cell scrollable hover">
                     <div class="cell-inner">
-                        <div class="padder">
+                        <div class="">
                             <div class="list-group">
                                 <a ng-repeat="circulation in circulations | filter:query | orderBy:'date':true"
                                    class="list-group-item  b-l-3x hover-anchor b-l-{{ circulation.color }} "
@@ -79,7 +98,7 @@
                             <div text-angular ng-model="circulationDetail.Content " class="btn-groups"></div>
                         </div>
 
-                        <form ng-show="status.value==1" >
+                        <form ng-show="current_tab_no==1" >
                         	<legend>传阅确认</legend>
 
                         	<div class="form-group">
@@ -168,7 +187,7 @@
                             </tab>
 
                         </tabset>
-                        <form ng-hide="status.value==2" >
+                        <form ng-hide="current_tab_no==2" >
                         	<legend>参与讨论:</legend>
 
                         	<div class="form-group">
