@@ -22,7 +22,17 @@ define('port', default=10000, type=int, help="在此端口接收用户请求")
 class IndexHandler(RequestHandler):
     @coroutine
     def get(self, *args, **kwargs):
-        self.render('index.html',title='炎黄表单')
+        #?BPMEngine=AWS&
+        # sid=admin_1448843249906_169.24.2.22$b32c1025fcd18abd44890f97f302b4ffL{cn}LC{pc}C&
+        # pid=%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%BB%E6%95%B0%E6%8D%AE&
+        # tid=%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%BB%E6%95%B0%E6%8D%AE&
+        # status=%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%BB%E6%95%B0%E6%8D%AE (169.24.2.22) 32.77ms
+        pid = self.get_argument('pid',None)
+        tid = self.get_argument('tid',None)
+        status = self.get_argument('status',None)
+        sid = self.get_argument('sid',None)
+
+        self.render('index.html',title='炎黄表单',pid=pid,tid=tid,status=status,sid=sid)
         #query_args=self.get_arguments()
         #self.write(self.request.body)
 
