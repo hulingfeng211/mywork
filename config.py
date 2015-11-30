@@ -23,6 +23,7 @@ TEMPLATE_PATH=os.path.join(os.path.dirname(__file__),'templates')
 # session相关的配置
 SESSION= {
     'driver':'redis',
+    'force_persistence':True,
     'driver_settings':dict(
         host = 'localhost',
         port = 6379,

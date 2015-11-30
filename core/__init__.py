@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import hashlib
-import etc
+import config
 
 __author__ = 'george'
 import json
@@ -11,11 +11,11 @@ from json import JSONEncoder
 
 def load_setting():
     """加载配置文件"""
-    object_list = dir(etc)
+    object_list = dir(config)
     setting = {}
     for item in object_list:
         if item.isupper():
-            setting[item.lower()] = getattr(etc, item)
+            setting[item.lower()] = getattr(config, item)
     return setting
 
 def generate_response(status='success',status_code=200,message='Success'):

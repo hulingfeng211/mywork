@@ -22,8 +22,9 @@ define('port', default=10000, type=int, help="在此端口接收用户请求")
 class IndexHandler(RequestHandler):
     @coroutine
     def get(self, *args, **kwargs):
-        #self.render('index.html',title='guanyuwaiwangduanxin')
-        self.write('hello,oa')
+        self.render('index.html',title='炎黄表单')
+        #query_args=self.get_arguments()
+        #self.write(self.request.body)
 
 class IOfficeApplication(Application):
    def __init__(self):

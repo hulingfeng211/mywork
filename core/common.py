@@ -38,6 +38,10 @@ class BaseHandler(SessionBaseHandler):
     def get_current_user(self):
         return self.session.get('user', None)
 
+    def on_finish(self):
+        #todo update session expire when client call service.
+        super(SessionBaseHandler, self).on_finish()
+
     @coroutine
     def send_request(self, url, body=None, method='GET',headers=DEFAULT_HEADERS,*args, **kwargs):
         """
