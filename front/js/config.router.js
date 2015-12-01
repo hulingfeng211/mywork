@@ -632,6 +632,19 @@ angular.module('app')
                             }]
                     }
                 })
+                .state('apps.announce', {
+                    url: '/announce',
+                    templateUrl: 'tpl/apps_announce.html',
+                    resolve: {
+                        deps: ['$ocLazyLoad',
+                            function ( $ocLazyLoad) {
+                                return $ocLazyLoad.load(['textAngular','toaster']).then(function(){
+                                    return $ocLazyLoad.load(['js/app/oa/announce.js',
+                                    'vendor/libs/moment.min.js']);
+                                });
+                            }]
+                    }
+                })
                 .state('apps.contact', {
                     url: '/contact',
                     templateUrl: 'tpl/apps_contact.html',
