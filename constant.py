@@ -35,3 +35,6 @@ ADD_COMMENT_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/com
 # 传阅确认
 CONFIRM_MESSAGE_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message/%s'
 
+# OA附件URL
+ATTACH_FILE_URL='http://169.24.1.100/%s'
+

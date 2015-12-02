@@ -86,6 +86,14 @@ app.controller('OACtrl', ['$scope', '$http','toaster','$window', function ($scop
         $scope.circulation.selected = true;
         get_criculation_detail($scope.circulation);
     };
+    $scope.download_file=function(fileInfo){
+        var url = '/circulation/attachfile?filePath='+fileInfo.FilePath;
+        $http.get(url).then(function(res){
+            $window.open(res.data,'_blank');
+        });
+
+
+    };
     $scope.view_online_file = function (fileInfo) {
         var url = '/circulation/attachfile';
         var data = {

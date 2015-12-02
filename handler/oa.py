@@ -107,6 +107,14 @@ class CirculationFileHandler(BaseHandler):
             result=urllib.unquote(response)[1:-1]
             self.write(result)
 
+    @coroutine
+    def get(self, *args, **kwargs):
+        file_path=self.get_query_argument('filePath',None)
+        if  file_path:
+            url=constant.ATTACH_FILE_URL%file_path
+            #file =yield  self.send_request(url)
+            self.write(url)
+
 
 class CirculationUserHandler(BaseHandler):
 
