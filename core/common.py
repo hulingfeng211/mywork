@@ -9,12 +9,15 @@
 |
 |
 ============================================================="""
+import json
+from bson import ObjectId
 from tornado import gen
 from tornado.escape import json_decode
 from tornado.gen import coroutine
 from tornado.web import authenticated
 from tornado.httpclient import HTTPRequest, HTTPError, AsyncHTTPClient
 from torndsession.sessionhandler import SessionBaseHandler
+from core import bson_encode, is_json_request, clone_dict_without_id
 
 __author__ = 'george'
 
@@ -58,3 +61,61 @@ class BaseHandler(SessionBaseHandler):
             raise gen.Return(response.body)
         else:
             raise gen.Return(None)
+
+    def send_message(self,obj):
+        self.write(bson_encode(obj))
+
+class MongoBaseHandler(BaseHandler):
+    """通用的mongodb的Handler，封装简单的CRUD的操作"""
+    def initialize(self, *args, **kwargs):
+        # cname 为对应的mongodb的集合的名字
+        if kwargs:
+            for key, val in kwargs.items():
+                if not hasattr(self, key):
+                    setattr(self, key, val)
+        super(MongoBaseHandler,self).initialize()
+
+    @coroutine
+    def get(self, *args, **kwargs):
+
+        id = args[0] if len(args) > 0 else None
+        if id:
+            db = self.settings['db']
+            obj = yield db[self.cname].find_one({"_id": ObjectId(id)})
+            self.write(bson_encode(obj))
+            return
+        query_args={}
+        for k,v in  self.request.query_arguments.items():
+            if(len(v)>1):#  有两个以上的参数 name=['name1','name2']
+                query_args[k]={"$in":v}
+            else:
+                query_args[k]=v[0]
+
+        db = self.settings['db']
+        objs = yield db[self.cname].find(query_args).to_list(length=None)
+        self.write(bson_encode(objs))
+
+    @coroutine
+    def delete(self, *args, **kwargs):
+        id = args[0] if len(args) > 0 else None
+        if id:
+            db = self.settings['db']
+            yield db[self.cname].remove({"_id": ObjectId(id)})
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        if is_json_request(self.request):
+            body = json.loads(self.request.body)
+        else:
+            self.send_error(reason="仅支持Content-type:application/json")
+
+        db = self.settings['db']
+        if body.get('_id', None):  # update
+            yield db[self.cname].update({"_id": ObjectId(body.get('_id'))}, {
+                "$set": clone_dict_without_id(body)
+            })
+
+        else:
+            yield db[self.cname].insert(clone_dict_without_id(body))
+        #self.write(generate_response(message="保存成功"))
+        self.send_message("保存成功")

@@ -8,14 +8,15 @@
 +Description:应用程序入口
 +============================================================"""
 import logging
+import motor
 from tornado.ioloop import IOLoop
 from tornado.options import define, options, parse_command_line
 from tornado.web import Application, RequestHandler,StaticFileHandler,RedirectHandler
 from tornado.gen import coroutine
 from tornado.httpclient import AsyncHTTPClient
-import  os
+import os
 from core import settings
-from handler import auth,oa,chat
+from handler import auth,oa,chat,routes
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
 
@@ -55,6 +56,7 @@ class IOfficeApplication(Application):
        handlers.extend(auth.routes)
        handlers.extend(oa.routes)
        handlers.extend(chat.routes)
+       handlers.extend(routes)
        Application.__init__(self,handlers=handlers,**settings)
 
 

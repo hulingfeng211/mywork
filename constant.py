@@ -38,3 +38,7 @@ CONFIRM_MESSAGE_URL='https://fd.chinasws.com/MobileOA/MessageService.svc/message
 # OA附件URL
 ATTACH_FILE_URL='http://169.24.1.100/%s'
 
+# Mongodb Uri
+MONGO_URI="mongo_uri"
+DB_NAME="db_name"
+

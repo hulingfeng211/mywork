@@ -31,3 +31,7 @@ SESSION= {
         max_connections = 1024
     )
 }
+
+# MONGODB设置
+MONGO_URI="mongodb://127.0.0.1:27017/"
+DB_NAME='test'
