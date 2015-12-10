@@ -1,0 +1,157 @@
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFolded = true; 
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false
+  " ng-controller="ServerCtrl">
+    <!-- column -->
+    <div class="col w lter b-r">
+        <div class="vbox">
+            <div class="wrapper b-b">
+                <!--toaster-container-->
+                <toaster-container
+                        toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}"></toaster-container>
+
+                <a href class="pull-right btn btn-sm btn-info m-t-n-xs" ng-click="add_server()">新增</a>
+
+                <div class="font-thin h4">服务器列表</div>
+            </div>
+             <div class="">
+                <div class="input-group">
+                    <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
+                    <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
+                </div>
+            </div>
+            <!--<div class="nav-tabs-alt">
+                <ul class="nav nav-tabs nav-justified">
+
+                    <li ng-repeat="tab in tabs" ng-class="{'active': tab.active}">
+                        <a href ng-click="tab_change(tab)">{{tab.name}}</a>
+                    </li>
+
+                </ul>
+            </div>-->
+            <div class="row-row">
+                <div class="cell scrollable hover">
+                    <div class="cell-inner">
+                        <div class="">
+                            <ul class="list-group">
+                                <a ng-repeat="server in servers| filter:query | orderBy:'date':true"
+                                   ng-click="on_server_selected(server)"
+                                   class="list-group-item b-l-3x hover-anchor">
+                                    <span ng-click='delete_server(server)'
+                                          class="pull-right text-muted hover-action"><i class="fa fa-times"></i></span>
+                                    <span class="block text-ellipsis">{{ server.name }}</span>
+                                    <small class="text-muted">{{ server.ipaddr }}-&nbsp;&nbsp;&nbsp;{{ server.create_time | fromNow }}</small>
+                                </a>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /column -->
+
+    <!-- column -->
+    <div class="col">
+        <div class="vbox">
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div class="wrapper-md">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                        <legend>服务器详细信息</legend>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">名字:</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" required class="form-control" ng-model="server.name"
+                                               placeholder="Name">
+                                        <input type="hidden" ng-model="server._id">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">IP地址:</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" required ng-model="server.ipaddr" class="form-control"
+                                               placeholder="127.0.0.1">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">操作系统类型:</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" required ng-model="server.os"
+                                               placeholder="centos 6.5 x86-64">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">管理员用户名:</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" required ng-model="server.admin_name"
+                                               placeholder="administrator">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">管理员密码:</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" required ng-model="server.admin_pwd"
+                                               placeholder="test!23$5">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">责任人:</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" ng-model="server.owner"
+                                               placeholder="userid">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">网路选择:</label>
+
+                                    <div class="col-sm-10 ">
+
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="net" ng-model="server.net" value="内网" checked>
+                                            <i></i> 内网
+                                        </label>
+                                        <label class="radio-inline i-checks">
+                                            <input type="radio" name="net" ng-model="server.net" value="外网"> <i></i>外网
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">配置及用途描述:</label>
+
+                                    <div class="col-sm-10" lazy-load="textAngular">
+                                        <div text-angular ng-model="server.desc" class="btn-groups"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-10 col-sm-offset-2">
+                                        <button ng-click="save_server()" class="btn btn-primary pull-right">&nbsp;&nbsp;保存&nbsp;&nbsp;</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /column -->
+
+
+</div>
+<!-- /hbox layout -->

@@ -16,8 +16,10 @@ from tornado.escape import json_decode
 from tornado.gen import coroutine
 from tornado.web import authenticated
 from tornado.httpclient import HTTPRequest, HTTPError, AsyncHTTPClient
+from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
 from core import bson_encode, is_json_request, clone_dict_without_id
+from core.utils import format_datetime
 
 __author__ = 'george'
 
@@ -111,11 +113,28 @@ class MongoBaseHandler(BaseHandler):
 
         db = self.settings['db']
         if body.get('_id', None):  # update
+            body['update_time']=format_datetime(datetime.now())
+            body['update_user']=self.current_user.get('userCd','')
             yield db[self.cname].update({"_id": ObjectId(body.get('_id'))}, {
                 "$set": clone_dict_without_id(body)
             })
 
         else:
-            yield db[self.cname].insert(clone_dict_without_id(body))
+            obj=clone_dict_without_id(body)
+            obj['create_time']=format_datetime(datetime.now())
+            obj['create_user']=self.current_user.get('userCd','')
+            yield db[self.cname].insert(obj)
         #self.write(generate_response(message="保存成功"))
         self.send_message("保存成功")
+
+if __name__=="__main__":
+    from tornado.gen import IOLoop,coroutine
+    import motor
+
+    client=motor.MotorClient()
+    db=client['test']
+    @coroutine
+    def f():
+        yield db['servers'].insert({'a':'b'})
+    ioloop=IOLoop.current()
+    ioloop.run_sync(f)

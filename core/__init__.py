@@ -42,6 +42,7 @@ def clone_dict_without_id(obj):
             continue
         else:
             result[item[0]]=item[1]
+    return result
 
 class MongoEncoder(JSONEncoder):
     """针对mongodb的ObjectId的json序列化的封装"""
@@ -49,7 +50,7 @@ class MongoEncoder(JSONEncoder):
         if isinstance(o,ObjectId):
             return str(o)
         else:
-            return JSONEncoder.default(o,**kwargs)
+            return JSONEncoder.default(self,o)
 
 def bson_encode(obj):
     """
