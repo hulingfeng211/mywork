@@ -79,7 +79,6 @@ app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject'
 
         };
 
-
         $scope.save_server = function () {
             var url = '/servers';
             $http.post(url, $scope.server).then(function () {
