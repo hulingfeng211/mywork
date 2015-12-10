@@ -72,11 +72,13 @@ app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject'
             $scope.current_tab = tab;
             get_servers();
         };
+
         $scope.add_server = function () {
             $scope.server={};
             $scope.server = empty_server;
 
         };
+
 
         $scope.save_server = function () {
             var url = '/servers';
