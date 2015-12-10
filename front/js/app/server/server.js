@@ -64,6 +64,7 @@ app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject'
             $scope.server = server;
 
         };
+
         $scope.tab_change = function (tab) {
             angular.forEach($scope.tabs, function (i, v) {
                 $scope.tabs[v].active = false;
