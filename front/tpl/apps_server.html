@@ -7,7 +7,7 @@
   app.hideAside = false
   " ng-controller="ServerCtrl">
     <!-- column -->
-    <div class="col w lter b-r">
+    <div class="col w-lg lter b-r">
         <div class="vbox">
             <div class="wrapper b-b">
                 <!--toaster-container-->
@@ -22,6 +22,7 @@
                 <div class="input-group">
                     <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
                     <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
+                    <span class="input-group-addon input-sm"><a ng-click="get_server_list()" ><i class="icon-refresh"></i></a></span>
                 </div>
             </div>
             <!--<div class="nav-tabs-alt">
@@ -63,7 +64,7 @@
                 <div class="cell">
                     <div class="cell-inner">
                         <div class="wrapper-md">
-                            <form class="form-horizontal" role="form">
+                            <form class="form-horizontal form-validation" name="form" >
                                 <div class="form-group">
                                         <legend>服务器详细信息</legend>
                                 </div>
@@ -89,8 +90,13 @@
                                     <label class="col-sm-2 control-label">操作系统类型:</label>
 
                                     <div class="col-sm-10">
+                                        <select class="form-control" ng-model="server.os">
+                                            <option ng-repeat="os in oses" value="{{os}}">{{os}}</option>
+                                        </select>
+                                        <!--
                                         <input type="text" class="form-control" required ng-model="server.os"
                                                placeholder="centos 6.5 x86-64">
+                                               -->
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -140,7 +146,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-10 col-sm-offset-2">
-                                        <button ng-click="save_server()" class="btn btn-primary pull-right">&nbsp;&nbsp;保存&nbsp;&nbsp;</button>
+                                        <button ng-click="save_server()" ng-disabled='form.$invalid' class="btn btn-primary pull-right">&nbsp;&nbsp;保存&nbsp;&nbsp;</button>
                                     </div>
                                 </div>
                             </form>

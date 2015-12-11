@@ -88,10 +88,14 @@ class MongoBaseHandler(BaseHandler):
             return
         query_args={}
         for k,v in  self.request.query_arguments.items():
+            if k=='_v':
+                continue
+
             if(len(v)>1):#  有两个以上的参数 name=['name1','name2']
                 query_args[k]={"$in":v}
             else:
                 query_args[k]=v[0]
+
 
         db = self.settings['db']
         objs = yield db[self.cname].find(query_args).to_list(length=None)

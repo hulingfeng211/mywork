@@ -1,12 +1,21 @@
 /**
  * Created by george on 12/9/15.
  */
-app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject',
-    function ($scope, $http, toaster, $window, subject) {
+app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject','$log',
+    function ($scope, $http, toaster, $window, subject,$log) {
 
         $scope.tabs = [
             {'name': '内网', 'active': true},
             {'name': '外网', 'active': false}
+
+        ];
+        $scope.oses=[
+            "Centos 6.5 X86_64",
+            "Centos 6.5 X86",
+            "Windows 2008 R2 X64",
+            "Windows 2003",
+            "Windows 7",
+            "Windows 2012"
 
         ];
         var empty_server = {
@@ -14,18 +23,23 @@ app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject'
             ipaddr: '',
             admin_name: '',
             admin_pwd: '',
-            os: '',
+            os: 'Windows 2008 R2 X64',
             owner: subject.getPrincipal().name,
             net: '内网',
             desc: '',
             _id: ''
         };
+        $log.debug(subject.getPrincipal());
         $scope.server = empty_server;
 
         $scope.current_tab = $scope.tabs[0];
+        $scope.get_server_list=function(){
+            get_servers();
+        };
 
         function get_servers() {
-            var url = '/servers?create_user='+subject.getPrincipal().email;// + '?net=' + $scope.current_tab.name;
+            var seconds=new Date()/1000;
+            var url = '/servers?create_user='+subject.getPrincipal().email+'&_v='+seconds.toString();// + '?net=' + $scope.current_tab.name;
             $http.get(url).then(function (res) {
                 $scope.servers = res.data;
 
@@ -84,6 +98,7 @@ app.controller('ServerCtrl', ['$scope', '$http', 'toaster', '$window', 'subject'
             var url = '/servers';
             $http.post(url, $scope.server).then(function () {
                 toaster.pop('success', '确认', '保存成功');
+                $scope.server=empty_server;
                 get_servers()
             });
 

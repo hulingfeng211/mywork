@@ -38,7 +38,7 @@ def clone_dict_without_id(obj):
     #return {key:val for key,val in  obj.items() if key!="_id" and key!="id"}
     result={}
     for item  in obj.items():
-        if item[0]=='_id' or item[0]=="id":
+        if item[0]=='_id' or item[0]=="id" :
             continue
         else:
             result[item[0]]=item[1]
