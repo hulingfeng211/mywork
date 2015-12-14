@@ -2,7 +2,7 @@
  * calendarDemoApp - 0.1.3
  */
 
-app.controller('FullcalendarCtrl', ['$scope', function($scope) {
+app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) {
 
     var date = new Date();
     var d = date.getDate();
@@ -10,14 +10,15 @@ app.controller('FullcalendarCtrl', ['$scope', function($scope) {
     var y = date.getFullYear();
 
     /* event source that pulls from google.com */
-    $scope.eventSource = {
+    /*$scope.eventSource = {
             url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
             className: 'gcal-event',           // an option!
             currentTimezone: 'America/Chicago' // an option!
-    };
+     };*
 
     /* event source that contains custom events on the scope */
-    $scope.events = [
+    $scope.events =[];
+    /** [
       {title:'All Day Event', start: new Date(y, m, 1), className: ['b-l b-2x b-info'], location:'New York', info:'This a all day event that will start from 9:00 am to 9:00 pm, have fun!'},
       {title:'Dance class', start: new Date(y, m, 3), end: new Date(y, m, 4, 9, 30), allDay: false, className: ['b-l b-2x b-danger'], location:'London', info:'Two days dance training class.'},
       {title:'Game racing', start: new Date(y, m, 6, 16, 0), className: ['b-l b-2x b-info'], location:'Hongkong', info:'The most big racing of this year.'},
@@ -29,7 +30,13 @@ app.controller('FullcalendarCtrl', ['$scope', function($scope) {
       {title:'Repeating Event', start: new Date(y, m, d + 4, 16, 0), alDay: false, className: ['b-l b-2x b-warning'], location:'Home Town', info:'Repeat every day'},      
       {title:'Click for Google', start: new Date(y, m, 28), end: new Date(y, m, 29), url: 'http://google.com/', className: ['b-l b-2x b-primary']},
       {title:'Feed cat', start: new Date(y, m+1, 6, 18, 0), className: ['b-l b-2x b-info']}
-    ];
+    ];*/
+    function load_events() {
+        $http.get('/events').then(function (res) {
+            $scope.events = res.data;
+        });
+    }
+    load_events();
 
     /* alert on dayClick */
     $scope.precision = 400;
@@ -70,7 +77,7 @@ app.controller('FullcalendarCtrl', ['$scope', function($scope) {
         $scope.overlay.find('.arrow').addClass('top');
       }
       (wrap.find('.fc-overlay').length == 0) && wrap.append( $scope.overlay );
-    }
+    };
 
     /* config object */
     $scope.uiConfig = {

@@ -1,9 +1,9 @@
 <div ng-controller="FullcalendarCtrl">
   <div class="wrapper-md bg-light b-b">
-    <button type="button" class="btn btn-default btn-addon pull-right m-t-n-xs" ui-toggle-class="show" target="#aside">
-      <i class="fa fa-bars"></i> List
+    <button type="button" class="btn btn-default btn-addon pull-right m-t-n-xs" ui-toggle-class="hide" target="#aside">
+      <i class="fa fa-bars"></i>计划列表
     </button>
-    <h1 class="m-n font-thin h3">Fullcalendar</h1>
+    <h1 class="m-n font-thin h3">工作日历</h1>
   </div>
   <div class="hbox hbox-auto-xs hbox-auto-sm">
     <div class="col wrapper-md">
@@ -36,7 +36,7 @@
         <div class="calendar" ng-model="eventSources" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
       </div>
     </div>
-    <div class="col w-md w-auto-xs bg-light dk bg-auto b-l hide" id="aside">
+    <div class="col w-md w-auto-xs bg-light dk bg-auto b-l " id="aside">
       <div class="wrapper">
         <div ng-repeat="e in events" class="bg-white-only r r-2x m-b-xs wrapper-sm {{e.className[0]}}">          
           <input ng-model="e.title" class="form-control m-t-n-xs no-border no-padder no-bg">
