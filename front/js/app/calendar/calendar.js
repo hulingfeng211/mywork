@@ -2,7 +2,7 @@
  * calendarDemoApp - 0.1.3
  */
 
-app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) {
+app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
 
     var date = new Date();
     var d = date.getDate();
@@ -17,8 +17,16 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) 
      };*
 
     /* event source that contains custom events on the scope */
-    $scope.events =[];
-    /** [
+    $scope.events = [];
+    /** [{
+        title: 'All Day Event',
+        start: new Date(y, m, 1),
+        className: ['b-l b-2x b-info'],
+        location: 'Shanghai ',
+        info: '测试'
+    }];*/
+    /**
+     [
       {title:'All Day Event', start: new Date(y, m, 1), className: ['b-l b-2x b-info'], location:'New York', info:'This a all day event that will start from 9:00 am to 9:00 pm, have fun!'},
       {title:'Dance class', start: new Date(y, m, 3), end: new Date(y, m, 4, 9, 30), allDay: false, className: ['b-l b-2x b-danger'], location:'London', info:'Two days dance training class.'},
       {title:'Game racing', start: new Date(y, m, 6, 16, 0), className: ['b-l b-2x b-info'], location:'Hongkong', info:'The most big racing of this year.'},
@@ -33,14 +41,37 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) 
     ];*/
     function load_events() {
         $http.get('/events').then(function (res) {
-            $scope.events = res.data;
+            angular.forEach(res.data, function (v) {
+                $scope.events.push(v);
+            });
+            //if(angular.isArray(res.data))
+            //    $scope.events = res.data;
         });
     }
     load_events();
 
+    function save_event(e) {
+
+        var data = {
+            title: e.title,
+            start: e.start,
+            className: e.className,
+            location: e.location,
+            info: e.info,
+            _id: angular.isNumber(e._id) ? "" : e._id
+        };
+        var url = '/events';
+        $log.debug(data);
+        $http.post(url, data).then(function () {
+            //do nothing.
+        });
+    }
+
+
     /* alert on dayClick */
     $scope.precision = 400;
     $scope.lastClickTime = 0;
+
     $scope.alertOnEventClick = function( date, jsEvent, view ){
       var time = new Date().getTime();
       if(time - $scope.lastClickTime <= $scope.precision){
@@ -54,10 +85,12 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) 
     };
     /* alert on Drop */
     $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
+        save_event(event);
        $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
     };
     /* alert on Resize */
     $scope.alertOnResize = function(event, delta, revertFunc, jsEvent, ui, view){
+        save_event(event);
        $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
     };
 
@@ -106,8 +139,19 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) 
     };
 
     /* remove event */
-    $scope.remove = function(index) {
-      $scope.events.splice(index,1);
+    $scope.remove = function (e) {
+        //delete from db
+        if (angular.isNumber(e._id)) {
+
+            $scope.events.splice($scope.events.indexOf(e), 1);
+        }
+        else {
+            var url = '/events/' + e._id;
+            $http.delete(url).then(function () {
+                $scope.events.splice($scope.events.indexOf(e), 1);
+            });
+        }
+
     };
 
     /* Change View */
@@ -121,5 +165,13 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', function ($scope, $http) 
 
     /* event sources array*/
     $scope.eventSources = [$scope.events];
+    /**
+     $scope.$watchCollection('events', function (newValue) {
+        angular.forEach(newValue, function (event) {
+
+            save_event(event)
+        })
+
+    });*/
 }]);
 /* EOF */
