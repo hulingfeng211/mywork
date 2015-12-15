@@ -37,10 +37,20 @@
       </div>
     </div>
     <div class="col w-md w-auto-xs bg-light dk bg-auto b-l " id="aside">
+
+       <div class="wrapper b-t m-t-xxs">
+        <div class="input-group">
+          <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
+          <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
+           <span class="input-group-addon input-sm"><a ng-click="get_event_list()" ><i class="icon-refresh"></i></a></span>
+        </div>
+      </div>
       <div class="wrapper">
-        <div ng-repeat="e in events" class="bg-white-only r r-2x m-b-xs wrapper-sm {{e.className[0]}}">          
+        <div ng-repeat="e in events|filter:query|orderBy:'date':true" class="bg-white-only r r-2x m-b-xs wrapper-sm {{e.className[0]}}">
           <input ng-model="e.title" class="form-control m-t-n-xs no-border no-padder no-bg">
+          <input ng-model="e.info" class="form-control m-t-n-xs no-border no-padder no-bg">
           <a class="pull-right text-xs text-muted" ng-click="remove(e)"><i class="fa fa-trash-o"></i></a>
+          <a class="pull-right text-xs text-muted " style="margin-right:12px;" ng-click="save(e)"><i class="fa fa-save"></i></a>
           <div class="text-xs text-muted">{{e.start | date:"MMM dd"}} - {{e.end | date:"MMM dd"}}</div>
         </div>
       </div>

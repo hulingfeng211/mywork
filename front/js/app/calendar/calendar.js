@@ -25,6 +25,9 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope,
         location: 'Shanghai ',
         info: '测试'
     }];*/
+    $scope.eventSources=[];
+    $scope.events=[];
+
     /**
      [
       {title:'All Day Event', start: new Date(y, m, 1), className: ['b-l b-2x b-info'], location:'New York', info:'This a all day event that will start from 9:00 am to 9:00 pm, have fun!'},
@@ -40,15 +43,24 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope,
       {title:'Feed cat', start: new Date(y, m+1, 6, 18, 0), className: ['b-l b-2x b-info']}
     ];*/
     function load_events() {
-        $http.get('/events').then(function (res) {
+        var dt=new Date()/1000;
+        var url='/events?_v='+dt.toString();
+        $http.get(url).then(function (res) {
+
+            //$scope.events=[];
+           // while($scope.events.pop()){
+//
+          //  }
             angular.forEach(res.data, function (v) {
                 $scope.events.push(v);
             });
-            //if(angular.isArray(res.data))
-            //    $scope.events = res.data;
+            //$scope.eventSources = [$scope.events];
+            // $scope.eventSources = [res.data];
+            if(angular.isArray(res.data))
+                $scope.events = res.data;
         });
     }
-    load_events();
+    //load_events();
 
     function save_event(e) {
 
@@ -76,6 +88,7 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope,
       var time = new Date().getTime();
       if(time - $scope.lastClickTime <= $scope.precision){
           $scope.events.push({
+              _id:"",
             title: 'New Event',
             start: date,
             className: ['b-l b-2x b-info']
@@ -85,12 +98,22 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope,
     };
     /* alert on Drop */
     $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
-        save_event(event);
+        if(!is_local_event(event))
+            save_event(event);
        $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
     };
+    $scope.get_event_list=function(){
+        load_events();
+
+    };
+    //
+    function is_local_event(event){
+        return angular.isNumber(event._id);
+    }
     /* alert on Resize */
     $scope.alertOnResize = function(event, delta, revertFunc, jsEvent, ui, view){
-        save_event(event);
+        if(!is_local_event(event))
+            save_event(event);
        $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
     };
 
@@ -132,12 +155,18 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope,
     /* add custom event*/
     $scope.addEvent = function() {
       $scope.events.push({
+          _id:"",
         title: 'New Event',
         start: new Date(y, m, d),
         className: ['b-l b-2x b-info']
       });
     };
 
+    /* save event */
+
+    $scope.save=function(e){
+        save_event(e);
+    };
     /* remove event */
     $scope.remove = function (e) {
         //delete from db
@@ -165,6 +194,7 @@ app.controller('FullcalendarCtrl', ['$scope', '$http', '$log', function ($scope,
 
     /* event sources array*/
     $scope.eventSources = [$scope.events];
+
     /**
      $scope.$watchCollection('events', function (newValue) {
         angular.forEach(newValue, function (event) {

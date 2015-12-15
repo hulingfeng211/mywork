@@ -22,7 +22,7 @@
              <div class="">
                 <div class="input-group">
                     <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
-                    <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
+                    <input type="text" class="form-control input-sm" placeholder="search" ng-model="s">
                     <span class="input-group-addon input-sm"><a ng-click="get_server_list()" ><i class="icon-refresh"></i></a></span>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                     <div class="cell-inner">
                         <div class="">
                             <ul class="list-group">
-                                <a ng-repeat="server in servers| filter:query | orderBy:'date':true"
+                                <a ng-repeat="server in servers| filter:s | orderBy:'create_time':true"
                                    ng-click="on_server_selected(server)"
                                    class="list-group-item b-l-3x hover-anchor">
                                     <span ng-click='delete_server(server)'

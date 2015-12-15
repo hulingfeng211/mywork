@@ -31,7 +31,7 @@
             <div class="wrapper b-t m-t-xxs">
                 <div class="input-group">
                     <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
-                    <input type="text" class="form-control input-sm" placeholder="search" ng-model="server.$">
+                    <input type="text" class="form-control input-sm" placeholder="search" ng-model="query">
                 </div>
             </div>
             <div class="nav-tabs-alt">
@@ -52,7 +52,7 @@
                     <div class="cell-inner">
                         <div class="">
                             <div class="list-group">
-                                <a ng-repeat="circulation in circulations | filter:server | orderBy:'create_time':true"
+                                <a ng-repeat="circulation in circulations | filter:query | orderBy:'date':true"
                                    class="list-group-item  b-l-3x hover-anchor b-l-{{ circulation.color }} "
                                    ng-class="{'active': circulation.selected }"
                                    ng-click="selectCirculation(circulation)">
