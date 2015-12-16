@@ -46,7 +46,7 @@ app.controller('SigninFormController', ['$scope', '$http', '$state','subject', '
                     $scope.authError = data;
                 }else{
                     $scope.user=data.info.authc.principal;
-                    $state.go('app.dashboard-v1');
+                    $state.go('app.dashboard-v2');
                 }
             }, function (error) {
                 console.log(error);

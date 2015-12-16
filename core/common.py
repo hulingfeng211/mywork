@@ -102,6 +102,24 @@ class MongoBaseHandler(BaseHandler):
         self.write(bson_encode(objs))
 
     @coroutine
+    def put(self, *args, **kwargs):
+        """接受用户的请求对文档进行更新
+        :param args url路径的参数 """
+        if is_json_request(self.request):
+            body = json.loads(self.request.body)
+        else:
+            self.send_error(reason="仅支持Content-type:application/json")
+
+        db = self.settings['db']
+        if body.get('_id', None):  # update
+            body['update_time']=format_datetime(datetime.now())
+            body['update_user']=self.current_user.get('userCd','')
+            yield db[self.cname].update({"_id": ObjectId(body.get('_id'))}, {
+                "$set": clone_dict_without_id(body)
+            })
+        self.send_message("保存成功")
+
+    @coroutine
     def delete(self, *args, **kwargs):
         id = args[0] if len(args) > 0 else None
         if id:

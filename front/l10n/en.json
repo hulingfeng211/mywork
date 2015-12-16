@@ -33,6 +33,7 @@
     "DASHBOARD" : "Dashboard",
     "CALENDAR" : "Calendar",
     "EMAIL" : "Email",
+    "TASK":"Task",
     "WIDGETS" : "Widgets",
     "components" : {
       "COMPONENTS" : "Components",

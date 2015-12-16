@@ -3,15 +3,13 @@
 /**
  * Config for the router
  */
-angular.module('app')
-    .run(
+angular.module('app').run(
     ['$rootScope', '$state', '$stateParams',
         function ($rootScope, $state, $stateParams) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
         }
-    ]
-)
+    ])
     .config(
     ['$stateProvider', '$urlRouterProvider', 'angularShiroConfigProvider',
         function ($stateProvider, $urlRouterProvider, config) {
@@ -27,8 +25,7 @@ angular.module('app')
             $urlRouterProvider
                 //    .otherwise('/app/404');
                 .otherwise('/app/dashboard-v1');
-            $stateProvider
-                .state('app', {
+            $stateProvider.state('app', {
                     abstract: true,
                     url: '/app',
                     templateUrl: 'tpl/app.html'
@@ -524,7 +521,33 @@ angular.module('app')
                             }]
                     }
                 })
-
+                //task
+                .state('app.task', {
+                    abstract: true,
+                    url: '/task',
+                    templateUrl: 'tpl/task/task.html',
+                    // use resolve to load other dependences
+                    resolve: {
+                        deps: ['uiLoad',
+                            function (uiLoad) {
+                                return uiLoad.load(['js/app/task/task.js',
+                                    'js/app/task/task-service.js',
+                                    'vendor/libs/moment.min.js']);
+                            }]
+                    }
+                })
+                .state('app.task.list', {
+                    url: '/inbox/{project}',
+                    templateUrl: 'tpl/task/task.list.html'
+                })
+                .state('app.task.detail', {
+                    url: '/{mailId:[0-9]{1,4}}',
+                    templateUrl: 'tpl/task/task.detail.html'
+                })
+                .state('app.task.compose', {
+                    url: '/compose',
+                    templateUrl: 'tpl/task/task.new.html'
+                })
                 // mail
                 .state('app.mail', {
                     abstract: true,

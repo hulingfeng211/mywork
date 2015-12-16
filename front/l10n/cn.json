@@ -34,6 +34,7 @@
     "DASHBOARD" : "控制面板",
     "CALENDAR" : "日历",
     "EMAIL" : "邮箱",
+    "TASK":"任务",
     "WIDGETS" : "小工具",
     "components" : {
       "COMPONENTS" : "组件",
