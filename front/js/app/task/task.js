@@ -75,13 +75,45 @@ app.controller('TaskCtrl', ['$scope', 'ProjectService', 'LabelService',
 
     }]);
 
-app.controller('TaskListCtrl', ['$scope', 'mails', '$stateParams', 'TaskService',
-    function ($scope, mails, $stateParams, TaskService) {
+app.controller('TaskListCtrl', ['$scope', '$stateParams', 'TaskService',
+    function ($scope, $stateParams, TaskService) {
         $scope.project = $stateParams.project;
+        $scope.label = $stateParams.label;
 
-        $scope.tasks = TaskService.query({project: $scope.project});
+        function query_tasks() {
+
+
+            //var expression = {q: '{"project":'+$scope.project+'",labels":{"$all":["' + $scope.label + '"]}}'};
+            var expression={};
+
+            if(angular.isDefined($scope.project)){
+                expression['project']=$scope.project;
+            }
+            if(angular.isDefined($scope.label)){
+                expression['labels']={"$all":[$scope.label]}
+            }
+            var q={q:JSON.stringify(expression).toString()};
+            $scope.tasks=TaskService.query(q);
+
+
+            /**
+            if (angular.isDefined($scope.label)) {
+                $scope.tasks = TaskService.query(expression);
+                return;
+            }
+            if (angular.isDefined($scope.project)) {
+                $scope.tasks = TaskService.query({project: $scope.project});
+                return;
+            }
+             */
+
+        }
+        query_tasks();
+        $scope.refresh_task=query_tasks;
+
+
         $scope.delete_task=function(task){
-            TaskService.delete({"id":task._id})
+            TaskService.delete({"id": task._id});
             var eIndex = $scope.tasks.indexOf(task);
             if(eIndex>-1){
                 $scope.tasks.splice(eIndex,1);
@@ -98,8 +130,8 @@ app.controller('TaskDetailCtrl', ['$scope', 'TaskService', '$stateParams', funct
 
 }]);
 
-app.controller('TaskNewCtrl', ['$scope', 'ProjectService', 'LabelService', 'TaskService',
-    function ($scope, ProjectService, LabelService, TaskService) {
+app.controller('TaskNewCtrl', ['$scope', 'ProjectService', 'LabelService', 'TaskService','$state','$filter',
+    function ($scope, ProjectService, LabelService, TaskService,$state,$filter) {
 
 
         var empty_task = {
@@ -107,8 +139,8 @@ app.controller('TaskNewCtrl', ['$scope', 'ProjectService', 'LabelService', 'Task
             project: '',
             labels: [],
             complete: false,
-            start: new Date().toLocaleDateString(),
-            end: new Date().toLocaleDateString(),
+            start:$filter('date')(new Date(),'short'),
+            end: $filter('date')(new Date(),'short'),
             comment: '',
             status: ''
         };
@@ -157,6 +189,8 @@ app.controller('TaskNewCtrl', ['$scope', 'ProjectService', 'LabelService', 'Task
         $scope.save_task = function () {
             TaskService.save($scope.task);
             $scope.task = empty_task;
+            $state.go('app.task.list');
+
         };
         $scope.lables = LabelService.query();
         $scope.projects =ProjectService.query({'_v':new Date()/1000});

@@ -19,7 +19,7 @@
           <div class="input-group">
             <input type="text" class="form-control input-sm" ng-model="newProject.name" placeholder="New project" required>
             <span class="input-group-btn">
-              <button class="btn btn-sm btn-default" type="button" ng-click="add_project()" ng-disabled="project.$invalid">Add</button>
+              <button class="btn btn-sm btn-default" type="submit" ng-click="add_project()" ng-disabled="project.$invalid">Add</button>
             </span>
           </div>
         </form>
@@ -27,7 +27,7 @@
       <div class="wrapper">Labels</div>
       <ul class="nav nav-pills nav-stacked nav-sm">
         <li ng-repeat="label in labels" ui-sref-active="active">
-          <a ui-sref="app.mail.list({fold:label.filter})">
+          <a ui-sref="app.task.list({label:label.filter})">
             <i class="fa fa-fw fa-circle text-muted" color="{{label.color}}" label-color ></i>
             {{label.name}}
           </a>
@@ -38,7 +38,7 @@
           <div class="input-group">
             <input type="text" class="form-control input-sm" ng-model="newLabel.name" placeholder="New label" required>
             <span class="input-group-btn">
-              <button class="btn btn-sm btn-default" type="button" ng-click="addLabel()" ng-disabled="label.$invalid">Add</button>
+              <button class="btn btn-sm btn-default" type="submit" ng-click="addLabel()" ng-disabled="label.$invalid">Add</button>
             </span>
           </div>
         </form>

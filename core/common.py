@@ -99,15 +99,15 @@ class MongoBaseHandler(BaseHandler):
                     if k == '_v':
                         continue
                     if k == 'q':  # 带查询参数
-                        q = ast.literal_eval(v)
+                        q = ast.literal_eval(v[0])
                         continue
                         pass
                     if k == 'p':  # 列投影
-                        p = ast.literal_eval(v)
+                        p = ast.literal_eval(v[0])
                         continue
                         pass
                     if k == 's':  # 排序
-                        s = ast.literal_eval(v)
+                        s = ast.literal_eval(v[0])
                         continue
                     if len(v) > 1:
                         other[k] = {"$in", v}

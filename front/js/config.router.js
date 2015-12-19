@@ -530,7 +530,7 @@ angular.module('app').run(
                     resolve: {
                         deps: ['$ocLazyLoad',
                             function ($ocLazyLoad) {
-                                return $ocLazyLoad.load(['toaster', 'ui.select']).then(
+                                return $ocLazyLoad.load(['toaster', 'ui.select','textAngular']).then(
                                     function () {
                                         return $ocLazyLoad.load(['js/app/task/task.js',
                                     'js/app/task/task-service.js',
@@ -542,7 +542,7 @@ angular.module('app').run(
                     }
                 })
                 .state('app.task.list', {
-                    url: '/inbox/{project}',
+                    url: '/inbox?{project}&{label}',
                     templateUrl: 'tpl/task/task.list.html'
                 })
                 .state('app.task.detail', {

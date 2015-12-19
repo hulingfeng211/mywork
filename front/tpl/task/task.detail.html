@@ -31,13 +31,23 @@
   <!-- / header -->
   <div class="wrapper b-b">
     <h2 class="font-thin m-n">{{task.name}}</h2>
+    {{task.start}}<br/>
+    {{task.end}}<br/>
+
   </div>
   <div class="wrapper b-b">
-    <img ng-src="{{mail.avatar}}" class="img-circle thumb-xs m-r-sm">
-    from <a href>{{mail.from}}</a> on {{mail.date}}
+    <img ng-src="img/a2.jpg" class="img-circle thumb-xs m-r-sm">
+     <a href>{{task.project}} {{task.create_date|date:'yyyy-MM-dd'}}</a>
+     <ul class="form-contorl">
+       <li ng-repeat="l in task.labels">
+         {{l}}
+       </li>
+     </ul>
   </div>
   <div class="wrapper">
-    {{task.comment}}
+      <div lazy-load="textAngular">
+            <div text-angular ng-model="task.comment " class="btn-groups"></div>
+          </div>
   </div>
   <div class="wrapper">
     <div ng-repeat="attach in mail.attach" class="panel b-a inline m-r-sm m-b-sm bg-light">
