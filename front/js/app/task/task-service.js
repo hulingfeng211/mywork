@@ -22,17 +22,14 @@ app.factory('mails', ['$http', function ($http) {
   return factory;
 }]);
 app.factory("TaskService", ["$resource", function ($resource) {
-
     return $resource("/tasks/:id");
 
 }]);
 app.factory("ProjectService", ["$resource", function ($resource) {
-
     return $resource("/projects/:id");
 
 }]);
 app.factory("LabelService", ["$resource", function ($resource) {
-
     return $resource("/labels/:id");
 
 }]);

@@ -1,6 +1,37 @@
 /**
  * Created by george on 12/16/15.
  */
+
+app.filter('propsFilter', function() {
+    return function(items, props) {
+        var out = [];
+
+        if (angular.isArray(items)) {
+          items.forEach(function(item) {
+            var itemMatches = false;
+
+            var keys = Object.keys(props);
+            for (var i = 0; i < keys.length; i++) {
+              var prop = keys[i];
+              var text = props[prop].toLowerCase();
+              if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+                itemMatches = true;
+                break;
+              }
+            }
+
+            if (itemMatches) {
+              out.push(item);
+            }
+          });
+        } else {
+          // Let the output be the input untouched
+          out = items;
+        }
+
+        return out;
+    };
+});
 app.controller('TaskCtrl', ['$scope', 'ProjectService', 'LabelService',
     function ($scope, ProjectService, LabelService) {
 
@@ -49,14 +80,22 @@ app.controller('TaskListCtrl', ['$scope', 'mails', '$stateParams', 'TaskService'
         $scope.project = $stateParams.project;
 
         $scope.tasks = TaskService.query({project: $scope.project});
+        $scope.delete_task=function(task){
+            TaskService.delete({"id":task._id})
+            var eIndex = $scope.tasks.indexOf(task);
+            if(eIndex>-1){
+                $scope.tasks.splice(eIndex,1);
 
+            }
+        }
 
     }]);
 
-app.controller('TaskDetailCtrl', ['$scope', 'mails', '$stateParams', function ($scope, mails, $stateParams) {
-    mails.get($stateParams.mailId).then(function (mail) {
-        $scope.mail = mail;
-    })
+
+app.controller('TaskDetailCtrl', ['$scope', 'TaskService', '$stateParams', function ($scope, TaskService, $stateParams) {
+
+    $scope.task=TaskService.get({"id":($stateParams.taskId)});
+
 }]);
 
 app.controller('TaskNewCtrl', ['$scope', 'ProjectService', 'LabelService', 'TaskService',
@@ -119,8 +158,8 @@ app.controller('TaskNewCtrl', ['$scope', 'ProjectService', 'LabelService', 'Task
             TaskService.save($scope.task);
             $scope.task = empty_task;
         };
-        $scope.projects = ProjectService.query();
         $scope.lables = LabelService.query();
+        $scope.projects =ProjectService.query({'_v':new Date()/1000});
 
     }]);
 

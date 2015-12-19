@@ -37,7 +37,7 @@ class IndexHandler(RequestHandler):
         #query_args=self.get_arguments()
         #self.write(self.request.body)
 
-class IOfficeApplication(Application):
+class WorkApplication(Application):
    def __init__(self):
 
        handlers=[
@@ -63,7 +63,7 @@ class IOfficeApplication(Application):
 if __name__ == "__main__":
     parse_command_line()
     AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
-    app = IOfficeApplication()
+    app = WorkApplication()
     logging.info('server at http://*:%s'%options.port)
     app.listen(options.port)
     ioloop=IOLoop.current()

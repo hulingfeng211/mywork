@@ -32,10 +32,11 @@
       </a>
       <div class="pull-right text-sm text-muted">
         <span class="hidden-xs">{{ task.create_time | fromNow }}</span>
-        <i class="fa fa-paperclip ng-hide m-l-sm" ng-show="{{task.project}}"></i>
+        <i class="fa fa-paperclip ng-hide m-l-sm" ng-show="{{task.complete==false}}"></i>
+        <a ng-click="delete_task(task)"><i class="fa fa-trash-o pull-right" ></i></a>
       </div>
       <div class="clear">
-        <div><a ui-sref="app.mail.detail({mailId:mail.id})" class="text-md">{{task.name}}</a><span class="label bg-light m-l-sm">{{mail.label}}</span></div>
+        <div><a ui-sref="app.task.detail({taskId:task._id})" class="text-md">{{task.name}}</a><span class="label bg-light m-l-sm">{{task.label}}</span></div>
         <div class="text-ellipsis m-t-xs">{{task.comment | limitTo:100}}</div>
       </div>      
     </li>

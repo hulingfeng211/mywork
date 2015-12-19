@@ -1,7 +1,7 @@
-<div ng-controller="MailDetailCtrl">
+<div ng-controller="TaskDetailCtrl">
   <!-- header -->
   <div class="wrapper bg-light lter b-b">
-    <a ui-sref="app.mail.list" class="btn btn-sm btn-default w-xxs m-r-sm" tooltip="Back to Inbox"><i class="fa fa-long-arrow-left"></i></a>
+    <a ui-sref="app.task.list" class="btn btn-sm btn-default w-xxs m-r-sm" tooltip="任务明细"><i class="fa fa-long-arrow-left"></i></a>
     <div class="btn-group m-r-sm">
       <button class="btn btn-sm btn-default w-xxs w-auto-xs" tooltip="Archive"><i class="fa fa-archive"></i></button>
       <button class="btn btn-sm btn-default w-xxs w-auto-xs" tooltip="Report"><i class="fa fa-exclamation-circle"></i></button>
@@ -18,7 +18,7 @@
       <div class="btn-group dropdown">
         <button class="btn btn-sm btn-default w-xxs w-auto-xs dropdown-toggle" tooltip="Move to"><i class="fa fa-fw fa-tag"></i> <span class="caret"></span></button>
         <ul class="dropdown-menu">
-          <li ng-repeat="label in labels">
+          <li ng-repeat="label in task.labels">
             <a href>
               <i class="fa fa-fw fa-circle text-muted text-xs" color="{{label.color}}" label-color ></i>
               {{label.name}}
@@ -30,14 +30,14 @@
   </div>
   <!-- / header -->
   <div class="wrapper b-b">
-    <h2 class="font-thin m-n">{{mail.subject}}</h2>
+    <h2 class="font-thin m-n">{{task.name}}</h2>
   </div>
   <div class="wrapper b-b">
     <img ng-src="{{mail.avatar}}" class="img-circle thumb-xs m-r-sm">
     from <a href>{{mail.from}}</a> on {{mail.date}}
   </div>
   <div class="wrapper">
-    {{mail.content}}
+    {{task.comment}}
   </div>
   <div class="wrapper">
     <div ng-repeat="attach in mail.attach" class="panel b-a inline m-r-sm m-b-sm bg-light">

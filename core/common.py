@@ -10,6 +10,7 @@
 |
 ============================================================="""
 import json
+import logging
 from bson import ObjectId
 from tornado import gen
 from tornado.escape import json_decode
@@ -20,6 +21,7 @@ from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
 from core import bson_encode, is_json_request, clone_dict_without_id
 from core.utils import format_datetime
+import ast
 
 __author__ = 'george'
 
@@ -86,19 +88,50 @@ class MongoBaseHandler(BaseHandler):
             obj = yield db[self.cname].find_one({"_id": ObjectId(id)})
             self.write(bson_encode(obj))
             return
-        query_args={}
-        for k,v in  self.request.query_arguments.items():
-            if k=='_v':
-                continue
 
-            if(len(v)>1):#  有两个以上的参数 name=['name1','name2']
-                query_args[k]={"$in":v}
-            else:
-                query_args[k]=v[0]
+        def get_query_args(self):
+            other = {}
+            q = {}  # 查询的规则 {'name':'aaa'}
+            p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
+            s = {}  # 排序的规则
+            try:
+                for k, v in self.request.query_arguments.items():
+                    if k == '_v':
+                        continue
+                    if k == 'q':  # 带查询参数
+                        q = ast.literal_eval(v)
+                        continue
+                        pass
+                    if k == 'p':  # 列投影
+                        p = ast.literal_eval(v)
+                        continue
+                        pass
+                    if k == 's':  # 排序
+                        s = ast.literal_eval(v)
+                        continue
+                    if len(v) > 1:
+                        other[k] = {"$in", v}
+                    else:
+                        other[k] = v[0]
+            except ValueError, e:
+                logging.error(e)
+            return dict(q,**other), p, s
 
-
+        q, p, s  = get_query_args(self)
         db = self.settings['db']
-        objs = yield db[self.cname].find(query_args).to_list(length=None)
+
+        if not p:
+            cursor=db[self.cname].find(q )
+            if not s:
+                objs=yield cursor.to_list(length=None)
+            else:
+                objs=yield cursor.sort(s).to_list(length=None)
+        else:
+            cursor=db[self.cname].find(q ,p)
+            if not s:
+                objs=yield cursor.to_list(length=None)
+            else:
+                objs=yield cursor.sort(s).to_list(length=None)
         self.write(bson_encode(objs))
 
     @coroutine

@@ -24,7 +24,7 @@ angular.module('app').run(
 
             $urlRouterProvider
                 //    .otherwise('/app/404');
-                .otherwise('/app/dashboard-v1');
+                .otherwise('/app/dashboard-v2');
             $stateProvider.state('app', {
                     abstract: true,
                     url: '/app',
@@ -528,12 +528,17 @@ angular.module('app').run(
                     templateUrl: 'tpl/task/task.html',
                     // use resolve to load other dependences
                     resolve: {
-                        deps: ['uiLoad',
-                            function (uiLoad) {
-                                return uiLoad.load(['js/app/task/task.js',
+                        deps: ['$ocLazyLoad',
+                            function ($ocLazyLoad) {
+                                return $ocLazyLoad.load(['toaster', 'ui.select']).then(
+                                    function () {
+                                        return $ocLazyLoad.load(['js/app/task/task.js',
                                     'js/app/task/task-service.js',
                                     'vendor/libs/moment.min.js']);
+                                    }
+                                );
                             }]
+
                     }
                 })
                 .state('app.task.list', {
@@ -541,7 +546,7 @@ angular.module('app').run(
                     templateUrl: 'tpl/task/task.list.html'
                 })
                 .state('app.task.detail', {
-                    url: '/{mailId:[0-9]{1,4}}',
+                    url: '/{taskId:[a-zA-Z0-9]{24}}',
                     templateUrl: 'tpl/task/task.detail.html'
                 })
                 .state('app.task.compose', {
