@@ -553,6 +553,40 @@ angular.module('app').run(
                     url: '/compose',
                     templateUrl: 'tpl/task/task.new.html'
                 })
+                //server
+                .state('app.server', {
+                    abstract: true,
+                    url: '/server',
+                    templateUrl: 'tpl/server/server.html',
+                    // use resolve to load other dependences
+                    resolve: {
+                        deps: ['$ocLazyLoad',
+                            function ($ocLazyLoad) {
+                                return $ocLazyLoad.load(['toaster', 'ui.select','textAngular']).then(
+                                    function () {
+                                        return $ocLazyLoad.load(['js/app/server/server.js',
+                                    'js/app/server/server-service.js',
+                                    'vendor/libs/moment.min.js']);
+                                    }
+                                );
+                            }]
+
+                    }
+                })
+                .state('app.server.list',{
+                    url:'/list',
+                    templateUrl:'tpl/server/server.detail.html'
+
+                })
+                .state('app.server.detail', {
+                    url: '/{serverId:[a-zA-Z0-9]{24}}',
+                    templateUrl: 'tpl/server/server.detail.html'
+                })
+                .state('app.server.compose', {
+                    url: '/compose',
+                    templateUrl: 'tpl/server/server.new.html'
+                })
+
                 // mail
                 .state('app.mail', {
                     abstract: true,
@@ -660,6 +694,7 @@ angular.module('app').run(
                             }]
                     }
                 })
+                /**
                 .state('apps.server', {
                     url: '/server',
                     templateUrl: 'tpl/apps_server.html',
@@ -672,7 +707,7 @@ angular.module('app').run(
                                 });
                             }]
                     }
-                })
+                })*/
                 .state('apps.announce', {
                     url: '/announce',
                     templateUrl: 'tpl/apps_announce.html',

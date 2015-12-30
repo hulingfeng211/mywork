@@ -34,6 +34,7 @@
     "CALENDAR" : "Calendar",
     "EMAIL" : "Email",
     "TASK":"Task",
+    "SERVER":"Server Manager",
     "WIDGETS" : "Widgets",
     "components" : {
       "COMPONENTS" : "Components",

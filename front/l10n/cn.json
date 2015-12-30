@@ -35,6 +35,7 @@
     "CALENDAR" : "日历",
     "EMAIL" : "邮箱",
     "TASK":"任务",
+    "SERVER":"服务器管理",
     "WIDGETS" : "小工具",
     "components" : {
       "COMPONENTS" : "组件",

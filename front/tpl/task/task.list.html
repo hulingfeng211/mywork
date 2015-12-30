@@ -18,9 +18,19 @@
         </ul>
       </div>
       <div class="btn-group">
-        <button class="btn btn-sm btn-bg btn-default" data-toggle="tooltip" data-placement="bottom" data-title="Refresh" data-original-title="" title=""><i class="fa fa-refresh"></i></button>
+        <button ng-click="refresh_task()" class="btn btn-sm btn-bg btn-default" data-toggle="tooltip"
+                data-placement="bottom" data-title="Refresh" data-original-title="" title=""><i
+                class="fa fa-refresh"></i></button>
       </div>
+
     </div>
+     <div class="btn-group ">
+        <form name="query_form" >
+          <input type="text" class="form-crontorl" required style="width: 200px;">
+          <button type="submit" ng-disabled="query_form.$invalid" class="btn btn-sm btn-bg btn-default"><i
+                  class="fa fa-search-plus"></i></button>
+        </form>
+      </div>
   </div>
   <!-- / header -->
 
