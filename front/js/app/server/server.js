@@ -11,19 +11,27 @@ app.controller('ServerListCtrl', ['$scope', '$http', 'toaster', '$window', 'subj
                 create_user: subject.getPrincipal().email,
                 _v: seconds.toString()
             });
+            if (angular.isDefined($scope.servers) && $scope.servers.length > 0) {
+                $state.go('app.server.detail', {"serverId": $scope.servers[0]._id})
+            }
             //var url = '/servers?create_user='+subject.getPrincipal().email+'&_v='+seconds.toString();// + '?net=' + $scope.current_tab.name;
 
         }
+
+        $scope.refresh_server_list = function () {
+            get_server_list();
+        };
 
         $scope.on_server_selected = function (server) {
 
             $state.go('app.server.detail', {"serverId": server._id})
 
         };
+        $scope.delete_server = function (server) {
+            ServerService.delete({"id": server._id});
+            get_server_list();
+        };
         get_server_list();
-        if (angular.isDefined($scope.servers) && $scope.servers.length > 0) {
-            $state.go('app.server.detail', {"serverId": $scope.server[0]._id})
-        }
 
 
     }]);

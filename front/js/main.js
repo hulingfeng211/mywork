@@ -3,16 +3,30 @@
 /* Controllers */
 
 angular.module('app')
-    .controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window', 'subject', "$http", '$state','$rootScope',
-        function ($scope, $translate, $localStorage, $window, subject, $http, $state,$rootScope) {
+    .controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window', 'subject', "$http", '$state','$rootScope','SettingsService',
+        function ($scope, $translate, $localStorage, $window, subject, $http, $state,$rootScope,SettingsService) {
             // add 'ie' classes to html
             var isIE = !!navigator.userAgent.match(/MSIE/i);
             isIE && angular.element($window.document.body).addClass('ie');
             isSmartDevice($window) && angular.element($window.document.body).addClass('smart');
-
+            var userId=subject.getPrincipal().email;
+            var settings=SettingsService.query({"create_user":userId});
+            if(!angular.isDefined(settings)){
+                settings={
+                    themeID: 1,
+                    navbarHeaderColor: 'bg-black',
+                    navbarCollapseColor: 'bg-white-only',
+                    asideColor: 'bg-black',
+                    headerFixed: true,
+                    asideFixed: false,
+                    asideFolded: false,
+                    asideDock: false,
+                    container: false
+                };
+            }
             // config
             $scope.app = {
-                name: 'OA-NEW',
+                name: '我的工作',
                 version: '1.3.3',
                 // for chart colors
                 color: {
@@ -25,17 +39,7 @@ angular.module('app')
                     dark: '#3a3f51',
                     black: '#1c2b36'
                 },
-                settings: {
-                    themeID: 1,
-                    navbarHeaderColor: 'bg-black',
-                    navbarCollapseColor: 'bg-white-only',
-                    asideColor: 'bg-black',
-                    headerFixed: true,
-                    asideFixed: false,
-                    asideFolded: false,
-                    asideDock: false,
-                    container: false
-                }
+                settings: settings
             };
 
             // save settings to local storage
@@ -51,6 +55,10 @@ angular.module('app')
                 }
                 // save to local storage
                 $localStorage.settings = $scope.app.settings;
+
+                //update setting data to server
+                SettingsService.save({"settings":$scope.app.settings,"_id":userId});
+
             }, true);
 
             // angular translate

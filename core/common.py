@@ -12,11 +12,10 @@
 import json
 import logging
 from bson import ObjectId
+import re
 from tornado import gen
-from tornado.escape import json_decode
 from tornado.gen import coroutine
-from tornado.web import authenticated
-from tornado.httpclient import HTTPRequest, HTTPError, AsyncHTTPClient
+from tornado.httpclient import HTTPRequest,  AsyncHTTPClient
 from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
 from core import bson_encode, is_json_request, clone_dict_without_id
@@ -71,6 +70,12 @@ class BaseHandler(SessionBaseHandler):
 
 class MongoBaseHandler(BaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""
+    def is_object_id(self,id_str):
+        """判断字符串是不是objectid的str"""
+        pattern='[a-f\d]{24}'
+        return len(re.findall(pattern,id_str))>0
+
+        pass
     def initialize(self, *args, **kwargs):
         # cname 为对应的mongodb的集合的名字
         if kwargs:
@@ -85,7 +90,8 @@ class MongoBaseHandler(BaseHandler):
         id = args[0] if len(args) > 0 else None
         if id:
             db = self.settings['db']
-            obj = yield db[self.cname].find_one({"_id": ObjectId(id)})
+
+            obj = yield db[self.cname].find_one({"_id": ObjectId(id) if self.is_object_id(id) else id})
             self.write(bson_encode(obj))
             return
 
@@ -144,10 +150,12 @@ class MongoBaseHandler(BaseHandler):
             self.send_error(reason="仅支持Content-type:application/json")
 
         db = self.settings['db']
-        if body.get('_id', None):  # update
+        id=body.get('_id',None)
+        if id:  # update
             body['update_time']=format_datetime(datetime.now())
             body['update_user']=self.current_user.get('userCd','')
-            yield db[self.cname].update({"_id": ObjectId(body.get('_id'))}, {
+
+            yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict_without_id(body)
             })
         self.send_message("保存成功")
@@ -157,7 +165,7 @@ class MongoBaseHandler(BaseHandler):
         id = args[0] if len(args) > 0 else None
         if id:
             db = self.settings['db']
-            yield db[self.cname].remove({"_id": ObjectId(id)})
+            yield db[self.cname].remove({"_id": ObjectId(id) if self.is_object_id(id) else id})
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -167,10 +175,11 @@ class MongoBaseHandler(BaseHandler):
             self.send_error(reason="仅支持Content-type:application/json")
 
         db = self.settings['db']
-        if body.get('_id', None):  # update
+        id=body.get('_id',None)
+        if id:  # update
             body['update_time']=format_datetime(datetime.now())
             body['update_user']=self.current_user.get('userCd','')
-            yield db[self.cname].update({"_id": ObjectId(body.get('_id'))}, {
+            yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict_without_id(body)
             })
 

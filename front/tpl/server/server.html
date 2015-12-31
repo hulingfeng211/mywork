@@ -1,16 +1,25 @@
 <div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="ServerListCtrl">
     <div class="col w-md bg-light dk b-r bg-auto">
-        <div class="wrapper b-b bg">
+        <div class="wrapper bg-light lter b-b">
+
+            <div class="input-group">
+              <input class="form-control" placeholder="查询" ng-model="query" type="text">
+              <span class="input-group-btn">
+                <button class="btn btn-default" tooltip="刷新" type="button" ng-click="refresh_server_list()"><i class="icon-refresh"></i> </button>
+                  <a tooltip="新建" class="btn btn-default" ui-sref="app.server.compose" ><i class="icon-plus"></i> </a>
+              </span>
+            </div>
+            <!--
 
             <button class="btn btn-sm btn-default pull-right visible-sm visible-xs" ui-toggle-class="show"
                     target="#email-menu"><i class="fa fa-bars"></i></button>
-            <a ui-sref="app.server.compose" class="btn btn-sm btn-danger w-xs font-bold">新建</a>
+            <a ui-sref="app.server.compose" class="btn btn-sm btn-danger w-xs font-bold">新建</a>-->
 
         </div>
-        <div class="wrapper hidden-sm hidden-xs" id="email-menu">
+        <div class="wrapper hidden-sm hidden-xs">
             <ul class="nav nav-pills nav-stacked nav-sm">
 
-                <a ng-repeat="server in servers| filter:s | orderBy:'create_time':true"
+                <a ng-repeat="server in servers| filter:query | orderBy:'create_time':true"
                    ng-click="on_server_selected(server)"
                    class="list-group-item b-l-3x hover-anchor">
                                     <span ng-click='delete_server(server)'
