@@ -3,7 +3,7 @@
         <div class="wrapper bg-light lter b-b">
 
             <div class="input-group">
-              <input class="form-control" placeholder="查询" ng-model="query" type="text">
+                <input class="form-control" placeholder="查询" ng-model="query" type="text">
               <span class="input-group-btn">
                 <button class="btn btn-default" tooltip="刷新" type="button" ng-click="refresh_server_list()"><i class="icon-refresh"></i> </button>
                   <a tooltip="新建" class="btn btn-default" ui-sref="app.server.compose" ><i class="icon-plus"></i> </a>
@@ -16,25 +16,28 @@
             <a ui-sref="app.server.compose" class="btn btn-sm btn-danger w-xs font-bold">新建</a>-->
 
         </div>
-        <div class="wrapper hidden-sm hidden-xs">
-            <ul class="nav nav-pills nav-stacked nav-sm">
+        <div class="wrapper scrollable hover hidden-sm hidden-xs">
+            <div class="row-row">
+                <div class="cell scrollable hover">
+                    <ul class="nav nav-pills nav-stacked nav-sm">
 
-                <a ng-repeat="server in servers| filter:query | orderBy:'create_time':true"
-                   ng-click="on_server_selected(server)"
-                   class="list-group-item b-l-3x hover-anchor">
+                        <a ng-repeat="server in servers| filter:query | orderBy:'create_time':true"
+                           ng-click="on_server_selected(server)"
+                           class="list-group-item b-l-3x hover-anchor">
                                     <span ng-click='delete_server(server)'
                                           class="pull-right text-muted hover-action"><i class="fa fa-times"></i></span>
-                    <span class="block text-ellipsis">{{ server.name }}</span>
-                    <small class="text-muted">{{ server.ipaddr }}-&nbsp;&nbsp;&nbsp;{{ server.create_time | fromNow }}
-                    </small>
-                </a>
-                <a ui-sref="app.server.list()">
-                    {{server.name}}
-                </a>
+                            <span class="block text-ellipsis">{{ server.name }}</span>
+                            <small class="text-muted">{{ server.ipaddr }}-&nbsp;&nbsp;&nbsp;{{ server.create_time | fromNow }}
+                            </small>
+                        </a>
+                        <a ui-sref="app.server.list()">
+                            {{server.name}}
+                        </a>
 
 
-            </ul>
-
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col">
