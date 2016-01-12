@@ -1,8 +1,18 @@
 # -*- coding:utf-8 -*-
-
+"""==========================================================
+|
+|
+|       creater:george
+|       create-time:2016-1-12 14:32:02
+|       email:15921315347@163.com
+|       description:模块入口
+|
+|
+============================================================="""
 # 定义url模板
 from core.common import MongoBaseHandler
 
+# 公共的路由
 routes=[
 
     # 服务器管理
@@ -28,6 +38,10 @@ routes=[
     # 用户设置
     (r'/settings',MongoBaseHandler,{'cname':'settings'}),
     (r'/settings/(.+)',MongoBaseHandler,{'cname':'settings'}),
+
+    # 用户设置
+    (r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
+    (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
 
 ]
 

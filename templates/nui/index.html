@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello,World NUI</title>
+    <script src="{{static_url('nui/jquery/jquery-1.6.2.min.js')}}"></script>
+    <link href="{{static_url('nui/themes/default/miniui.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{static_url('nui/themes/icons.css')}}" rel="stylesheet" type="text/css">
+    <script src="{{static_url('nui/nui-min.js')}}"></script>
+</head>
+<body>
+
+
+<input id="helloBTn" class="mini-button" text="Hello" onclick="onHelloClick"/>
+<script type="text/javascript">
+    function onHelloClick(e){
+        var button= e.sender;
+        nui.alert('Hello,MiniUI');
+    }
+</script>
+
+</body>
+</html>
