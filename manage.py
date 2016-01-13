@@ -16,7 +16,7 @@ from tornado.gen import coroutine
 from tornado.httpclient import AsyncHTTPClient
 import os
 from core import settings
-from handler import auth,oa,chat,routes,miniui
+from handler import auth,oa,chat,routes,miniui,service
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
 
@@ -57,6 +57,7 @@ class WorkApplication(Application):
        handlers.extend(oa.routes)
        handlers.extend(chat.routes)
        handlers.extend(miniui.routes)
+       handlers.extend(service.routes)
        handlers.extend(routes)
        Application.__init__(self,handlers=handlers,**settings)
 
