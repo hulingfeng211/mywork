@@ -9,8 +9,12 @@
 |
 |
 ============================================================="""
+from bson import ObjectId
 from tornado import escape
+from tornado.gen import coroutine
 from tornado.web import RequestHandler
+from core import clone_dict, bson_encode
+from core.treeutils import to_list
 
 __author__ = 'george'
 
@@ -19,33 +23,33 @@ class MenuService(RequestHandler):
     """
     菜单服务
     """
-    def get(self, *args, **kwargs):
-        pass
 
+    @coroutine
+    def get(self, *args, **kwargs):
+        result = yield self.settings['db'].menus.find().to_list(length=None)
+        #print result
+        self.write(bson_encode(result))
+
+    @coroutine
     def post(self, *args, **kwargs):
         data=self.get_argument('data',None)
-        remove_data=self.get_argument('remove',None)
-        def iter_menu(menu):
-            if menu.get('children',None):
-               childrens=menu.get('children',None)
+        remove_data = self.get_argument('removed', None)
 
-               for child_menu in childrens:
-                   iter_menu(child_menu)
-            else:
-                yield self.settings['db'].menus.save(menu)
         if data:
             data_json=escape.json_decode(data)
-            print data_json
-            for menu in data_json:
-                if menu.get('children'): #not leaf
-                    pass
+            list = to_list(data_json,"-1","children","id","pid")
+            print list
+            print 'len(list):',len(list)
+            for i,item in enumerate(list):
+                yield self.settings['db'].menus.save(item)
 
         if remove_data:
-            #deal with remove_data
-            pass
-        print 'remove_data=',remove_data
+            data_json = escape.json_decode(remove_data)
+            list = to_list(data_json,"-1","children","id","pid")
+            for item in list:
+                yield self.settings['db'].menus.remove({"_id":item['id']})
 
 routes=[
-    (r'/s/menu',MenuService)
+    (r'/s/menu',MenuService),
 ]
 

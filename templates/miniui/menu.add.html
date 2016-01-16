@@ -9,12 +9,13 @@
         <tr>
             <td style="width:100%;">
                 <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
-                <a class="mini-button" iconCls="icon-save" plain="true">保存</a>
+                <a class="mini-button" onclick="saveData()" iconCls="icon-save" plain="true">保存</a>
             </td>
         </tr>
     </table>
         </div>
-        <ul id="tree1" onnodedblclick="onNodeDoubleClick()" class="mini-tree"
+        <!--ajaxOptions='{type:"get"}' -->
+        <ul id="tree1" onnodedblclick="onNodeDoubleClick()" url="/s/menu" ajaxOptions='{type:"get"}' class="mini-tree"
             style="width:100%;height:100%;padding:5px;"
             showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
             allowLeafDropIn="true"
@@ -41,29 +42,30 @@
     </div>
     <div showCollapseButton="false" style="padding-left: 5px;">
 
-        <h1>FormLayout 表单布局</h1>
+        <h1>菜单信息</h1>
 
-        <h4>单列多行</h4>
+        <form id="menu_form">
         <table border="0" cellpadding="1" cellspacing="2">
             <tr>
-                <td style="width:60px;">姓名：</td>
+                <td style="width:60px;">Name：</td>
                 <td style="width:100px">
-                    <input name="name" class="mini-textbox"/>
+                    <input name="name" id="name" class="mini-textbox"/>
                 </td>
             </tr>
             <tr>
-                <td>密码：</td>
+                <td>Desc：</td>
                 <td>
-                    <input name="pwd" class="mini-password"/>
+                    <input name="desc" id="desc" class="mini-textbox"/>
                 </td>
             </tr>
             <tr>
-                <td>生日：</td>
+                <td>URL：</td>
                 <td>
-                    <input name="birthday" class="mini-datepicker"/>
+                    <input name="url" id="url" class="mini-textbox"/>
                 </td>
             </tr>
         </table>
+        </form>
     </div>
 </div>
 
@@ -72,7 +74,6 @@
 {%block script %}
 
 <script type="text/javascript">
-
 
     function onNodeDoubleClick(e) {
         onEditNode(e);
@@ -84,9 +85,11 @@
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });
-        $('#tree1').bind('nodedblclick', function (e) {
-            mini.alert('doubleclick');
-        });
+        var tree = mini.get('tree1');
+        var db = new mini.DataBinding();
+        db.bindForm("menu_form", tree);
+
+
     };
     function onAddRootNode(e) {
         var tree = mini.get('tree1');
@@ -112,7 +115,7 @@
         var tree = mini.get("tree1");
         var node = tree.getSelectedNode();
 
-        var newNode = {};
+        var newNode = {name: 'node'};
         tree.addNode(newNode, "add", node);
     }
 
@@ -175,7 +178,8 @@
             type: "post",
             success: function (text) {
                 mini.hideMessageBox(msgid);
-                //tree.load("../data/TreeService.php?method=LoadTree");
+
+                tree.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert(jqXHR.responseText);

@@ -76,6 +76,10 @@ class MongoBaseHandler(BaseHandler):
         return len(re.findall(pattern,id_str))>0
 
         pass
+
+    def prepare(self):
+        """覆盖父类的方法，避免401错误"""
+        pass
     def initialize(self, *args, **kwargs):
         # cname 为对应的mongodb的集合的名字
         if kwargs:
@@ -173,6 +177,7 @@ class MongoBaseHandler(BaseHandler):
             body = json.loads(self.request.body)
         else:
             self.send_error(reason="仅支持Content-type:application/json")
+            return
 
         db = self.settings['db']
         id=body.get('_id',None)

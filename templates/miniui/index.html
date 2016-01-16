@@ -44,15 +44,15 @@
 
     </div>
     <div title="south" region="south" showSplit="false" showHeader="false" height="30">
-        <div style="line-height:28px;text-align:center;cursor:default">Copyright © 上海普加软件有限公司版权所有</div>
+        <div style="line-height:28px;text-align:center;cursor:default">Copyright © 上海外高桥造船有限公司</div>
     </div>
     <div title="center" region="center" style="border:0;" bodyStyle="overflow:hidden;">
         <!--Splitter-->
         <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
             <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border:0;">
                 <!--OutlookTree-->
-                <div id="leftTree" class="mini-outlooktree" url="/miniui/menu" onnodeclick="onNodeSelect"
-                     textField="text" idField="id" parentField="pid"
+                <div id="leftTree" class="mini-outlooktree" url="/s/menu" ajaxOptions='{type:"get"}' onnodeclick="onNodeSelect"
+                     textField="name" idField="id" parentField="pid"
                         >
                 </div>
 
@@ -85,11 +85,12 @@
             tab = {};
             tab._nodeid = node.id;
             tab.name = id;
-            tab.title = node.text;
+            tab.title = node.name;
+            tab.url=node.url;
             tab.showCloseButton = true;
 
             //这里拼接了url，实际项目，应该从后台直接获得完整的url地址
-            tab.url = mini_JSPath + "../../docs/api/" + node.id + ".html";
+            //tab.url = mini_JSPath + "../../docs/api/" + node.id + ".html";
 
             tabs.addTab(tab);
         }

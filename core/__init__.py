@@ -44,6 +44,18 @@ def clone_dict_without_id(obj):
             result[item[0]]=item[1]
     return result
 
+def clone_dict(obj,without=[]):
+    """
+    克隆一个字典对象，排除without的字段
+    """
+    result={}
+    for item in obj.items():
+        if item[0] in without:
+            continue
+        else:
+            result[item[0]]=item[1]
+    return result
+
 class MongoEncoder(JSONEncoder):
     """针对mongodb的ObjectId的json序列化的封装"""
     def default(self, o,**kwargs):
