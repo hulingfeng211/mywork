@@ -16,15 +16,15 @@ class HomeHandler(RequestHandler):
 
 class MenuHandler(RequestHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/menu.add.html')
+        self.render('miniui/menu.mgt.html')
 
-    def post(self, *args, **kwargs):
-        pass
-
+class OrgnHandler(RequestHandler):
+    def get(self, *args, **kwargs):
+        self.render('miniui/orgn.mgt.html')
 
 routes = [
-    (r'/miniui/', HelloHandler),
-    (r'/miniui$', HelloHandler),
-    (r'/miniui/home', HomeHandler),
-    (r'/miniui/menu', MenuHandler),
+    (r'/app/', HelloHandler),
+    (r'/app$', HelloHandler),
+    (r'/app/home', HomeHandler),
+    (r'/page/menu', MenuHandler),
 ]

@@ -1,0 +1,40 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "name": "基础管理",
+      "desc": "基础管理",
+      "_pid": -1,
+      "children": [
+        {
+          "_id": 2,
+          "_pid": 1,
+          "name": "菜单管理",
+          "url": "/page/menu",
+          "desc": "菜单管理"
+        },
+        {
+          "_id": 3,
+          "_pid": 1,
+          "name": "组织管理",
+          "url": "/page/orgn",
+          "desc": "组织管理"
+        },
+        {
+          "_id": 4,
+          "_pid": 1,
+          "name": "人员管理",
+          "url": "/page/user",
+          "desc": "人员管理"
+        },
+        {
+          "_id": 5,
+          "_pid": 1,
+          "name": "角色管理",
+          "url": "/page/role",
+          "desc": "角色管理"
+        }
+      ]
+    }
+  ]
+}

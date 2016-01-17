@@ -11,6 +11,7 @@
 ============================================================="""
 from bson import ObjectId
 from tornado import escape
+from tornado.escape import json_decode
 from tornado.gen import coroutine
 from tornado.web import RequestHandler
 from core import clone_dict, bson_encode
@@ -32,11 +33,18 @@ class MenuService(RequestHandler):
 
     @coroutine
     def post(self, *args, **kwargs):
-        data=self.get_argument('data',None)
-        remove_data = self.get_argument('removed', None)
+        if 'application/json' in self.request.headers['content-Type']:
+            body=json_decode(self.request.body)
+            if body:
+                data=body.get('data',None)
+                remove_data=body.get('removed',None)
+        else:
+            data=self.get_argument('data',None)
+            remove_data = self.get_argument('removed', None)
 
         if data:
-            data_json=escape.json_decode(data)
+            print 'data:',data
+            data_json= escape.json_decode(data) if type(data)==unicode else data
             list = to_list(data_json,"-1","children","id","pid")
             print list
             print 'len(list):',len(list)
