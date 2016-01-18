@@ -22,10 +22,16 @@ class OrgnHandler(RequestHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/orgn.mgt.html')
 
+class UserHandler(RequestHandler):
+    def get(self, *args, **kwargs):
+        self.render('miniui/user.mgt.html')
+
+
 routes = [
     (r'/app/', HelloHandler),
     (r'/app$', HelloHandler),
     (r'/app/home', HomeHandler),
     (r'/page/menu', MenuHandler),
     (r'/page/orgn', OrgnHandler),
+    (r'/page/user', UserHandler),
 ]

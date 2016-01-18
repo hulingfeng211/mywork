@@ -39,9 +39,12 @@ routes=[
     (r'/settings',MongoBaseHandler,{'cname':'settings'}),
     (r'/settings/(.+)',MongoBaseHandler,{'cname':'settings'}),
 
-    # 用户设置
+    # 菜单设置
     (r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
     (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
+    # 用户管理
+    (r'/s/users',MongoBaseHandler,{'cname':'users'}),
+    (r'/s/users/(.+)',MongoBaseHandler,{'cname':'users'}),
 
 ]
 

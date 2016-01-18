@@ -119,12 +119,15 @@ class MongoBaseHandler(BaseHandler):
                     if k == 's':  # 排序
                         s = ast.literal_eval(v[0])
                         continue
+
                     if len(v) > 1:
                         other[k] = {"$in", v}
                     else:
                         other[k] = v[0]
             except ValueError, e:
                 logging.error(e)
+            #
+            # return dict(q,**other), p, s
             return dict(q,**other), p, s
 
         q, p, s  = get_query_args(self)
