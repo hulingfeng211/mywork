@@ -27,4 +27,5 @@ routes = [
     (r'/app$', HelloHandler),
     (r'/app/home', HomeHandler),
     (r'/page/menu', MenuHandler),
+    (r'/page/orgn', OrgnHandler),
 ]
