@@ -50,7 +50,7 @@ class OrgnService(RequestHandler):
             print list
             print 'len(list):',len(list)
             for i,item in enumerate(list):
-                yield self.settings['db'].menus.save(item)
+                yield self.settings['db'].orgns.save(item)
 
         if remove_data:
             data_json = escape.json_decode(remove_data)
