@@ -46,11 +46,11 @@ def clone_dict_without_id(obj):
 
 def clone_dict(obj,without=[]):
     """
-    克隆一个字典对象，排除without的字段
+    克隆一个字典对象，排除without的字段与_开头的字段
     """
     result={}
     for item in obj.items():
-        if item[0] in without:
+        if item[0] in without or item[0].startswith('_'):
             continue
         else:
             result[item[0]]=item[1]

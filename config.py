@@ -31,6 +31,14 @@ SESSION= {
         max_connections = 1024
     )
 }
+# 生成方法 core/utils/generate_cookie_secret
+COOKIE_SECRET='0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='
+
+# 用户登录的URL
+LOGIN_URL="/page/login"
+
+# 开启跨站点的请求伪造保护
+XSRF_COOKIES=True
 
 # MONGODB设置
 MONGO_URI="mongodb://127.0.0.1:27017/"

@@ -17,8 +17,8 @@
         <!--ajaxOptions='{type:"get"}' -->
         <ul id="tree1" url="/s/orgn" ajaxOptions='{type:"get"}' class="mini-tree"
             style="width:100%;height:100%;padding:5px;"
-            showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
-            allowLeafDropIn="true"
+            showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="false" allowDrop="false"
+            allowLeafDropIn="false"
             idField="id" parentField="pid" resultAsTree="false">
         </ul>
 
@@ -34,10 +34,17 @@
             <div id="grid1" class="mini-datagrid" borderStyle="border:0"
                  allowCellSelect="true"
                  allowCellEdit="true"
+                 idField="id"
+                 multiSelect="true"
                  url="/s/users"
+                 idField="id"
+                 pageSize="20"
+                 editNextOnEnterKey="true"
                  ajaxOptions='{type:"get"}'
                  style="width:100%;height:100%;">
                 <div property="columns">
+                    <div type="indexcolumn"></div>
+                    <div type="checkcolumn"></div>
                     <div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号
                         <input property="editor" class="mini-textbox" style="width:100%;"/>
                     </div>
@@ -87,6 +94,9 @@
         }
 
     });
+    function reloadData(e){
+        tree.reload();
+    }
     var Genders = [{id: 1, text: '男'}, {id: 2, text: '女'}];
     function onGenderRenderer(e) {
         for (var i = 0, l = Genders.length; i < l; i++) {
@@ -95,6 +105,13 @@
         }
         return "";
     }
+     grid.on("beforeload", function (e) {
+            if (grid.getChanges().length > 0) {
+                if (confirm("有增删改的数据未保存，是否取消本次操作？")) {
+                    e.cancel = true;
+                }
+            }
+        });
      function addRow() {
             var node = tree.getSelectedNode();
             if (node) {
@@ -112,14 +129,15 @@
         function saveData() {
             var data = grid.getChanges();
             var json = mini.encode(data);
-            grid.loading("保存中，请稍后......");
+            var msgid = grid.loading("保存中，请稍后......");
             $.ajax({
                 url: "/s/users",
-                data: { data: json },
+                data: {data: json, '_xsrf': $.cookie('_xsrf')},
                 //contentType:'application/json',
                 type: "post",
                 success: function (text) {
-                    grid.relocontentTypead();
+                    mini.hideMessageBox(msgid);
+                    grid.reload();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     alert(jqXHR.responseText);

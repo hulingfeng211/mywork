@@ -14,12 +14,13 @@ import logging
 from bson import ObjectId
 import re
 from tornado import gen
-from tornado.gen import coroutine
+from tornado.web import escape,authenticated
 from tornado.httpclient import HTTPRequest,  AsyncHTTPClient
 from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
-from core import bson_encode, is_json_request, clone_dict_without_id
+from core import bson_encode, is_json_request, clone_dict_without_id, clone_dict
 from core.utils import format_datetime
+from tornado.gen import coroutine
 import ast
 
 __author__ = 'george'
@@ -27,6 +28,7 @@ __author__ = 'george'
 DEFAULT_HEADERS={
     'content-type':'application/json'
 }
+
 
 class BaseHandler(SessionBaseHandler):
 
@@ -67,6 +69,169 @@ class BaseHandler(SessionBaseHandler):
 
     def send_message(self,obj):
         self.write(bson_encode(obj))
+
+class MINIUIBaseHandler(BaseHandler):
+
+    @authenticated
+    def prepare(self):
+        pass
+
+class MINIUIMongoHandler(BaseHandler):
+    """通用的mongodb的Handler，封装简单的CRUD的操作"""
+    def is_object_id(self,id_str):
+        """判断字符串是不是objectid的str"""
+        pattern='[a-f\d]{24}'
+        return len(re.findall(pattern,str(id_str)))>0
+
+        pass
+
+    def prepare(self):
+        """覆盖父类的方法，避免401错误"""
+        pass
+    def initialize(self, *args, **kwargs):
+        # cname 为对应的mongodb的集合的名字
+        if kwargs:
+            for key, val in kwargs.items():
+                if not hasattr(self, key):
+                    setattr(self, key, val)
+        super(MINIUIMongoHandler,self).initialize()
+
+    @coroutine
+    def get(self, *args, **kwargs):
+
+        id = args[0] if len(args) > 0 else None
+        if id:
+            db = self.settings['db']
+
+            obj = yield db[self.cname].find_one({"_id": ObjectId(id) if self.is_object_id(id) else id})
+            self.write(bson_encode(obj))
+            return
+
+        def get_query_args(self):
+            """
+            dept_id=569ca74805b6057d184b4f4c&pageIndex=0&pageSize=10&sortField=&sortOrder=&_=1453162105840
+            """
+            other = {}
+            q = {}  # 查询的规则 {'name':'aaa'}
+            p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
+            s = {}  # 排序的规则
+            except_key=['pageIndex','pageSize','sortField','sortOrder','_']
+            try:
+                for k, v in self.request.query_arguments.items():
+                    if k == '_v':
+                        continue
+                    if k == 'q':  # 带查询参数
+                        q = ast.literal_eval(v[0])
+                        continue
+                        pass
+                    if k == 'p':  # 列投影
+                        p = ast.literal_eval(v[0])
+                        continue
+                        pass
+                    if k == 's':  # 排序
+                        s = ast.literal_eval(v[0])
+                        continue
+                    if k in except_key:
+                        continue
+
+                    if len(v) > 1:
+                        other[k] = {"$in", v}
+                    else:
+                        other[k] = v[0]
+            except ValueError, e:
+                logging.error(e)
+            #
+            # return dict(q,**other), p, s
+            return dict(q,**other), p, s
+
+        q, p, s  = get_query_args(self)
+
+        pageIndex=int(self.get_query_argument('pageIndex',0))
+        pageSize=int(self.get_query_argument('pageSize',10))
+
+        db = self.settings['db']
+        cursor=db[self.cname].find(q )
+        if not p:
+            if not s:
+                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).to_list(length=None)
+            else:
+                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).sort(s).to_list(length=None)
+
+        else:
+            cursor=db[self.cname].find(q ,p)
+            if not s:
+                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).to_list(length=None)
+            else:
+                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).sort(s).to_list(length=None)
+
+        total=yield  cursor.count()
+        result={
+                'total':total,
+                'data':objs
+        }
+        self.write(bson_encode(result))
+
+    @coroutine
+    def put(self, *args, **kwargs):
+        """接受用户的请求对文档进行更新
+        :param args url路径的参数 """
+        if is_json_request(self.request):
+            body = json.loads(self.request.body)
+        else:
+            self.send_error(reason="仅支持Content-type:application/json")
+
+        db = self.settings['db']
+        id=body.get('_id',None)
+        if id:  # update
+            body['update_time']=format_datetime(datetime.now())
+            body['update_user']=self.current_user.get('userCd','')
+
+            yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
+                "$set": clone_dict(body)
+            })
+        self.send_message("保存成功")
+
+    @coroutine
+    def delete(self, *args, **kwargs):
+        id = args[0] if len(args) > 0 else None
+        if id:
+            db = self.settings['db']
+            yield db[self.cname].remove({"_id": ObjectId(id) if self.is_object_id(id) else id})
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        if is_json_request(self.request):
+            body = json.loads(self.request.body)
+        else:
+            body=self.get_argument('data',None)
+            body = escape.json_decode(body) if body else {}
+            #self.send_error(reason="仅支持Content-type:application/json")
+            #return
+
+        db = self.settings['db']
+        for row in body:
+            id=row.get('id',None)
+            if row['_state']=='removed':
+                if self.is_object_id(id):
+                    yield db[self.cname].remove({"_id":ObjectId(id)})
+
+            if id and self.is_object_id(id):  # update
+                row['update_time']=format_datetime(datetime.now())
+                row['update_user']=self.current_user.get('userCd','')
+                yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
+                    "$set": clone_dict(row,without=[])
+                })
+
+            else:
+                obj=clone_dict(row)
+                obj['id']=ObjectId()
+                obj['_id']=obj['id']
+
+                obj['create_time']=format_datetime(datetime.now())
+                obj['create_user']=self.current_user.get('userCd','')
+                yield db[self.cname].insert(obj)
+        #self.write(generate_response(message="保存成功"))
+        self.send_message("保存成功")
 
 class MongoBaseHandler(BaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""

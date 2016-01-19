@@ -10,7 +10,7 @@
 |
 ============================================================="""
 # 定义url模板
-from core.common import MongoBaseHandler
+from core.common import MongoBaseHandler, MINIUIMongoHandler
 
 # 公共的路由
 routes=[
@@ -43,8 +43,8 @@ routes=[
     (r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
     (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
     # 用户管理
-    (r'/s/users',MongoBaseHandler,{'cname':'users'}),
-    (r'/s/users/(.+)',MongoBaseHandler,{'cname':'users'}),
+    (r'/s/users',MINIUIMongoHandler,{'cname':'users'}),
+    (r'/s/users/(.+)',MINIUIMongoHandler,{'cname':'users'}),
 
 ]
 

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block body %}
+<div id="loginWindow" class="mini-window" title="用户登录" style="width:350px;height:165px;"
+     showModal="true" showCloseButton="false"
+        >
+
+    <div id="loginForm" style="padding:15px;padding-top:10px;">
+        <table>
+           <!-- {% module xsrf_form_html() %} -->
+            <tr>
+                <td style="width:60px;"><label for="username$text">帐号：</label></td>
+                <td>
+                    <input id="username" name="username" onvalidation="onUserNameValidation" class="mini-textbox"
+                           required="true" style="width:150px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:60px;"><label for="pwd$text">密码：</label></td>
+                <td>
+                    <input id="pwd" name="pwd" onvalidation="onPwdValidation" class="mini-password"
+                           requiredErrorText="密码不能为空" required="true" style="width:150px;" onenter="onLoginClick"/>
+                    &nbsp;&nbsp;<a href="#">忘记密码?</a>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-top:5px;">
+                    <a onclick="onLoginClick" class="mini-button" style="width:60px;">登录</a>
+                    <a onclick="onResetClick" class="mini-button" style="width:60px;">重置</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+{% end %}
+{% block script %}
+<script type="text/javascript">
+
+
+    var loginWindow = mini.get("loginWindow");
+    loginWindow.show();
+
+    function onLoginClick(e) {
+        var form = new mini.Form("#loginWindow");
+
+        form.validate();
+        if (form.isValid() == false) return;
+
+        var username = mini.get('username').value;
+        var pwd = mini.get('pwd').value;
+        loginWindow.hide();
+        //mini.loading("正在登录，请稍候...", "登录");
+        $.ajax({
+            url: "/page/login",
+            data: {username: username, pwd: pwd,'_xsrf': $.cookie('_xsrf')},
+            type: "post",
+            success: function (text) {
+                //mini.hideMessageBox(msgid);
+                mini.loading("登录成功，马上转到系统...", "登录成功");
+                setTimeout(function () {
+                    window.location = "/app/";
+                }, 1500);
+                //tree.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+    function onResetClick(e) {
+        var form = new mini.Form("#loginWindow");
+        form.clear();
+    }
+    /////////////////////////////////////
+    function isEmail(s) {
+        if (s.search(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/) != -1)
+            return true;
+        else
+            return false;
+    }
+    function onUserNameValidation(e) {
+        if (e.isValid) {
+            if (isEmail(e.value) == false) {
+                e.errorText = "必须输入邮件地址";
+                e.isValid = false;
+            }
+        }
+    }
+    function onPwdValidation(e) {
+        if (e.isValid) {
+            if (e.value.length < 5) {
+                e.errorText = "密码不能少于5个字符";
+                e.isValid = false;
+            }
+        }
+    }
+</script>
+
+{%end%}

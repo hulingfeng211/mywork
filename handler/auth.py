@@ -16,6 +16,7 @@ class LoginHandler(BaseHandler):
     """用户登陆"""
 
     def prepare(self):
+        """绕开基类的prepare方法"""
         pass
 
     @coroutine

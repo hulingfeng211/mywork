@@ -69,6 +69,10 @@ class MenuService(RequestHandler):
         #print result
         self.write(bson_encode(result))
 
+    def check_xsrf_cookie(self):
+        """skip xsrf check"""
+        pass
+
     @coroutine
     def post(self, *args, **kwargs):
         if 'application/json' in self.request.headers['content-Type']:

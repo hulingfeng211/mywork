@@ -9,6 +9,9 @@
 |
 |
 ============================================================="""
+import base64
+import uuid
+
 
 def format_datetime(dt,format='%Y-%m-%d %H:%M:%S'):
     """
@@ -18,3 +21,13 @@ def format_datetime(dt,format='%Y-%m-%d %H:%M:%S'):
 
     """
     return dt.strftime(format)
+
+def generate_cookie_secret():
+    """
+    生成cookie secret
+    """
+    return base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)
+
+if __name__=="__main__":
+    print generate_cookie_secret()
+
