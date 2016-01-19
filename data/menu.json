@@ -27,13 +27,7 @@
           "url": "/page/employee",
           "desc": "人员管理"
         },
-        {
-          "_id": 5,
-          "_pid": 1,
-          "name": "角色管理",
-          "url": "/page/role",
-          "desc": "角色管理"
-        },
+
         {
           "_id": 6,
           "_pid": 1,
@@ -46,7 +40,7 @@
           "_pid": 1,
           "name": "用户管理",
           "url": "/page/user",
-          "desc": "用户管理"
+          "desc": "用户&角色管理"
         }
       ]
     }
