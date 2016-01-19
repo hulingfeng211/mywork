@@ -50,7 +50,8 @@ class BaseHandler(SessionBaseHandler):
 
     def on_finish(self):
         #todo update session expire when client call service.
-        super(SessionBaseHandler, self).on_finish()
+        #SessionBaseHandler.on_finish()
+        super(BaseHandler, self).on_finish()
 
     @coroutine
     def send_request(self, url, body=None, method='GET',headers=DEFAULT_HEADERS,*args, **kwargs):
@@ -132,7 +133,7 @@ class MINIUIMongoHandler(BaseHandler):
         return len(re.findall(pattern,str(id_str)))>0
 
         pass
-
+    @authenticated
     def prepare(self):
         """覆盖父类的方法，避免401错误"""
         pass
