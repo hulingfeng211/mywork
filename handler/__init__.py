@@ -42,6 +42,11 @@ routes=[
     # 菜单设置
     (r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
     (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
+
+    # 员工管理
+    (r'/s/employees',MINIUIMongoHandler,{'cname':'employees'}),
+    (r'/s/employees/(.+)',MINIUIMongoHandler,{'cname':'employees'}),
+
     # 用户管理
     (r'/s/users',MINIUIMongoHandler,{'cname':'users'}),
     (r'/s/users/(.+)',MINIUIMongoHandler,{'cname':'users'}),

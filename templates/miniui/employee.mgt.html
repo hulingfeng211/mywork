@@ -36,7 +36,7 @@
                  allowCellEdit="true"
                  idField="id"
                  multiSelect="true"
-                 url="/s/users"
+                 url="/s/employees"
                  idField="id"
                  pageSize="20"
                  editNextOnEnterKey="true"
@@ -131,7 +131,7 @@
             var json = mini.encode(data);
             var msgid = grid.loading("保存中，请稍后......");
             $.ajax({
-                url: "/s/users",
+                url: "/s/employees",
                 data: {data: json, '_xsrf': $.cookie('_xsrf')},
                 //contentType:'application/json',
                 type: "post",
