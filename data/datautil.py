@@ -5,6 +5,23 @@ import json
 import argparse
 import os
 import sys
+import pymongo
+
+
+def add_user(username,email):
+    """
+    脚本添加用户
+    :param username 用户名
+    :param email  邮箱
+    :return None
+    """
+    client=pymongo.MongoClient()
+    db=client['test']
+    #db.users.insert(
+#        {'username':username,'email'}
+#    )
+
+    pass
 
 def import_menu(file):
     """
