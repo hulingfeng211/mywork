@@ -25,6 +25,10 @@ class OrgnHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/orgn.mgt.html')
 
+class UserHandler(MINIUIBaseHandler):
+    def get(self, *args, **kwargs):
+        self.render('miniui/user.mgt.html')
+
 class EmployeeHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/employee.mgt.html')
@@ -65,6 +69,7 @@ routes = [
     (r'/page/menu', MenuHandler),
     (r'/page/orgn', OrgnHandler),
     (r'/page/employee', EmployeeHandler),
+    (r'/page/user', UserHandler),
     (r'/page/login', LoginHandler),
     (r'/page/logout', LogoutHandler),
 ]

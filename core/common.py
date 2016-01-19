@@ -14,11 +14,13 @@ import logging
 from bson import ObjectId
 import re
 from tornado import gen
+from tornado.escape import json_decode
 from tornado.web import escape,authenticated
 from tornado.httpclient import HTTPRequest,  AsyncHTTPClient
 from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
 from core import bson_encode, is_json_request, clone_dict_without_id, clone_dict
+from core.treeutils import to_list
 from core.utils import format_datetime
 from tornado.gen import coroutine
 import ast
@@ -70,11 +72,57 @@ class BaseHandler(SessionBaseHandler):
     def send_message(self,obj):
         self.write(bson_encode(obj))
 
+
 class MINIUIBaseHandler(BaseHandler):
 
     @authenticated
     def prepare(self):
         pass
+
+
+class MINIUITreeHandler(MINIUIBaseHandler):
+    """
+    组织服务
+    """
+    def initialize(self, *args, **kwargs):
+        # cname 为对应的mongodb的集合的名字
+        if kwargs:
+            for key, val in kwargs.items():
+                if not hasattr(self, key):
+                    setattr(self, key, val)
+        super(MINIUITreeHandler,self).initialize()
+
+    @coroutine
+    def get(self, *args, **kwargs):
+        result = yield self.settings['db'][self.cname].find().to_list(length=None)
+        #print result
+        self.write(bson_encode(result))
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        if 'application/json' in self.request.headers['content-Type']:
+            body=json_decode(self.request.body)
+            if body:
+                data=body.get('data',None)
+                remove_data=body.get('removed',None)
+        else:
+            data=self.get_argument('data',None)
+            remove_data = self.get_argument('removed', None)
+
+        if data:
+            print 'data:',data
+            data_json= escape.json_decode(data) if type(data)==unicode else data
+            list = to_list(data_json,"-1","children","id","pid")
+            print list
+            print 'len(list):',len(list)
+            for i,item in enumerate(list):
+                yield self.settings['db'][self.cname].save(item)
+
+        if remove_data:
+            data_json = escape.json_decode(remove_data)
+            list = to_list(data_json,"-1","children","id","pid")
+            for item in list:
+                yield self.settings['db'][self.cname].remove({"_id":item['id']})
 
 class MINIUIMongoHandler(BaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""

@@ -10,7 +10,7 @@
 |
 ============================================================="""
 # 定义url模板
-from core.common import MongoBaseHandler, MINIUIMongoHandler
+from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler
 
 # 公共的路由
 routes=[
@@ -50,6 +50,9 @@ routes=[
     # 用户管理
     (r'/s/users',MINIUIMongoHandler,{'cname':'users'}),
     (r'/s/users/(.+)',MINIUIMongoHandler,{'cname':'users'}),
+
+    #角色管理
+    (r'/s/roles',MINIUITreeHandler,{'cname':'roles'}),
 
 ]
 

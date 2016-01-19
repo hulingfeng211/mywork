@@ -15,16 +15,17 @@ from tornado.escape import json_decode
 from tornado.gen import coroutine
 from tornado.web import RequestHandler
 from core import clone_dict, bson_encode
+from core.common import MINIUIBaseHandler
 from core.treeutils import to_list
 
 __author__ = 'george'
+
 
 
 class OrgnService(RequestHandler):
     """
     组织服务
     """
-
     @coroutine
     def get(self, *args, **kwargs):
         result = yield self.settings['db'].orgns.find().to_list(length=None)
@@ -57,6 +58,8 @@ class OrgnService(RequestHandler):
             list = to_list(data_json,"-1","children","id","pid")
             for item in list:
                 yield self.settings['db'].orgns.remove({"_id":item['id']})
+
+
 
 class MenuService(RequestHandler):
     """
