@@ -51,6 +51,7 @@ class BaseHandler(SessionBaseHandler):
     def on_finish(self):
         #todo update session expire when client call service.
         #SessionBaseHandler.on_finish()
+        self.session.set('last_access_time',datetime.now())
         super(BaseHandler, self).on_finish()
 
     @coroutine
@@ -233,7 +234,7 @@ class MINIUIMongoHandler(BaseHandler):
         id=body.get('_id',None)
         if id:  # update
             body['update_time']=format_datetime(datetime.now())
-            body['update_user']=self.current_user.get('userCd','')
+            body['update_user']=self.current_user.get('username','')
 
             yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict(body)
@@ -266,7 +267,7 @@ class MINIUIMongoHandler(BaseHandler):
 
             if id and self.is_object_id(id):  # update
                 row['update_time']=format_datetime(datetime.now())
-                row['update_user']=self.current_user.get('userCd','')
+                row['update_user']=self.current_user.get('username','')
                 yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                     "$set": clone_dict(row,without=[])
                 })
@@ -277,7 +278,7 @@ class MINIUIMongoHandler(BaseHandler):
                 obj['_id']=obj['id']
 
                 obj['create_time']=format_datetime(datetime.now())
-                obj['create_user']=self.current_user.get('userCd','')
+                obj['create_user']=self.current_user.get('username','')
                 yield db[self.cname].insert(obj)
         #self.write(generate_response(message="保存成功"))
         self.send_message("保存成功")

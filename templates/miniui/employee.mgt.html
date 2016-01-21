@@ -26,9 +26,20 @@
     <div showCollapseButton="false" style="padding-left: 5px;">
 
         <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
-            <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
-            <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
-            <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveData()">保存</a>
+            <table style="width: 100%;">
+               <tr>
+                   <td style="width:100%;">
+                       <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+                       <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+                       <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveData()">保存</a>
+                   </td>
+                   <td style="white-space: nowrap">
+                       <input id="key" class="mini-textbox" emptyText="请输入姓名" style="width: 150px;" onenter="onKeyEnter"/>
+                       <a class="mini-button" onclick="search()">查询</a>
+
+                   </td>
+               </tr>
+            </table>
         </div>
         <div class="mini-fit">
             <div id="grid1" class="mini-datagrid" borderStyle="border:0"
@@ -45,13 +56,14 @@
                 <div property="columns">
                     <div type="indexcolumn"></div>
                     <div type="checkcolumn"></div>
-                    <div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号
+                    <div field="loginname" width="120" headerAlign="center" allowSort="true">工号
                         <input property="editor" class="mini-textbox" style="width:100%;"/>
                     </div>
-                    <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
+                    <div field="name" width="120" headerAlign="center" allowSort="true">姓名
                         <input property="editor" class="mini-textbox" style="width:100%;"/>
-                        <input id="nameFilter" property="filter" class="mini-textbox"
-                               onvaluechanged="onNameFilterChanged" style="width:100%;"/>
+                    </div>
+                    <div field="email" width="120" headerAlign="center" allowSort="true">邮箱
+                        <input property="editor" class="mini-textbox" style="width:100%;"/>
                     </div>
                     <div field="gender" width="100" allowSort="true" renderer="onGenderRenderer" align="center"
                          headerAlign="center">性别
@@ -94,6 +106,13 @@
         }
 
     });
+    function search(){
+        var key=mini.get('key').getValue();
+        grid.load({name:key})
+    }
+    function onKeyEnter(e){
+        search();
+    }
     function reloadData(e){
         tree.reload();
     }
