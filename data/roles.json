@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "_pid": -1,
+      "name": "系统角色",
+      "code":"xtjs",
+      "children": [
+        {
+          "_id": 2,
+          "_pid": 1,
+          "name": "普通用户",
+          "code":"ptyh"
+        },
+        {
+          "_id": 3,
+          "_pid": 1,
+          "name": "超级管理员",
+          "code":"root"
+        }
+      ]
+    }
+  ]
+}
+

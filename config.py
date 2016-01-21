@@ -7,39 +7,43 @@
 +Created Time:2015年07月22日 星期三 10时48分55秒
 +Description:应用程序配置文件
 +============================================================"""
-import  os
-
-
+import os
+import datetime
 # 开启程序的debug模式
-DEBUG=True
+DEBUG = True
 
 # 指定静态文件的路经
-STATIC_PATH=os.path.join(os.path.dirname(__file__),"static")
+STATIC_PATH = os.path.join(os.path.dirname(__file__), "static")
 
 # 指定模版文件的路经
-TEMPLATE_PATH=os.path.join(os.path.dirname(__file__),'templates')
+TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'templates')
 # TEMPLATE_PATH=os.path.join(os.path.dirname(__file__),'front')
 
 # session相关的配置
-SESSION= {
-    'driver':'redis',
-    'force_persistence':True,
-    'driver_settings':dict(
-        host = 'localhost',
-        port = 6379,
-        db = 4,
-        max_connections = 1024
-    )
-}
+
+# redis as session store
+# SESSION = {
+#     'driver': 'redis',#memory/redis
+#     'force_persistence': True,
+#     'driver_settings': dict(
+#         host='localhost',
+#         port=6379,
+#         db=4,
+#         max_connections=1024
+#     )
+# }
+
+
+
 # 生成方法 core/utils/generate_cookie_secret
-COOKIE_SECRET='0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='
+COOKIE_SECRET = '0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='
 
 # 用户登录的URL
-LOGIN_URL="/page/login"
+LOGIN_URL = "/page/login"
 
 # 开启跨站点的请求伪造保护
-XSRF_COOKIES=True
+XSRF_COOKIES = True
 
 # MONGODB设置
-MONGO_URI="mongodb://127.0.0.1:27017/"
-DB_NAME='test'
+MONGO_URI = "mongodb://127.0.0.1:27017/"
+DB_NAME = 'test'
