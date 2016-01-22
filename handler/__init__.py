@@ -40,8 +40,8 @@ routes=[
     (r'/settings/(.+)',MongoBaseHandler,{'cname':'settings'}),
 
     # 菜单设置
-    (r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
-    (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
+    #(r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
+    #(r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
 
     # 员工管理
     (r'/s/employees',MINIUIMongoHandler,{'cname':'employees'}),
@@ -53,6 +53,15 @@ routes=[
 
     #角色管理
     (r'/s/roles',MINIUITreeHandler,{'cname':'roles'}),
+
+    #菜单管理
+    (r'/s/menus',MINIUITreeHandler,{'cname':'menus'}),
+
+    # 组织管理
+    (r'/s/orgns',MINIUITreeHandler,{'cname':'orgns'}),
+
+    # 权限管理
+    (r'/s/resources',MINIUIMongoHandler,{'cname':'resources'}),
 
 ]
 

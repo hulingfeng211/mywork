@@ -22,16 +22,16 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'templates')
 # session相关的配置
 
 # redis as session store
-# SESSION = {
-#     'driver': 'redis',#memory/redis
-#     'force_persistence': True,
-#     'driver_settings': dict(
-#         host='localhost',
-#         port=6379,
-#         db=4,
-#         max_connections=1024
-#     )
-# }
+SESSION = {
+     'driver': 'redis',#memory/redis
+     'force_persistence': True,
+     'driver_settings': dict(
+         host='localhost',
+         port=6379,
+         db=4,
+         max_connections=1024
+     )
+ }
 
 
 

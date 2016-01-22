@@ -126,7 +126,7 @@ class MINIUITreeHandler(MINIUIBaseHandler):
             for item in list:
                 yield self.settings['db'][self.cname].remove({"_id":item['id']})
 
-class MINIUIMongoHandler(BaseHandler):
+class MINIUIMongoHandler(MINIUIBaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""
     def is_object_id(self,id_str):
         """判断字符串是不是objectid的str"""
@@ -134,10 +134,7 @@ class MINIUIMongoHandler(BaseHandler):
         return len(re.findall(pattern,str(id_str)))>0
 
         pass
-    @authenticated
-    def prepare(self):
-        """覆盖父类的方法，避免401错误"""
-        pass
+
     def initialize(self, *args, **kwargs):
         # cname 为对应的mongodb的集合的名字
         if kwargs:
@@ -252,6 +249,7 @@ class MINIUIMongoHandler(BaseHandler):
     def post(self, *args, **kwargs):
         if is_json_request(self.request):
             body = json.loads(self.request.body)
+            body=body.get('data',None)
         else:
             body=self.get_argument('data',None)
             body = escape.json_decode(body) if body else {}
@@ -261,7 +259,7 @@ class MINIUIMongoHandler(BaseHandler):
         db = self.settings['db']
         for row in body:
             id=row.get('id',None)
-            if row['_state']=='removed':
+            if row.get('_state',None)=='removed':
                 if self.is_object_id(id):
                     yield db[self.cname].remove({"_id":ObjectId(id)})
 

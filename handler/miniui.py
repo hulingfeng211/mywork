@@ -16,6 +16,10 @@ class HomeHandler(RequestHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/home.html')
 
+class ResourceHandler(RequestHandler):
+    def get(self, *args, **kwargs):
+        self.render('miniui/resource.mgt.html')
+
 
 class MenuHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
@@ -72,4 +76,5 @@ routes = [
     (r'/page/user', UserHandler),
     (r'/page/login', LoginHandler),
     (r'/page/logout', LogoutHandler),
+    (r'/page/resource', ResourceHandler),
 ]

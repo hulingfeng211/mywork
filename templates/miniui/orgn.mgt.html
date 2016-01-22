@@ -16,7 +16,7 @@
             </table>
         </div>
         <!--ajaxOptions='{type:"get"}' -->
-        <ul id="tree1" onnodedblclick="onNodeDoubleClick()" url="/s/orgn" ajaxOptions='{type:"get"}' class="mini-tree"
+        <ul id="tree1" onnodedblclick="onNodeDoubleClick()" url="/s/orgns" ajaxOptions='{type:"get"}' class="mini-tree"
             style="width:100%;height:100%;padding:5px;"
             showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
             allowLeafDropIn="true"
@@ -175,7 +175,7 @@
 
 
         $.ajax({
-            url: "/s/orgn",
+            url: "/s/orgns",
             data: paramsObj,
             type: "post",
             success: function (text) {

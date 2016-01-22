@@ -1,0 +1,29 @@
+{
+  "data":[
+    {
+
+      "name":"menus",
+      "desc":"菜单"
+    },
+    {
+      "name":"orgns",
+      "desc":"组织"
+    },
+    {
+      "name":"employees",
+      "desc":"员工"
+    },
+    {
+      "name":"users",
+      "desc":"用户"
+    },
+    {
+      "name":"resources",
+      "desc":"资源"
+    },
+    {
+      "name":"perms",
+      "desc":"权限"
+    }
+  ]
+}
