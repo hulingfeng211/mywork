@@ -42,3 +42,11 @@ ATTACH_FILE_URL='http://169.24.1.100/%s'
 MONGO_URI="mongo_uri"
 DB_NAME="db_name"
 
+# redis配置
+REDIS='redis'
+HOST='host'
+PORT='port'
+SELECTED_DB='selected_db'
+MAX_CONNECTIONS='max_connections'
+CONNECTION_POOL='connection_pool'
+

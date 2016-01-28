@@ -15,10 +15,14 @@ from tornado.web import Application, RequestHandler,StaticFileHandler,RedirectHa
 from tornado.gen import coroutine
 from tornado.httpclient import AsyncHTTPClient
 import os
+from tornadoredis import ConnectionPool
 from core import settings
 from handler import auth,oa,chat,routes,miniui,service
 
+
+
 define('port', default=10000, type=int, help="在此端口接收用户请求")
+
 
 class IndexHandler(RequestHandler):
     @coroutine

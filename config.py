@@ -10,6 +10,8 @@
 import os
 import datetime
 # 开启程序的debug模式
+from tornadoredis import ConnectionPool
+
 DEBUG = True
 
 # 指定静态文件的路经
@@ -33,7 +35,15 @@ SESSION = {
      )
  }
 
+REDIS={
+    'host':'localhost',
+    'port':6379,
+    'selected_db':5,
+    'max_connections':1024
+}
 
+
+CONNECTION_POOL=ConnectionPool(**REDIS)
 
 # 生成方法 core/utils/generate_cookie_secret
 COOKIE_SECRET = '0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='
