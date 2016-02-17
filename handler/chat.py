@@ -47,7 +47,7 @@ class LongPollingHandler(RequestHandler):
         if self.request.connection.stream.closed():
             return
         self.subscribe()
-        num=15 # 设置超时时间
+        num=90 # 设置超时时间,
 
         IOLoop.current().add_timeout(time.time()+num,lambda: self.on_timeout(num))
 
