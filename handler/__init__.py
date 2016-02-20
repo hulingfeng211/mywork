@@ -13,7 +13,7 @@
 from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler
 
 # 公共的路由
-routes=[
+routes = [
 
     # 服务器管理
     (r'/servers',MongoBaseHandler,{'cname':'servers'}),
@@ -40,8 +40,8 @@ routes=[
     (r'/settings/(.+)',MongoBaseHandler,{'cname':'settings'}),
 
     # 菜单设置
-    #(r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
-    #(r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
+    # (r'/s/menus',MongoBaseHandler,{'cname':'menus'}),
+    # (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
 
     # 员工管理
     (r'/s/employees',MINIUIMongoHandler,{'cname':'employees'}),
@@ -51,10 +51,10 @@ routes=[
     (r'/s/users',MINIUIMongoHandler,{'cname':'users'}),
     (r'/s/users/(.+)',MINIUIMongoHandler,{'cname':'users'}),
 
-    #角色管理
+    # 角色管理
     (r'/s/roles',MINIUITreeHandler,{'cname':'roles'}),
 
-    #菜单管理
+    # 菜单管理
     (r'/s/menus',MINIUITreeHandler,{'cname':'menus'}),
 
     # 组织管理
