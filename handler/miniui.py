@@ -52,7 +52,7 @@ class LoginHandler(MINIUIBaseHandler):
         pass
 
     def get(self, *args, **kwargs):
-        self.render('miniui/login.html')
+        self.render('miniui/login.html',site_name=self.settings['site_name'])
 
     def post(self, *args, **kwargs):
         #gen.sleep(10);
