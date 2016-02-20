@@ -5,11 +5,14 @@
 <head>
     <title>系统框架模板</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <!--
     <script src="{{static_url('miniui/jquery-1.6.2.min.js')}}"></script>
     <link href="{{static_url('miniui/miniui/themes/default/miniui.css')}}" rel="stylesheet" type="text/css">
     <link href="{{static_url('miniui/miniui/themes/default/fontcss.css')}}" rel="stylesheet" type="text/css">
     <link href="{{static_url('miniui/miniui/themes/icons.css')}}" rel="stylesheet" type="text/css">
     <script src="{{static_url('miniui/miniui/miniui.js')}}"></script>
+    -->
+
 
     <style type="text/css">
         body {
@@ -22,7 +25,7 @@
         }
 
         .header {
-            background: url('{{static_url(' miniui/miniui/themes/default/images/header.gif ')}}') repeat-x 0 - 1 px;
+            background: url("{{static_url('miniui/miniui/themes/default/images/header.gif')}}") repeat-x 0 -1px;
         }
     </style>
 </head>
@@ -51,9 +54,10 @@
         <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
             <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border:0;">
                 <!--OutlookTree-->
-                <div id="leftTree" class="mini-outlooktree" url="/s/menus" ajaxOptions='{type:"get"}' onnodeclick="onNodeSelect"
+                <div id="leftTree" class="mini-outlooktree" url="/s/menus" ajaxOptions='{type:"get"}'
+                     onnodeclick="onNodeSelect"
                      textField="name" idField="id" parentField="pid"
-                        >
+                >
                 </div>
 
             </div>
@@ -61,7 +65,7 @@
                 <!--Tabs-->
                 <div id="mainTabs" class="mini-tabs" style="width:100%;height:100%;"
                      plain="false" onactivechanged="onTabsActiveChanged"
-                        >
+                >
                     <div title="首页" url="/app/home">
                     </div>
 
@@ -70,11 +74,49 @@
         </div>
     </div>
 </div>
-
+<ul id="contextMenu" class="mini-contextmenu">
+    <li>
+        <span>皮肤切换</span>
+        <ul>
+            <li onclick="onSkinChange(this)">default</li>
+            <li onclick="onSkinChange(this)">blue</li>
+            <li onclick="onSkinChange(this)">gray</li>
+            <li onclick="onSkinChange(this)">olive2003</li>
+            <li onclick="onSkinChange(this)">blue2003</li>
+            <li onclick="onSkinChange(this)">blue2010</li>
+            <li onclick="onSkinChange(this)">bootstrap</li>
+            <li onclick="onSkinChange(this)">metro</li>
+            <li onclick="onSkinChange(this)">metro-green</li>
+            <li onclick="onSkinChange(this)">metro-orange</li>
+            <li onclick="onSkinChange(this)">jqueryui-uilightness</li>
+            <li onclick="onSkinChange(this)">jqueryui-humanity</li>
+            <li onclick="onSkinChange(this)">jqueryui-excitebike</li>
+            <li onclick="onSkinChange(this)">jqueryui-cupertino</li>
+            <li onclick="onSkinChange(this)">nui</li>
+        </ul>
+    </li>
+</ul>
+<script src="{{static_url('miniui/boot.js')}}"></script>
 <script type="text/javascript">
     mini.parse();
 
     var tree = mini.get("leftTree");
+    window.onload = function () {
+        //alert('dfds');
+        $("#north").bind('contextmenu', function (e) {
+            var menu = mini.get("contextMenu");
+            menu.showAtPos(e.pageX, e.pageY);
+            return false;
+        })
+
+    };
+    function onSkinChange(node) {
+        var skin = node.text;
+        mini.Cookie.set('miniuiSkin', skin);
+        //mini.Cookie.set('miniuiSkin', skin, 100);//100天过期的话，可以保持皮肤切换
+        window.location.reload()
+    }
+
 
     function showTab(node) {
         var tabs = mini.get("mainTabs");
@@ -86,7 +128,7 @@
             tab._nodeid = node.id;
             tab.name = id;
             tab.title = node.name;
-            tab.url=node.url;
+            tab.url = node.url;
             tab.showCloseButton = true;
 
             //这里拼接了url，实际项目，应该从后台直接获得完整的url地址
@@ -96,15 +138,15 @@
         }
         tabs.activeTab(tab);
     }
-    function goToHome(){
+    function goToHome() {
         location.reload();
     }
-    function onLogoutClick(e){
+    function onLogoutClick(e) {
         $.ajax({
-            type:'get',
-            url:'/page/logout',
-            success:function(e){
-                window.location="/app"
+            type: 'get',
+            url: '/page/logout',
+            success: function (e) {
+                window.location = "/app"
             }
         })
     }

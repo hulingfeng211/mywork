@@ -19,12 +19,12 @@
         path = href + "/" + path;
     }
     return path;
-}
+};
 
 var bootPATH = __CreateJSPath("boot.js");
 
 //debugger
-mini_debugger = true;   
+mini_debugger = true;
 
 //miniui
 document.write('<script src="' + bootPATH + 'jquery-1.6.2.min.js" type="text/javascript"></sc' + 'ript>');
@@ -35,7 +35,10 @@ document.write('<link href="' + bootPATH + 'miniui/themes/icons.css" rel="styles
 //skin
 var skin = getCookie("miniuiSkin");
 if (skin) {
-    document.write('<link href="' + bootPATH + 'miniui/themes/' + skin + '/skin.css" rel="stylesheet" type="text/css" />');
+    var path = "/static/miniui/miniui/themes/" + skin + '/skin.css';
+    var content = '<link href="' + path + '" ' + 'rel="stylesheet" type="text/css" />';
+    document.write(content);
+    //document.write('<link href="' + boothPATH + 'miniui/themes/' + skin + '/skin.css" rel="stylesheet" type="text/css" />');
 }
 
 

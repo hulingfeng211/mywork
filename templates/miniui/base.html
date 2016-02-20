@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!--
     <link href="{{static_url('miniui/miniui/themes/default/miniui.css')}}" rel="stylesheet" type="text/css">
     <link href="{{static_url('miniui/miniui/themes/default/fontcss.css')}}" rel="stylesheet" type="text/css">
     <link href="{{static_url('miniui/miniui/themes/icons.css')}}" rel="stylesheet" type="text/css">
+    -->
     <title>base</title>
     <style type="text/css">
         body {
@@ -24,9 +26,14 @@
 
 {%block body %}
 {%end%}
+<!--
 <script src="{{static_url('miniui/jquery-1.6.2.min.js')}}"></script>
 <script src="{{static_url('miniui/jquery.cookie.js')}}"></script>
 <script src="{{static_url('miniui/miniui/miniui.js')}}"></script>
+-->
+
+<script src="{{static_url('miniui/boot.js')}}"></script>
+<script src="{{static_url('miniui/jquery.cookie.js')}}"></script>
 <script type="text/javascript">
     mini.parse();
 </script>

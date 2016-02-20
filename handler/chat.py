@@ -21,17 +21,18 @@ import constant
 
 __author__ = 'george'
 
+
 class LongPollingHandler(RequestHandler):
 
-    def initialize(self,*args,**kwargs):
-        #self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS][constant.SELECTED_DB])
-        self.client=tornadoredis.Client(selected_db=5,host='localhost',port=6379)
+    def initialize(self, *args, **kwargs):
+        # self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS][constant.SELECTED_DB])
+        self.client = tornadoredis.Client(selected_db=5, host='localhost', port=6379)
         self.client.connect()
-        self.channel_name=kwargs.get('channel_name',None)
+        self.channel_name = kwargs.get('channel_name', None)
 
     @asynchronous
     def get(self, *args, **kwargs):
-       self.get_data()
+        self.get_data()
 
     @asynchronous
     def post(self, *args, **kwargs):
@@ -39,68 +40,66 @@ class LongPollingHandler(RequestHandler):
 
     @engine
     def subscribe(self):
-        yield Task(self.client.subscribe,self.channel_name)
+        yield Task(self.client.subscribe, self.channel_name)
         self.client.listen(self.on_message)
 
-    #@coroutine
+    # @coroutine
     def get_data(self):
         if self.request.connection.stream.closed():
             return
         self.subscribe()
-        num=90 # 设置超时时间,
+        num = 90  # 设置超时时间,
 
-        IOLoop.current().add_timeout(time.time()+num,lambda: self.on_timeout(num))
+        IOLoop.current().add_timeout(time.time() + num, lambda: self.on_timeout(num))
 
-    def on_timeout(self,num):
-        self.send_data(json_encode({'name':'','msg':''}))
+    def on_timeout(self, num):
+        self.send_data(json_encode({'name': '', 'msg': ''}))
         if self.client.connection.connected():
             self.client.disconnect()
 
-
-    def send_data(self,body):
-        if self._finished :
-        #if self.request.connection.stream.closed():
+    def send_data(self, body):
+        if self._finished:
+            # if self.request.connection.stream.closed():
             return
-        self.set_header('Content-Type','application/json;charset=UTF-8')
+        self.set_header('Content-Type', 'application/json;charset=UTF-8')
         self.write(body)
         self.finish()
 
-    def on_message(self,msg):
-        if msg.kind=='message':
+    def on_message(self, msg):
+        if msg.kind == 'message':
             self.send_data(str(msg.body))
-        elif msg.kind=='unsubscribe':
+        elif msg.kind == 'unsubscribe':
             self.client.disconnect()
 
     def on_finish(self):
         if self.client.subscribed:
             self.client.unsubscribe(self.channel_name)
-        super(LongPollingHandler,self).on_finish()
+        super(LongPollingHandler, self).on_finish()
 
     def check_xsrf_cookie(self):
         pass
 
 
 class PublisHandler(RequestHandler):
-
-    def initialize(self,*args,**kwargs):
-        #self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS][constant.SELECTED_DB])
-        self.client=tornadoredis.Client(selected_db=5,host='localhost',port=6379)
+    def initialize(self, *args, **kwargs):
+        # self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS][constant.SELECTED_DB])
+        self.client = tornadoredis.Client(selected_db=5, host='localhost', port=6379)
         self.client.connect()
-        self.channel_name=kwargs.get('channel_name',None)
+        self.channel_name = kwargs.get('channel_name', None)
 
     def post(self, *args, **kwargs):
-
-        self.client.publish(self.channel_name,self.request.body)
+        self.client.publish(self.channel_name, self.request.body)
 
     def get(self, *args, **kwargs):
         self.render('chat/pubsub.html');
 
     def on_finish(self):
         self.client.disconnect()
-        super(PublisHandler,self).on_finish()
+        super(PublisHandler, self).on_finish()
 
     def check_xsrf_cookie(self):
         pass
+
 
 class MessageBuffer(object):
     def __init__(self):
@@ -143,7 +142,7 @@ global_message_buffer = MessageBuffer()
 
 class MainHandler(RequestHandler):
     def get(self, *args, **kwargs):
-        self.render('chat/index.html',messages=global_message_buffer.cache)
+        self.render('chat/index.html', messages=global_message_buffer.cache)
 
 
 class MessageNewHanlder(RequestHandler):
@@ -162,7 +161,6 @@ class MessageNewHanlder(RequestHandler):
 
 
 class MessageUpdatesHandler(RequestHandler):
-
     @coroutine
     def post(self, *args, **kwargs):
         print 'message updates calling....'
@@ -174,10 +172,11 @@ class MessageUpdatesHandler(RequestHandler):
             return
         self.write(dict(messages=messages))
 
-routes  = [
-    (r'/chat/',MainHandler),
-    (r'/chat/a/message/new',MessageNewHanlder),
-    (r'/chat/a/message/updates',MessageUpdatesHandler),
-    (r'/polling',LongPollingHandler,dict(channel_name='msg_channel')),
-    (r'/pushmsg',PublisHandler,dict(channel_name='msg_channel')),
+
+routes = [
+    (r'/chat/', MainHandler),
+    (r'/chat/a/message/new', MessageNewHanlder),
+    (r'/chat/a/message/updates', MessageUpdatesHandler),
+    (r'/polling', LongPollingHandler, dict(channel_name='msg_channel')),
+    (r'/pushmsg', PublisHandler, dict(channel_name='msg_channel')),
 ]
