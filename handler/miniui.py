@@ -9,7 +9,7 @@ __author__ = 'george'
 
 class IndexHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/index.html')
+        self.render('miniui/index.html',site_name=self.settings['site_name'])
 
 
 class HomeHandler(RequestHandler):

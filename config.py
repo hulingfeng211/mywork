@@ -57,3 +57,6 @@ XSRF_COOKIES = True
 # MONGODB设置
 MONGO_URI = "mongodb://127.0.0.1:27017/"
 DB_NAME = 'test'
+
+# 站点设置
+SITE_NAME = "管理系统模板Demo"
