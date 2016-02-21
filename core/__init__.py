@@ -21,6 +21,7 @@ def load_setting():
             setting[item.lower()] = getattr(config, item)
     return setting
 
+
 def generate_response(status='success',status_code=200,message='Success'):
     """生成返回消息"""
     return  json.dumps(dict({
@@ -28,9 +29,12 @@ def generate_response(status='success',status_code=200,message='Success'):
         'status_code':status_code,
         'message':message
     }))
+
+
 def is_json_request(request):
     """判断是否是json的请求"""
     return 'application/json' in request.headers['Content-Type']
+
 
 def clone_dict_without_id(obj):
     """复制一个字典对象，去除字典的id列"""
@@ -44,6 +48,7 @@ def clone_dict_without_id(obj):
             result[item[0]]=item[1]
     return result
 
+
 def clone_dict(obj,without=[]):
     """
     克隆一个字典对象，排除without的字段与_开头的字段
@@ -56,6 +61,7 @@ def clone_dict(obj,without=[]):
             result[item[0]]=item[1]
     return result
 
+
 class MongoEncoder(JSONEncoder):
     """针对mongodb的ObjectId的json序列化的封装"""
     def default(self, o,**kwargs):
@@ -63,6 +69,7 @@ class MongoEncoder(JSONEncoder):
             return str(o)
         else:
             return JSONEncoder.default(self,o)
+
 
 def bson_encode(obj):
     """
@@ -81,6 +88,7 @@ def print_url(handlers):
 def make_password(password):
     """生成用户的加密后的密码，默认采用md5算法"""
     return hashlib.md5(password).hexdigest()
+
 
 def get_database():
     """

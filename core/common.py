@@ -71,8 +71,15 @@ class BaseHandler(SessionBaseHandler):
         else:
             raise gen.Return(None)
 
-    def send_message(self,obj):
-        self.write(bson_encode(obj))
+    def send_message(self,obj,status_code=0):
+        """
+        发送消息到客户端
+        :param obj 带发送到客户端的对象一个字典对象
+        :param status_code 状态码
+        """
+        #todo
+        if isinstance(obj,dict):
+            self.write(bson_encode(obj))
 
 
 class MINIUIBaseHandler(BaseHandler):

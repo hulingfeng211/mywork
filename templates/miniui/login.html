@@ -70,6 +70,7 @@
                 //tree.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                loginWindow.show();
                 alert(jqXHR.responseText);
             }
         });

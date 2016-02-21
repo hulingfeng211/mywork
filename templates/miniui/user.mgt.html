@@ -8,8 +8,8 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:100%;">
-                        <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
-                        <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a>
+                      <!--  <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
+                        <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> -->
                         <a class="mini-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
                     </td>
                 </tr>
@@ -132,18 +132,19 @@
     var grid = mini.get('grid1');
 
     window.onload = function () {
+        /**
         $("#tree1").bind("contextmenu", function (e) {
             var menu = mini.get("contextMenu");
             menu.showAtPos(e.pageX, e.pageY);
             return false;
-        });
+        });*/
 
 
     };
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
             //mini.alert(e.node.id);
-            grid.load({role_id: e.node.id})
+            grid.load({role_id: e.node.code})
         } else {
             grid.setData([]);
             grid.setTotalCount(0);
@@ -279,7 +280,7 @@
         var node = tree.getSelectedNode();
         if (node) {
             var newRow = {name: "New Row"};
-            newRow.role_id = node.id;
+            newRow.role_id = node.code;
             grid.addRow(newRow, 0);
         }
     }

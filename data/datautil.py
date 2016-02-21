@@ -30,7 +30,7 @@ def get_user_session(cookie=""):
     cookies={
 
     }
-    cookie_str="msid=a7752bd348284cd0bdae8801ad4fd394; _xsrf=2|ac8d3543|8b7acb54af297e36de80725b11e027d2|1453428703"
+    cookie_str="msid=13dca512dd454f9f8bd25ecfe893e199; _xsrf=2|ba51cb96|b91acf8c23eefae4fd193327e118e1c9|1456055700"
     for cookie in cookie_str.split(';'):
         item=cookie.strip().split('=')
         cookies[item[0].strip()]=item[1]
@@ -79,8 +79,16 @@ if __name__=="__main__":
     #import_data(menu_json_path,resources='menus')
 
     # resources
-    menu_json_path=os.path.join(os.path.dirname(__file__),'resource.json')
-    import_data(menu_json_path,resources='resources')
-    #get_user_session()
+    #menu_json_path=os.path.join(os.path.dirname(__file__),'resource.json')
+    #import_data(menu_json_path,resources='resources')
+    # get_user_session()
+
+    # users
+    user_json_path=os.path.join(os.path.dirname(__file__),'user.json')
+    import_data(user_json_path,resources='users')
+
+    # users
+    #role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
+    #import_data(role_json_path,resources='roles')
 
 

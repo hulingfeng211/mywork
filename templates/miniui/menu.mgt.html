@@ -167,7 +167,8 @@
         var removed = tree.getChanges("removed");
         var paramsObj = {
             data: mini.encode(data),
-            removed: mini.encode(removed)
+            removed: mini.encode(removed),
+            '_xsrf': $.cookie('_xsrf')
         };
 
         var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
