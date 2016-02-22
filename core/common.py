@@ -88,6 +88,7 @@ class MINIUIBaseHandler(BaseHandler):
 
     @authenticated
     def prepare(self):
+
         pass
 
 
