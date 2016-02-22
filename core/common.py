@@ -136,6 +136,7 @@ class MINIUITreeHandler(MINIUIBaseHandler):
             for item in list:
                 yield self.settings['db'][self.cname].remove({"_id":item['id']})
 
+
 class MINIUIMongoHandler(MINIUIBaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""
     def is_object_id(self,id_str):
