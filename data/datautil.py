@@ -8,7 +8,7 @@ import sys
 import pymongo
 
 
-def add_user(username,email):
+def add_root_user():
     """
     脚本添加用户
     :param username 用户名
@@ -17,6 +17,17 @@ def add_user(username,email):
     """
     client=pymongo.MongoClient()
     db=client['test']
+    root={
+      "_id": 1,
+      "loginname": "15921315347@163.com",
+      "name": "胡佐治",
+      "email": "15921315347@163.com",
+      "pwd": "96e79218965eb72c92a549dd5a330112",
+      "role_id":"root",
+      "nologin": 0,
+      "superuser": 1
+    }
+    db.users.insert(root)
     #db.users.insert(
 #        {'username':username,'email'}
 #    )
@@ -30,7 +41,7 @@ def get_user_session(cookie=""):
     cookies={
 
     }
-    cookie_str="msid=13dca512dd454f9f8bd25ecfe893e199; _xsrf=2|ba51cb96|b91acf8c23eefae4fd193327e118e1c9|1456055700"
+    cookie_str="msid=e57690a7cbdc4819924809e0b28d1719; _xsrf=2|cb945997|a3762e294dca8295317e03c018266ec1|1456121948"
     for cookie in cookie_str.split(';'):
         item=cookie.strip().split('=')
         cookies[item[0].strip()]=item[1]
@@ -84,11 +95,14 @@ if __name__=="__main__":
     # get_user_session()
 
     # users
-    user_json_path=os.path.join(os.path.dirname(__file__),'user.json')
-    import_data(user_json_path,resources='users')
+    #user_json_path=os.path.join(os.path.dirname(__file__),'user.json')
+    #import_data(user_json_path,resources='users')
 
-    # users
+    # roles
     #role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
     #import_data(role_json_path,resources='roles')
+
+    # add root
+    add_root_user()
 
 

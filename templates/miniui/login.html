@@ -3,7 +3,7 @@
 <div style="line-height:100px; padding:10px;height: 100px;background-color:#171812;color:white;" align="center">
     <strong style="font-size: 30px;">{{site_name}}-登录入口</strong>
 </div>
-<div id="loginWindow" class="mini-window" title="用户登录" style="width:350px;height:165px;"
+<div id="loginWindow" class="mini-window" title="用户登录" style="width:350px;height:185px;"
      showModal="true" showCloseButton="false"
         >
 
@@ -30,6 +30,11 @@
                 <td style="padding-top:5px;">
                     <a onclick="onLoginClick" class="mini-button" style="width:60px;">登录</a>
                     <a onclick="onResetClick" class="mini-button" style="width:60px;">重置</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <label style="color:red;" id="loginmessage"></label>
                 </td>
             </tr>
         </table>
@@ -61,12 +66,21 @@
             url: "/page/login",
             data: {username: username, pwd: pwd,'_xsrf': $.cookie('_xsrf')},
             type: "post",
-            success: function (text) {
+            success: function (result) {
                 //mini.hideMessageBox(msgid);
-                mini.loading("登录成功，马上转到系统...", "登录成功");
-                setTimeout(function () {
-                    window.location = "/app/";
-                }, 1500);
+                if (result.status_code == 0) {
+                    $('#loginmessage').text("");
+                    mini.loading("登录成功，马上转到系统...", "登录成功");
+                    setTimeout(function () {
+                        window.location = "/app/";
+                        }, 1500);
+                }
+                else {
+                    //mini.alert(result.data);
+                    $('#loginmessage').text(result.data);
+                    loginWindow.show();
+
+                }
                 //tree.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {

@@ -17,28 +17,28 @@ class IndexHandler(MINIUIBaseHandler):
 
 class HomeHandler(RequestHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/home.html')
+        self.render('miniui/home.html',title="首页")
 
 class ResourceHandler(RequestHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/resource.mgt.html')
+        self.render('miniui/resource.mgt.html',title='资源管理')
 
 
 class MenuHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/menu.mgt.html')
+        self.render('miniui/menu.mgt.html',title='菜单管理')
 
 class OrgnHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/orgn.mgt.html')
+        self.render('miniui/orgn.mgt.html',title='组织管理')
 
 class UserHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/user.mgt.html')
+        self.render('miniui/user.mgt.html',title='用户管理')
 
 class EmployeeHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
-        self.render('miniui/employee.mgt.html')
+        self.render('miniui/employee.mgt.html',title='员工管理')
 
 class LogoutHandler(MINIUIBaseHandler):
     def prepare(self):
@@ -55,7 +55,7 @@ class LoginHandler(MINIUIBaseHandler):
         pass
 
     def get(self, *args, **kwargs):
-        self.render('miniui/login.html',site_name=self.settings['site_name'])
+        self.render('miniui/login.html',site_name=self.settings['site_name'],title="用户登录")
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -68,10 +68,11 @@ class LoginHandler(MINIUIBaseHandler):
             if make_password(pwd) == user.get('pwd'):
                 # self.send_error(status_code=500,reason='用户名和密码不能违空')
                 self.session.set('user',{'username':username})
+                self.send_message("登录成功")
             else:
-                self.send_error(status_code=500,reason="密码错误")
+                self.send_message("密码错误",status_code=1)
         else:
-            self.send_error(status_code=500,reason='用户名和密码不能为空')
+            self.send_message("用户不存在或密码为空",status_code=1)
 
 
 routes = [

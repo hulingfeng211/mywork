@@ -78,8 +78,10 @@ class BaseHandler(SessionBaseHandler):
         :param status_code 状态码
         """
         #todo
-        if isinstance(obj,dict):
-            self.write(bson_encode(obj))
+        #if isinstance(obj,dict):
+        self.set_header("content-type","application/json");
+        self.write(bson_encode({"data":obj,"status_code":status_code}))
+
 
 
 class MINIUIBaseHandler(BaseHandler):
