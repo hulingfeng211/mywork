@@ -87,3 +87,4 @@ routes = [
     (r'/page/logout', LogoutHandler),
     (r'/page/resource', ResourceHandler),
 ]
+
