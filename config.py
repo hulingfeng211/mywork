@@ -55,7 +55,7 @@ LOGIN_URL = "/page/login"
 XSRF_COOKIES = True
 
 # MONGODB设置
-MONGO_URI = "mongodb://127.0.0.1:27017/"
+MONGO_URI = "mongodb://192.168.2.14:27017/"
 DB_NAME = 'test'
 
 # 站点设置

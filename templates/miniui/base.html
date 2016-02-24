@@ -22,7 +22,7 @@
     {% block style %}
     {% end %}
 </head>
-<body>
+<body style="display: none">
 
 {%block body %}
 {%end%}
@@ -36,6 +36,7 @@
 <script src="{{static_url('miniui/jquery.cookie.js')}}"></script>
 <script type="text/javascript">
     mini.parse();
+    $('body').css('display','inline');
 </script>
 {%block script %}
 {%end%}

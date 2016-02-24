@@ -6,6 +6,7 @@ import argparse
 import os
 import sys
 import pymongo
+import config
 
 
 def add_root_user():
@@ -15,7 +16,7 @@ def add_root_user():
     :param email  邮箱
     :return None
     """
-    client=pymongo.MongoClient()
+    client=pymongo.MongoClient(config.MONGO_URI)
     db=client['test']
     root={
       "_id": 1,
@@ -41,7 +42,7 @@ def get_user_session(cookie=""):
     cookies={
 
     }
-    cookie_str="msid=e57690a7cbdc4819924809e0b28d1719; _xsrf=2|cb945997|a3762e294dca8295317e03c018266ec1|1456121948"
+    cookie_str="msid=b13b102294a5420d9b77ce2b2fc62a4e; _xsrf=2|8686133d|2885bdfa7f5bbc49891870bae1e71451|1456205598"
     for cookie in cookie_str.split(';'):
         item=cookie.strip().split('=')
         cookies[item[0].strip()]=item[1]
@@ -86,23 +87,20 @@ if __name__=="__main__":
     #if args.op:
     #    print args.op
     # menus
-    #menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
-    #import_data(menu_json_path,resources='menus')
+    menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
+    import_data(menu_json_path,resources='menus')
 
     # resources
-    #menu_json_path=os.path.join(os.path.dirname(__file__),'resource.json')
-    #import_data(menu_json_path,resources='resources')
+    menu_json_path=os.path.join(os.path.dirname(__file__),'resource.json')
+    import_data(menu_json_path,resources='resources')
     # get_user_session()
 
-    # users
-    #user_json_path=os.path.join(os.path.dirname(__file__),'user.json')
-    #import_data(user_json_path,resources='users')
 
     # roles
-    #role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
-    #import_data(role_json_path,resources='roles')
+    role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
+    import_data(role_json_path,resources='roles')
 
     # add root
-    add_root_user()
+    #add_root_user()
 
 
