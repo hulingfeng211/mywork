@@ -66,17 +66,17 @@
                 <div property="columns">
                     <div type="checkcolumn"></div>
                     <div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号
-                        <input property="editor" class="mini-textbox" style="width:100%;"/>
+                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
                     <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
-                        <input property="editor" class="mini-textbox" style="width:100%;"/>
+                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
-                     <div field="email" width="100" allowSort="true"  align="center"
+                     <div field="email" required="true" width="100" allowSort="true"  align="center"
                          headerAlign="center">邮箱
-                        <input property="editor" class="mini-textbox" style="width:100%;" />
+                        <input property="editor" required="true" class="mini-textbox" vtype="email" style="width:100%;" />
                     </div>
-                    <div field="pwd" width="100" allowSort="true">密码
-                        <input property="editor" class="mini-textbox"   style="width:100%;"/>
+                    <div field="pwd" readOnly="true" width="100" allowSort="true">密码
+                        <input property="editor"  class="mini-textbox"    style="width:100%;"/>
                     </div>
                     <div type="checkboxcolumn" field="nologin" trueValue="1" falseValue="0" width="60" headerAlign="center">停用</div>
                     <div type="checkboxcolumn" field="superuser" trueValue="1" falseValue="0" width="60" headerAlign="center">超管</div>
@@ -121,6 +121,7 @@
 
 
 {%end%}
+<script src="{{static_url('miniui/jquery.md5.js')}}"></script>
 {%block script %}
 
 <script type="text/javascript">
@@ -308,6 +309,10 @@
             }
         });
     }
-
+    function setMd5Value(e){
+        if(e.sender.value!=null && e.sender.value!=''){
+            e.sender.setValue($.md5(e.sender.value));
+        }
+    }
 </script>
 {%end%}
