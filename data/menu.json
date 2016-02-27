@@ -41,6 +41,13 @@
           "name": "用户管理",
           "url": "/page/user",
           "desc": "用户&角色管理"
+        },
+        {
+          "_id": 8,
+          "_pid": 1,
+          "name": "在线用户",
+          "url": "/page/onlineuser",
+          "desc": "在线用户管理"
         }
       ]
     }

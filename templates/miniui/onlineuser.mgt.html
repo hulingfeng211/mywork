@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block body %}
+<div style="width: 100%">
+    <div style="border-bottom:0;padding:0px;" class="mini-toolbar">
+        <table style="width:100%">
+            <tr>
+                <td style="width:100%">
+                    <a class="mini-button" iconCls="icon-delete" onClick="logout" plain="true" tooltip="注销用户">注销用户</a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+<div class="mini-fit">
+    <div id="grid" style="width: 100%;height: 100%;" idField="id" url="/s/onlineuser"
+         ajaxOptions='{type:"get"}'
+         editNextOnEnterKey="true"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         class="mini-datagrid">
+        <div property="columns">
+            <div type="indexcolumn"></div>
+            <div field="loginname" headerAlign="center">登录名
+            </div>
+            <div field="logintime" headerAlign="center">登陆时间
+            </div>
+            <div field="logintime" headerAlign="center">登陆IP
+            </div>
+            <div field="logintime" headerAlign="center">最后操作时间
+            </div>
+            <div field="logintime" headerAlign="center">过期时间
+            </div>
+        </div>
+    </div>
+</div>
+
+{% end %}
+{% block script %}
+<script type="text/javascript">
+    //todo
+    var grid=mini.get('grid');
+    grid.load();
+
+    function addNew(e){
+        var newRow={"read":1,"save":0};
+        grid.addRow(newRow,0);
+
+    }
+</script>
+{% end %}

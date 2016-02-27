@@ -10,7 +10,30 @@
 |
 ============================================================="""
 # 定义url模板
-from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler
+import tornadoredis
+
+from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler
+
+
+class OnlineUserHandler(BaseHandler):
+    """从缓存服务器上获取当前登陆的所有用户"""
+    def initialize(self):
+        """"""""
+        cache_config = self.settings['session']['driver_settings']
+        host = cache_config['host']
+        port = cache_config['port']
+        db = cache_config['db']
+        self.client = tornadoredis.Client(selected_db=db, host=host, port=port)
+        self.client.connect()
+
+    def get(self, *args, **kwargs):
+        # todo
+        pass
+
+    def finish(self, chunk=None):
+        self.client.disconnect()
+        super(BaseHandler,self).finish()
+
 
 # 公共的路由
 routes = [
@@ -62,6 +85,9 @@ routes = [
 
     # 权限管理
     (r'/s/resources',MINIUIMongoHandler,{'cname':'resources'}),
+
+    # 在线用户
+    (r'/s/onlineuser',OnlineUserHandler),
 
 ]
 

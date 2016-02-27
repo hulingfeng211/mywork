@@ -40,6 +40,10 @@ class EmployeeHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/employee.mgt.html',title='员工管理')
 
+class OnlineUserHandler(MINIUIBaseHandler):
+    def get(self, *args, **kwargs):
+        self.render('miniui/onlineuser.mgt.html',title='在线用户管理')
+
 class LogoutHandler(MINIUIBaseHandler):
     def prepare(self):
         pass
@@ -86,5 +90,6 @@ routes = [
     (r'/page/login', LoginHandler),
     (r'/page/logout', LogoutHandler),
     (r'/page/resource', ResourceHandler),
+    (r'/page/onelineuser', OnlineUserHandler),
 ]
 

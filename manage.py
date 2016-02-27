@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*- 
 """========================================================== 
-+FileName:manage.py
-+Author: george
-+mail:hulingfeng211@163.com
-+Created Time:2015年07月22日 星期三 09时56分37秒
-+Description:应用程序入口
+|   FileName:manage.py
+|   Author: george
+|   mail:hulingfeng211@163.com
+|   Created Time:2015年07月22日 星期三 09时56分37秒
+|   Description:应用程序入口
 +============================================================"""
 import logging
 import motor
