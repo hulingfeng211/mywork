@@ -11,12 +11,12 @@
 ============================================================="""
 # 定义url模板
 import pickle
-
+import  pytz
 import tornadoredis
 from tornado.gen import coroutine, Task
-from dateutil import tz
 
 from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler
+from core.utils import utc_to_local, format_datetime
 
 
 class OnlineUserHandler(BaseHandler):
@@ -39,19 +39,15 @@ class OnlineUserHandler(BaseHandler):
         for key in keys:
             tmp_user=yield Task(self.client.get,key)
             # china
-            to_zone=tz.gettz('CST')
-
             user=pickle.loads(tmp_user)
-
-            # china time
-            expirestime=user['__expires__'].astimezone(to_zone)
-
+            expirestime=user['__expires__']
             result.append({
+                "id":key,
                 "loginname":user['user']['username'],
                 "remoteip":user['user']['remote_ip'],
-                "logintime":user['user']['login_time'].strftime('%Y-%m-%d %H:%M:%S'),
-                "lastaccesstime":user['last_access_time'].strftime('%Y-%m-%d %H:%M:%S') ,
-                "expiretime":expirestime.strftime('%Y-%m-%d %H:%M:%S') ,
+                "logintime":format_datetime(user['user']['login_time']),
+                "lastaccesstime":format_datetime(user['last_access_time']) ,
+                "expiretime":format_datetime(utc_to_local(expirestime)) ,
 
             })
 

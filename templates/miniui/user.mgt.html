@@ -51,6 +51,7 @@
             <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
             <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
             <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice()">从员工中选择</a>
+            <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
         </div>
             <div id="grid1" class="mini-datagrid" borderStyle="border:0"
                  allowCellSelect="true"
@@ -161,6 +162,16 @@
     function choice(e){
 
         //todo
+
+    }
+    /**
+     * 初始化选中的用户的密码
+     */
+    function initialpwd(){
+        var row=grid.getSelected();
+        if(row!=null){
+            row['pwd']= $.md5('111111')
+        }
 
     }
     function onAddRootNode(e) {
