@@ -10,7 +10,11 @@
 |
 ============================================================="""
 # 定义url模板
+import pickle
+
 import tornadoredis
+from tornado.gen import coroutine, Task
+from dateutil import tz
 
 from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler
 
@@ -26,9 +30,32 @@ class OnlineUserHandler(BaseHandler):
         self.client = tornadoredis.Client(selected_db=db, host=host, port=port)
         self.client.connect()
 
+    @coroutine
     def get(self, *args, **kwargs):
         # todo
-        pass
+        keys = yield Task(self.client.keys)
+
+        result = []
+        for key in keys:
+            tmp_user=yield Task(self.client.get,key)
+            # china
+            to_zone=tz.gettz('CST')
+
+            user=pickle.loads(tmp_user)
+
+            # china time
+            expirestime=user['__expires__'].astimezone(to_zone)
+
+            result.append({
+                "loginname":user['user']['username'],
+                "remoteip":user['user']['remote_ip'],
+                "logintime":user['user']['login_time'].strftime('%Y-%m-%d %H:%M:%S'),
+                "lastaccesstime":user['last_access_time'].strftime('%Y-%m-%d %H:%M:%S') ,
+                "expiretime":expirestime.strftime('%Y-%m-%d %H:%M:%S') ,
+
+            })
+
+        self.send_message(result)
 
     def finish(self, chunk=None):
         self.client.disconnect()

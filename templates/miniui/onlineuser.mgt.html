@@ -5,7 +5,7 @@
         <table style="width:100%">
             <tr>
                 <td style="width:100%">
-                    <a class="mini-button" iconCls="icon-delete" onClick="logout" plain="true" tooltip="注销用户">注销用户</a>
+                    <a class="mini-button" iconCls="icon-close" onClick="logout" plain="true" tooltip="注销用户">注销用户</a>
                 </td>
             </tr>
         </table>
@@ -23,13 +23,13 @@
             <div type="indexcolumn"></div>
             <div field="loginname" headerAlign="center">登录名
             </div>
-            <div field="logintime" headerAlign="center">登陆时间
+            <div field="logintime" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">登陆时间
             </div>
-            <div field="logintime" headerAlign="center">登陆IP
+            <div field="remoteip" headerAlign="center">登陆IP
             </div>
-            <div field="logintime" headerAlign="center">最后操作时间
+            <div field="lastaccesstime" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">最后操作时间
             </div>
-            <div field="logintime" headerAlign="center">过期时间
+            <div field="expiretime" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">过期时间
             </div>
         </div>
     </div>

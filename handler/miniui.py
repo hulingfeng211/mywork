@@ -1,4 +1,7 @@
 # -*- coding:utf-8 -*-
+import time
+
+import datetime
 from tornado import gen
 from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
@@ -71,7 +74,7 @@ class LoginHandler(MINIUIBaseHandler):
         if user and pwd:
             if make_password(pwd) == user.get('pwd'):
                 # self.send_error(status_code=500,reason='用户名和密码不能违空')
-                self.session.set('user',{'username':username})
+                self.session.set('user',{'username':username,'remote_ip':self.request.remote_ip,'login_time':datetime.datetime.now()})
                 self.send_message("登录成功")
             else:
                 self.send_message("密码错误",status_code=1)
