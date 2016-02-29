@@ -15,9 +15,16 @@ import  pytz
 import tornadoredis
 from tornado.gen import coroutine, Task
 
+from core import make_password
 from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler
 from core.utils import utc_to_local, format_datetime
 
+class MD5Handler(BaseHandler):
+
+    def get(self, *args, **kwargs):
+        key=self.get_argument('key',None)
+        md5=make_password(key)
+        self.send_message(md5)
 
 class OnlineUserHandler(BaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
@@ -40,6 +47,8 @@ class OnlineUserHandler(BaseHandler):
             tmp_user=yield Task(self.client.get,key)
             # china
             user=pickle.loads(tmp_user)
+            if not user.get('user',None):
+                continue
             expirestime=user['__expires__']
             result.append({
                 "id":key,
@@ -60,6 +69,9 @@ class OnlineUserHandler(BaseHandler):
 
 # 公共的路由
 routes = [
+
+    # md5加密
+    (r'/s/md5',MD5Handler),
 
     # 服务器管理
     (r'/servers',MongoBaseHandler,{'cname':'servers'}),

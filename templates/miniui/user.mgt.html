@@ -324,7 +324,19 @@
     }
     function setMd5Value(e){
         if(e.sender.value!=null && e.sender.value!=''){
-            e.sender.setValue($.md5(e.sender.value));
+            $.ajax({
+                url:'/s/md5',
+                data:{key: e.sender.value,'_xsrf': $.cookie('_xsrf')},
+                type:'get',
+                success:function(result){
+                    e.sender.setValue(result.data);
+                },
+                error:function(jqXHR,textStatus,errorThrown){
+
+                }
+
+            });
+            //e.sender.setValue($.md5(e.sender.value));
         }
     }
     function OnCellBeginEdit(e){

@@ -11,6 +11,8 @@
 ============================================================="""
 import json
 import logging
+
+import functools
 from bson import ObjectId
 import re
 from tornado import gen
@@ -81,7 +83,6 @@ class BaseHandler(SessionBaseHandler):
         #if isinstance(obj,dict):
         self.set_header("content-type","application/json");
         self.write(bson_encode({"data":obj,"status_code":status_code}))
-
 
 
 class MINIUIBaseHandler(BaseHandler):
@@ -422,6 +423,34 @@ class MongoBaseHandler(BaseHandler):
             yield db[self.cname].insert(obj)
         #self.write(generate_response(message="保存成功"))
         self.send_message("保存成功")
+
+
+def has_perms(roles):
+    """装饰器
+    :param roles 角色列表
+    :return 装饰后的方法"""
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self,*args,**kwargs):
+            print '%s %s()'%(roles,func.__name__)
+            # todo 判断当前角色列表roles数据是否在登陆的用户角色列表中，如果存在则执行方法func，否则提示没有权限
+            return func(self,*args,**kwargs)
+        return wrapper
+    return decorator
+
+
+def has_perms(perms):
+    """装饰器
+    :param perms 权限列表
+    :return 装饰后的方法"""
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self,*args,**kwargs):
+            print '%s %s()'%(perms,func.__name__)
+            # todo 判断当前权限列表perms数据是否在登陆的用户权限列表中，如果存在则执行方法func，否则提示没有权限
+            return func(self,*args,**kwargs)
+        return wrapper
+    return decorator
 
 if __name__=="__main__":
     from tornado.gen import IOLoop,coroutine

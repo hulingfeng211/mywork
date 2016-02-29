@@ -6,6 +6,7 @@
             <tr>
                 <td style="width:100%">
                     <a class="mini-button" iconCls="icon-close" onClick="logout" plain="true" tooltip="注销用户">注销用户</a>
+                    <a class="mini-button" iconCls="icon-reload" onClick="reload" plain="true" tooltip="刷新">刷新</a>
                 </td>
             </tr>
         </table>
@@ -46,6 +47,13 @@
         var newRow={"read":1,"save":0};
         grid.addRow(newRow,0);
 
+    }
+    function reload(){
+        grid.reload();
+    }
+    function logout(){
+        var row=grid.getSelected();
+        //todo
     }
 </script>
 {% end %}
