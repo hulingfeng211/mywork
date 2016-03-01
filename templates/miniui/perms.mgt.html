@@ -15,7 +15,7 @@
     </div>
 </div>
 <div class="mini-fit">
-    <div id="grid" style="width: 100%;height: 100%;" idField="id" url="/s/resources"
+    <div id="grid" style="width: 100%;height: 100%;" idField="id" url="/s/perms"
          ajaxOptions='{type:"get"}'
          editNextOnEnterKey="true"
          allowCellSelect="true"
@@ -23,14 +23,12 @@
          class="mini-datagrid">
         <div property="columns">
             <div type="indexcolumn"></div>
-            <div field="name" headerAlign="center">资源
+            <div field="name" headerAlign="center">权限名
             <input property="editor" class="mini-textbox" style="width:100%;"/>
             </div>
-            <div field="desc" headerAlign="center">资源描述
+            <div field="desc" headerAlign="center">权限描述
                 <input property="editor" class="mini-textbox" style="width:100%;"/>
             </div>
-            <div type="checkboxcolumn" field="read" trueValue="1" falseValue="0" width="60" headerAlign="center">查询</div>
-            <div type="checkboxcolumn" field="save" trueValue="1" falseValue="0" width="60" headerAlign="center">保存</div>
         </div>
     </div>
 </div>
@@ -46,6 +44,24 @@
         var newRow={"read":1,"save":0};
         grid.addRow(newRow,0);
 
+    }
+    function saveData(){
+        var data = grid.getChanges();
+        var json = mini.encode(data);
+        var msgid = grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "/s/perms",
+            data: {data: json, '_xsrf': $.cookie('_xsrf')},
+            //contentType:'application/json',
+            type: "post",
+            success: function (text) {
+                mini.hideMessageBox(msgid);
+                grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
     }
 </script>
 {% end %}

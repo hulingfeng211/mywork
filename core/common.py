@@ -17,8 +17,8 @@ from bson import ObjectId
 import re
 from tornado import gen
 from tornado.escape import json_decode
-from tornado.web import escape,authenticated
-from tornado.httpclient import HTTPRequest,  AsyncHTTPClient
+from tornado.web import escape, authenticated, HTTPError
+from tornado.httpclient import HTTPRequest, AsyncHTTPClient
 from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
 from core import bson_encode, is_json_request, clone_dict_without_id, clone_dict
@@ -29,35 +29,34 @@ import ast
 
 __author__ = 'george'
 
-DEFAULT_HEADERS={
-    'content-type':'application/json'
+DEFAULT_HEADERS = {
+    'content-type': 'application/json'
 }
 
 
 class BaseHandler(SessionBaseHandler):
-
     @coroutine
     def prepare(self):
         current_user = self.current_user
         if not current_user:
-            #self.redirect('/f/index.html',permanent=False)
-            #self.set_status(status_code=401,reason='用户未授权')
-            self.send_error(status_code=401,reason='用户未授权')
-            #self.redirect('/f/index.html',permanent=False)
-            #raise HTTPError(code=401,message='未授权')
-            #self.finish()
+            # self.redirect('/f/index.html',permanent=False)
+            # self.set_status(status_code=401,reason='用户未授权')
+            self.send_error(status_code=401, reason='用户未授权')
+            # self.redirect('/f/index.html',permanent=False)
+            # raise HTTPError(code=401,message='未授权')
+            # self.finish()
 
     def get_current_user(self):
         return self.session.get('user', None)
 
     def on_finish(self):
-        #todo update session expire when client call service.
-        #SessionBaseHandler.on_finish()
-        self.session.set('last_access_time',datetime.now())
+        # todo update session expire when client call service.
+        # SessionBaseHandler.on_finish()
+        self.session.set('last_access_time', datetime.now())
         super(BaseHandler, self).on_finish()
 
     @coroutine
-    def send_request(self, url, body=None, method='GET',headers=DEFAULT_HEADERS,*args, **kwargs):
+    def send_request(self, url, body=None, method='GET', headers=DEFAULT_HEADERS, *args, **kwargs):
         """
         发送HTTP请求，并返回请求后的结果
         """
@@ -66,84 +65,103 @@ class BaseHandler(SessionBaseHandler):
         userCd = self.current_user.get('userCd', None)
         pwd = self.current_user.get('pwd', None)
         request = HTTPRequest(url=url, method=method, body=body, auth_username=userCd,
-                              auth_password=pwd, auth_mode='digest', validate_cert=False,headers=headers, **kwargs)
+                              auth_password=pwd, auth_mode='digest', validate_cert=False, headers=headers, **kwargs)
         response = yield AsyncHTTPClient().fetch(request)
-        if response and response.code==200:
+        if response and response.code == 200:
             raise gen.Return(response.body)
         else:
             raise gen.Return(None)
 
-    def send_message(self,obj,status_code=0):
+    def send_message(self, obj, status_code=0):
         """
         发送消息到客户端
         :param obj 带发送到客户端的对象一个字典对象
         :param status_code 状态码
         """
-        #todo
-        #if isinstance(obj,dict):
-        self.set_header("content-type","application/json");
-        self.write(bson_encode({"data":obj,"status_code":status_code}))
+        # todo
+        # if isinstance(obj,dict):
+        self.set_header("content-type", "application/json");
+        self.write(bson_encode({"data": obj, "status_code": status_code}))
 
 
 class MINIUIBaseHandler(BaseHandler):
-
     @authenticated
     def prepare(self):
-
         pass
+
+    def initialize(self, *args, **kwargs):
+        if kwargs:
+            for key, val in kwargs.items():
+                if not hasattr(self, key):
+                    setattr(self, key, val)
+        super(BaseHandler, self).initialize()
+
+    def get(self, *args, **kwargs):
+        """提供默认的get方法的实现,如果template属性存在则进行页面模板的绘制后输出
+        需要在定义url模板的时候指定template和title
+
+        (r'/s/perms',MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
+
+        """
+        if self.template and self.title:
+            self.render(self.template, title=self.title)
+        else:
+            raise HTTPError(405)
 
 
 class MINIUITreeHandler(MINIUIBaseHandler):
     """
     组织服务
     """
+
     def initialize(self, *args, **kwargs):
         # cname 为对应的mongodb的集合的名字
         if kwargs:
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(MINIUITreeHandler,self).initialize()
+        super(MINIUIBaseHandler, self).initialize()
 
     @coroutine
     def get(self, *args, **kwargs):
         result = yield self.settings['db'][self.cname].find().to_list(length=None)
-        #print result
+        # print result
         self.write(bson_encode(result))
 
     @coroutine
     def post(self, *args, **kwargs):
         if 'application/json' in self.request.headers['content-Type']:
-            body=json_decode(self.request.body)
+            body = json_decode(self.request.body)
             if body:
-                data=body.get('data',None)
-                remove_data=body.get('removed',None)
+                data = body.get('data', None)
+                remove_data = body.get('removed', None)
         else:
-            data=self.get_argument('data',None)
+            data = self.get_argument('data', None)
             remove_data = self.get_argument('removed', None)
 
         if data:
-            print 'data:',data
-            data_json= escape.json_decode(data) if type(data)==unicode else data
-            list = to_list(data_json,"-1","children","id","pid")
+            print 'data:', data
+            data_json = escape.json_decode(data) if type(data) == unicode else data
+            list = to_list(data_json, "-1", "children", "id", "pid")
             print list
-            print 'len(list):',len(list)
-            for i,item in enumerate(list):
+            print 'len(list):', len(list)
+            for i, item in enumerate(list):
                 yield self.settings['db'][self.cname].save(item)
 
         if remove_data:
             data_json = escape.json_decode(remove_data)
-            list = to_list(data_json,"-1","children","id","pid")
+            list = to_list(data_json, "-1", "children", "id", "pid")
             for item in list:
-                yield self.settings['db'][self.cname].remove({"_id":item['id']})
+                yield self.settings['db'][self.cname].remove({"_id": item['id']})
 
 
 class MINIUIMongoHandler(MINIUIBaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""
-    def is_object_id(self,id_str):
+
+    def is_object_id(self, id_str):
         """判断字符串是不是objectid的str"""
-        pattern='[a-f\d]{24}'
-        return len(re.findall(pattern,str(id_str)))>0
+        pattern = '[a-f\d]{24}'
+        return len(re.findall(pattern, str(id_str))) > 0
 
         pass
 
@@ -153,7 +171,7 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(MINIUIMongoHandler,self).initialize()
+        super(MINIUIMongoHandler, self).initialize()
 
     @coroutine
     def get(self, *args, **kwargs):
@@ -174,7 +192,7 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
             q = {}  # 查询的规则 {'name':'aaa'}
             p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
             s = {}  # 排序的规则
-            except_key=['pageIndex','pageSize','sortField','sortOrder','_']
+            except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
             try:
                 for k, v in self.request.query_arguments.items():
                     if k == '_v':
@@ -201,32 +219,32 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
                 logging.error(e)
             #
             # return dict(q,**other), p, s
-            return dict(q,**other), p, s
+            return dict(q, **other), p, s
 
-        q, p, s  = get_query_args(self)
+        q, p, s = get_query_args(self)
 
-        pageIndex=int(self.get_query_argument('pageIndex',0))
-        pageSize=int(self.get_query_argument('pageSize',10))
+        pageIndex = int(self.get_query_argument('pageIndex', 0))
+        pageSize = int(self.get_query_argument('pageSize', 10))
 
         db = self.settings['db']
-        cursor=db[self.cname].find(q )
+        cursor = db[self.cname].find(q)
         if not p:
             if not s:
-                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).to_list(length=None)
+                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).to_list(length=None)
             else:
-                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).sort(s).to_list(length=None)
+                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).sort(s).to_list(length=None)
 
         else:
-            cursor=db[self.cname].find(q ,p)
+            cursor = db[self.cname].find(q, p)
             if not s:
-                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).to_list(length=None)
+                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).to_list(length=None)
             else:
-                objs=yield cursor.skip(pageIndex*pageSize).limit(pageSize).sort(s).to_list(length=None)
+                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).sort(s).to_list(length=None)
 
-        total=yield  cursor.count()
-        result={
-                'total':total,
-                'data':objs
+        total = yield cursor.count()
+        result = {
+            'total': total,
+            'data': objs
         }
         self.write(bson_encode(result))
 
@@ -240,10 +258,10 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
             self.send_error(reason="仅支持Content-type:application/json")
 
         db = self.settings['db']
-        id=body.get('_id',None)
+        id = body.get('_id', None)
         if id:  # update
-            body['update_time']=format_datetime(datetime.now())
-            body['update_user']=self.current_user.get('username','')
+            body['update_time'] = format_datetime(datetime.now())
+            body['update_user'] = self.current_user.get('username', '')
 
             yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict(body)
@@ -261,57 +279,60 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
     def post(self, *args, **kwargs):
         if is_json_request(self.request):
             body = json.loads(self.request.body)
-            body=body.get('data',None)
+            body = body.get('data', None)
         else:
-            body=self.get_argument('data',None)
+            body = self.get_argument('data', None)
             body = escape.json_decode(body) if body else {}
-            #self.send_error(reason="仅支持Content-type:application/json")
-            #return
+            # self.send_error(reason="仅支持Content-type:application/json")
+            # return
 
         db = self.settings['db']
         for row in body:
-            id=row.get('id',None)
-            if row.get('_state',None)=='removed':
+            id = row.get('id', None)
+            if row.get('_state', None) == 'removed':
                 if self.is_object_id(id):
-                    yield db[self.cname].remove({"_id":ObjectId(id)})
+                    yield db[self.cname].remove({"_id": ObjectId(id)})
 
             if id and self.is_object_id(id):  # update
-                row['update_time']=format_datetime(datetime.now())
-                row['update_user']=self.current_user.get('username','')
+                row['update_time'] = format_datetime(datetime.now())
+                row['update_user'] = self.current_user.get('username', '')
                 yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
-                    "$set": clone_dict(row,without=[])
+                    "$set": clone_dict(row, without=[])
                 })
 
             else:
-                obj=clone_dict(row)
-                obj['id']=ObjectId()
-                obj['_id']=obj['id']
+                obj = clone_dict(row)
+                obj['id'] = ObjectId()
+                obj['_id'] = obj['id']
 
-                obj['create_time']=format_datetime(datetime.now())
-                obj['create_user']=self.current_user.get('username','')
+                obj['create_time'] = format_datetime(datetime.now())
+                obj['create_user'] = self.current_user.get('username', '')
                 yield db[self.cname].insert(obj)
-        #self.write(generate_response(message="保存成功"))
+        # self.write(generate_response(message="保存成功"))
         self.send_message("保存成功")
+
 
 class MongoBaseHandler(BaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""
-    def is_object_id(self,id_str):
+
+    def is_object_id(self, id_str):
         """判断字符串是不是objectid的str"""
-        pattern='[a-f\d]{24}'
-        return len(re.findall(pattern,id_str))>0
+        pattern = '[a-f\d]{24}'
+        return len(re.findall(pattern, id_str)) > 0
 
         pass
 
     def prepare(self):
         """覆盖父类的方法，避免401错误"""
         pass
+
     def initialize(self, *args, **kwargs):
         # cname 为对应的mongodb的集合的名字
         if kwargs:
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(MongoBaseHandler,self).initialize()
+        super(MongoBaseHandler, self).initialize()
 
     @coroutine
     def get(self, *args, **kwargs):
@@ -353,23 +374,23 @@ class MongoBaseHandler(BaseHandler):
                 logging.error(e)
             #
             # return dict(q,**other), p, s
-            return dict(q,**other), p, s
+            return dict(q, **other), p, s
 
-        q, p, s  = get_query_args(self)
+        q, p, s = get_query_args(self)
         db = self.settings['db']
 
         if not p:
-            cursor=db[self.cname].find(q )
+            cursor = db[self.cname].find(q)
             if not s:
-                objs=yield cursor.to_list(length=None)
+                objs = yield cursor.to_list(length=None)
             else:
-                objs=yield cursor.sort(s).to_list(length=None)
+                objs = yield cursor.sort(s).to_list(length=None)
         else:
-            cursor=db[self.cname].find(q ,p)
+            cursor = db[self.cname].find(q, p)
             if not s:
-                objs=yield cursor.to_list(length=None)
+                objs = yield cursor.to_list(length=None)
             else:
-                objs=yield cursor.sort(s).to_list(length=None)
+                objs = yield cursor.sort(s).to_list(length=None)
         self.write(bson_encode(objs))
 
     @coroutine
@@ -382,10 +403,10 @@ class MongoBaseHandler(BaseHandler):
             self.send_error(reason="仅支持Content-type:application/json")
 
         db = self.settings['db']
-        id=body.get('_id',None)
+        id = body.get('_id', None)
         if id:  # update
-            body['update_time']=format_datetime(datetime.now())
-            body['update_user']=self.current_user.get('userCd','')
+            body['update_time'] = format_datetime(datetime.now())
+            body['update_user'] = self.current_user.get('userCd', '')
 
             yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict_without_id(body)
@@ -408,20 +429,20 @@ class MongoBaseHandler(BaseHandler):
             return
 
         db = self.settings['db']
-        id=body.get('_id',None)
+        id = body.get('_id', None)
         if id:  # update
-            body['update_time']=format_datetime(datetime.now())
-            body['update_user']=self.current_user.get('userCd','')
+            body['update_time'] = format_datetime(datetime.now())
+            body['update_user'] = self.current_user.get('userCd', '')
             yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict_without_id(body)
             })
 
         else:
-            obj=clone_dict_without_id(body)
-            obj['create_time']=format_datetime(datetime.now())
-            obj['create_user']=self.current_user.get('userCd','')
+            obj = clone_dict_without_id(body)
+            obj['create_time'] = format_datetime(datetime.now())
+            obj['create_user'] = self.current_user.get('userCd', '')
             yield db[self.cname].insert(obj)
-        #self.write(generate_response(message="保存成功"))
+        # self.write(generate_response(message="保存成功"))
         self.send_message("保存成功")
 
 
@@ -429,13 +450,16 @@ def has_perms(roles):
     """装饰器
     :param roles 角色列表
     :return 装饰后的方法"""
+
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(self,*args,**kwargs):
-            print '%s %s()'%(roles,func.__name__)
+        def wrapper(self, *args, **kwargs):
+            print '%s %s()' % (roles, func.__name__)
             # todo 判断当前角色列表roles数据是否在登陆的用户角色列表中，如果存在则执行方法func，否则提示没有权限
-            return func(self,*args,**kwargs)
+            return func(self, *args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -443,23 +467,31 @@ def has_perms(perms):
     """装饰器
     :param perms 权限列表
     :return 装饰后的方法"""
+
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(self,*args,**kwargs):
-            print '%s %s()'%(perms,func.__name__)
+        def wrapper(self, *args, **kwargs):
+            print '%s %s()' % (perms, func.__name__)
             # todo 判断当前权限列表perms数据是否在登陆的用户权限列表中，如果存在则执行方法func，否则提示没有权限
-            return func(self,*args,**kwargs)
+            return func(self, *args, **kwargs)
+
         return wrapper
+
     return decorator
 
-if __name__=="__main__":
-    from tornado.gen import IOLoop,coroutine
+
+if __name__ == "__main__":
+    from tornado.gen import IOLoop, coroutine
     import motor
 
-    client=motor.MotorClient()
-    db=client['test']
+    client = motor.MotorClient()
+    db = client['test']
+
+
     @coroutine
     def f():
-        yield db['servers'].insert({'a':'b'})
-    ioloop=IOLoop.current()
+        yield db['servers'].insert({'a': 'b'})
+
+
+    ioloop = IOLoop.current()
     ioloop.run_sync(f)

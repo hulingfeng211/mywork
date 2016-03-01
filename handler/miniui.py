@@ -17,36 +17,6 @@ class IndexHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/index.html',site_name=self.settings['site_name'])
 
-
-class HomeHandler(RequestHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/home.html',title="首页")
-
-class ResourceHandler(RequestHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/resource.mgt.html',title='资源管理')
-
-
-class MenuHandler(MINIUIBaseHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/menu.mgt.html',title='菜单管理')
-
-class OrgnHandler(MINIUIBaseHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/orgn.mgt.html',title='组织管理')
-
-class UserHandler(MINIUIBaseHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/user.mgt.html',title='用户管理')
-
-class EmployeeHandler(MINIUIBaseHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/employee.mgt.html',title='员工管理')
-
-class OnlineUserHandler(MINIUIBaseHandler):
-    def get(self, *args, **kwargs):
-        self.render('miniui/onlineuser.mgt.html',title='在线用户管理')
-
 class LogoutHandler(MINIUIBaseHandler):
     def prepare(self):
         pass
@@ -81,18 +51,18 @@ class LoginHandler(MINIUIBaseHandler):
         else:
             self.send_message("用户不存在或密码为空",status_code=1)
 
-
 routes = [
     (r'/app/', IndexHandler),
     (r'/app$', IndexHandler),
-    (r'/app/home', HomeHandler),
-    (r'/page/menu', MenuHandler),
-    (r'/page/orgn', OrgnHandler),
-    (r'/page/employee', EmployeeHandler),
-    (r'/page/user', UserHandler),
+    (r'/page/home', MINIUIBaseHandler,{'template':'miniui/home.html','title':'首页'}),
+    (r'/page/menu', MINIUIBaseHandler,{'template':'miniui/menu.mgt.html','title':'菜单管理'}),
+    (r'/page/orgn', MINIUIBaseHandler,{'template':'miniui/orgn.mgt.html','title':'组织管理'}),
+    (r'/page/employee', MINIUIBaseHandler,{'template':'miniui/employee.mgt.html','title':'员工管理'}),
+    (r'/page/user', MINIUIBaseHandler,{'template':'miniui/user.mgt.html','title':'用户管理'}),
     (r'/page/login', LoginHandler),
     (r'/page/logout', LogoutHandler),
-    (r'/page/resource', ResourceHandler),
-    (r'/page/onelineuser', OnlineUserHandler),
+    (r'/page/perms', MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
+    (r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
+    (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
 ]
 

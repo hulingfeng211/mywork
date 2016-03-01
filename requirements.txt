@@ -4,4 +4,6 @@ motor = 0.5
 redis= 2.10.5
 tornado-redis = 2.4.18
 torndsession = 1.1.2
-pytz = 2015.7
+python-dateutil=1.4.2
+requests = 2.9.1
+#pytz = 2015.7

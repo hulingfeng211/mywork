@@ -31,9 +31,9 @@
         {
           "_id": 6,
           "_pid": 1,
-          "name": "资源管理",
-          "url": "/page/resource",
-          "desc": "资源管理"
+          "name": "权限管理",
+          "url": "/page/perms",
+          "desc": "权限管理"
         },
         {
           "_id": 7,

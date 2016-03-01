@@ -17,7 +17,7 @@ def add_root_user():
     :return None
     """
     client=pymongo.MongoClient(config.MONGO_URI)
-    db=client['test']
+    db=client[config.DB_NAME]
     root={
       "_id": 1,
       "loginname": "15921315347@163.com",
@@ -42,7 +42,7 @@ def get_user_session(cookie=""):
     cookies={
 
     }
-    cookie_str="msid=a0ca8a7cc8a247c5a1a172c418162b91; _xsrf=2|aad874ab|79226be0682275e091b9f3cfadb4bd0a|1456586828"
+    cookie_str="msid=915f7debf86b49538d431bbd3e680dfc; _xsrf=2|73f9c1a9|b920913465f8726eb69e0521f5cbacc3|1456810602"
     for cookie in cookie_str.split(';'):
         item=cookie.strip().split('=')
         cookies[item[0].strip()]=item[1]
@@ -77,29 +77,40 @@ def import_data(file,resources='menus'):
         print res.text
 
 
+def login_system(username='15921315347@163.com',pwd='111111'):
+    """模拟登录到系统中方便导入数据
+    :param username 登录名
+    :param pwd 加密前的明文密码
+    :return None"""
+
+    home_url='http://localhost:10000/app'
+    login_url='http://localhost:10000/page/login'
+    res=requests.get(home_url)
+    if res and res.status_code==200:
+        _cookies=res.cookies
+        res2=requests.post(login_url,{'username':username,'pwd':pwd,'_xsrf':_cookies['_xsrf']})
+        if res2 and res2.status_code==200:
+            return res2.cookies['msgid'],res2.cookies['_xsrf']
+
+
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     # 参数前加--表示为可选参数，一般设置默认值
     # 不加--表示为必须的参数
-    parser.add_argument('--op',default='menu',type=str,help="数据类型")
-    args=parser.parse_args()
+    #parser.add_argument('--op',default='menu',type=str,help="数据类型")
+    #args=parser.parse_args()
     #if args.op:
     #    print args.op
 
     # menus
-    menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
-    import_data(menu_json_path,resources='menus')
+    #menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
+    #import_data(menu_json_path,resources='menus')
     #
- # resources
-    menu_json_path=os.path.join(os.path.dirname(__file__),'resource.json')
-    import_data(menu_json_path,resources='resources')
-    # # get_user_session()
-    #
-    #
-    # # roles
-    role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
-    import_data(role_json_path,resources='roles')
+
+    # roles
+    #role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
+    #import_data(role_json_path,resources='roles')
 
     # add root
     #add_root_user()

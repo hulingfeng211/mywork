@@ -11,7 +11,7 @@
 ============================================================="""
 # 定义url模板
 import pickle
-import  pytz
+#import  pytz
 import tornadoredis
 from tornado.gen import coroutine, Task
 
@@ -119,7 +119,7 @@ routes = [
     (r'/s/orgns',MINIUITreeHandler,{'cname':'orgns'}),
 
     # 权限管理
-    (r'/s/resources',MINIUIMongoHandler,{'cname':'resources'}),
+    (r'/s/perms',MINIUIMongoHandler,{'cname':'perms'}),
 
     # 在线用户
     (r'/s/onlineuser',OnlineUserHandler),
