@@ -446,7 +446,7 @@ class MongoBaseHandler(BaseHandler):
         self.send_message("保存成功")
 
 
-def has_perms(roles):
+def has_roles(roles):
     """装饰器
     :param roles 角色列表
     :return 装饰后的方法"""

@@ -100,7 +100,6 @@
                  allowCellSelect="true"
                  allowCellEdit="true"
                  idField="id"
-                 url="/s/resources"
                  multiSelect="true"
                  editNextOnEnterKey="true"
                  ajaxOptions='{type:"get"}'
@@ -132,6 +131,7 @@
     }
     var tree = mini.get('tree1');
     var grid = mini.get('grid1');
+    var gridPerms = mini.get('grid2');
 
     window.onload = function () {
         /**
@@ -179,8 +179,8 @@
                     data=mini.clone(data);
                     if(data){
                         //mini.forEach()
-                        for(var i=0;i<data.length();i++){
-                            grid.addRow(data[i],0);
+                        for(var i=0;i<data.length;i++){
+                            gridPerms.addRow(data[i],0);
                         }
                     }
                 }
