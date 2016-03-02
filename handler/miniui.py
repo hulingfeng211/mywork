@@ -17,6 +17,8 @@ class IndexHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
         self.render('miniui/index.html',site_name=self.settings['site_name'])
 
+
+
 class LogoutHandler(MINIUIBaseHandler):
     def prepare(self):
         pass

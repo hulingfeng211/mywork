@@ -57,9 +57,10 @@
                  allowCellEdit="true"
                  allowCellValid="true"
                  idField="id"
-                 multiSelect="true"
+                 multiSelect="false"
                  url="/s/users"
                  idField="id"
+
                  pageSize="20"
                  editNextOnEnterKey="true"
                  ajaxOptions='{type:"get"}'
@@ -101,6 +102,7 @@
                  allowCellEdit="true"
                  idField="id"
                  multiSelect="true"
+                 url="/s/userperms"
                  editNextOnEnterKey="true"
                  ajaxOptions='{type:"get"}'
                  style="width: 100%;height: 40%">
@@ -133,6 +135,7 @@
     var grid = mini.get('grid1');
     var gridPerms = mini.get('grid2');
 
+
     window.onload = function () {
         /**
          $("#tree1").bind("contextmenu", function (e) {
@@ -143,6 +146,14 @@
 
 
     };
+    /**
+     * usergrid行选择事件
+     */
+    grid.on('rowclick', function (e) {
+        //alert(e.record['id']);
+        //todo 根据用户id查找用户的权限列表填充到gridPerms中
+
+    });
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
             //mini.alert(e.node.id);
@@ -163,9 +174,32 @@
 
     }
     /**
+     * 保存用户权限
+     * */
+    function savePermData(){
+        var selectUser=grid.getSelected();
+        var perms=gridPerms.getChanges();
+        $.ajax(
+                {
+                    url:'/s/userperms',
+                    type:'post',
+                    data:{'uid':selectUser['id'],'perms':perms,'_xsrf': $.cookie('_xsrf')},
+                    success:function(result){
+                        gridPerms.load({'key':selectUser['id']})
+                    }
+
+                }
+        );
+    }
+    /**
      *选取用户的权限
      */
     function choice_perms(e) {
+        var selectUser=grid.getSelected();
+        if(selectUser==null){
+            mini.alert('请先选择用户');
+            return;
+        }
         var btn = this;
         mini.open({
             url: '/page/choice_perms',
@@ -173,14 +207,14 @@
             width: 650,
             height: 380,
             ondestroy: function (action) {
-                if(action=="ok"){
-                    var iframe=this.getIFrameEl();
-                    var data=iframe.contentWindow.GetData();
-                    data=mini.clone(data);
-                    if(data){
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);
+                    if (data) {
                         //mini.forEach()
-                        for(var i=0;i<data.length;i++){
-                            gridPerms.addRow(data[i],0);
+                        for (var i = 0; i < data.length; i++) {
+                            gridPerms.addRow(data[i], 0);
                         }
                     }
                 }

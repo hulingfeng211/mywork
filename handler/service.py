@@ -20,7 +20,23 @@ from core.treeutils import to_list
 
 __author__ = 'george'
 
+class UserPermService(MINIUIBaseHandler):
+    """用户权限服务"""
 
+    @coroutine
+    def get(self, *args, **kwargs):
+        key = self.get_argument('key',None)
+        if key:
+            db = self.settings['db']
+            result=yield db.users.find({'id':ObjectId(key)},{'perms':1}).to_list(length=None)
+            self.send_message(result)
+        else:
+            pass
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        print self.request.body
+        pass
 
 # class OrgnService(RequestHandler):
 #     """
@@ -105,5 +121,6 @@ __author__ = 'george'
 routes=[
     #(r'/s/menu',MenuService),
     #(r'/s/orgn',OrgnService),
+    (r'/s/userperms',UserPermService),
 ]
 
