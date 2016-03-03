@@ -23,7 +23,7 @@ class MD5Handler(BaseHandler):
 
     def get(self, *args, **kwargs):
         key=self.get_argument('key',None)
-        md5=make_password(key)
+        md5=make_password(key if key else '111111')
         self.send_message(md5)
 
 class OnlineUserHandler(BaseHandler):

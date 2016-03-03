@@ -42,7 +42,7 @@ class LoginHandler(MINIUIBaseHandler):
         username = self.get_argument('username',None)
         pwd = self.get_argument('pwd',None)
         db = self.settings['db']
-        user = yield db.users.find_one({"email":username})
+        user = yield db.users.find_one({"$or":[{"email":username},{"loginname":username}]})
         if user and pwd:
             if make_password(pwd) == user.get('pwd'):
                 # self.send_error(status_code=500,reason='用户名和密码不能违空')

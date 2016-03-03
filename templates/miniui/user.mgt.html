@@ -65,6 +65,7 @@
                  editNextOnEnterKey="true"
                  ajaxOptions='{type:"get"}'
                  oncellbeginedit="OnCellBeginEdit"
+                 oncellendedit="onCedllEndEdit"
                  style="width:100%;height:50%;">
                 <div property="columns">
                     <div type="checkcolumn"></div>
@@ -74,7 +75,7 @@
                     <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
-                    <div field="email" required="true" vtype="email" width="100" allowSort="true" align="center"
+                    <div field="email" required="true" required vtype="email" width="100" allowSort="true" align="center"
                          headerAlign="center">邮箱
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
@@ -149,7 +150,7 @@
     /**
      * usergrid行选择事件
      */
-    grid.on('rowclick', function (e) {
+    grid.on('select', function (e) {
         //alert(e.record['id']);
         //todo 根据用户id查找用户的权限列表填充到gridPerms中
 
@@ -176,16 +177,21 @@
     /**
      * 保存用户权限
      * */
-    function savePermData(){
-        var selectUser=grid.getSelected();
-        var perms=gridPerms.getChanges();
+    function savePermData() {
+        var selectUser = grid.getSelected();
+        var perms = gridPerms.getChanges();
+        var data={'uid': selectUser['id'], 'perms': perms};
         $.ajax(
                 {
-                    url:'/s/userperms',
-                    type:'post',
-                    data:{'uid':selectUser['id'],'perms':perms,'_xsrf': $.cookie('_xsrf')},
-                    success:function(result){
-                        gridPerms.load({'key':selectUser['id']})
+                    url: '/s/userperms',
+                    type: 'post',
+                    contentType:'application/json',
+                    data: mini.encode(data),
+                    beforeSend: function (xhr) {
+		                xhr.setRequestHeader('X-Xsrftoken',$.cookie('_xsrf'));
+	                },
+                    success: function (result) {
+                        gridPerms.load({'key': selectUser['id']})
                     }
 
                 }
@@ -195,8 +201,8 @@
      *选取用户的权限
      */
     function choice_perms(e) {
-        var selectUser=grid.getSelected();
-        if(selectUser==null){
+        var selectUser = grid.getSelected();
+        if (selectUser == null) {
             mini.alert('请先选择用户');
             return;
         }
@@ -229,7 +235,15 @@
     function initialpwd() {
         var row = grid.getSelected();
         if (row != null) {
-            row['pwd'] = $.md5('111111')
+            $.ajax({
+                url: '/s/md5',
+                type: 'get',
+                data: {key: row.loginname},
+                success: function (result) {
+                    //row['pwd'] = result.data;
+                    grid.updateRow(row,{"pwd":result.data})
+                }
+            });
         }
 
     }
@@ -349,7 +363,7 @@
     function addRow() {
         var node = tree.getSelectedNode();
         if (node) {
-            var newRow = {name: "New Row"};
+            var newRow = {name: "新用户"};
             newRow.role_id = node.code;
             grid.addRow(newRow, 0);
         }
@@ -398,8 +412,23 @@
     function OnCellBeginEdit(e) {
         var record = e.record;
         var field = e.field;
+        var editableFields=['name','superuser','nologin'];
+        if (record['id'] != null && editableFields.indexOf(field)==-1) {
+            e.cancel = true;
+        }
+    }
+    function onCedllEndEdit(e) {
+        var record = e.record;
+        var field = e.field;
         if (field == 'loginname') {
-            e.record.pwd = $.md5(record.loginname);
+            $.ajax({
+                url: '/s/md5',
+                type: 'get',
+                data: {key: record.loginname},
+                success: function (result) {
+                    e.record.pwd = result.data;
+                }
+            });
         }
     }
 </script>

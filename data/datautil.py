@@ -6,6 +6,8 @@ import argparse
 import os
 import sys
 import pymongo
+from bson import ObjectId
+
 import config
 
 
@@ -19,7 +21,6 @@ def add_root_user():
     client=pymongo.MongoClient(config.MONGO_URI)
     db=client[config.DB_NAME]
     root={
-      "_id": 1,
       "loginname": "15921315347@163.com",
       "name": "胡佐治",
       "email": "15921315347@163.com",
@@ -28,6 +29,9 @@ def add_root_user():
       "nologin": 0,
       "superuser": 1
     }
+    id=ObjectId()
+    root['id']=id
+    root['_id']=id
     db.users.insert(root)
     #db.users.insert(
 #        {'username':username,'email'}
@@ -113,6 +117,6 @@ if __name__=="__main__":
     #import_data(role_json_path,resources='roles')
 
     # add root
-    #add_root_user()
+    add_root_user()
 
 

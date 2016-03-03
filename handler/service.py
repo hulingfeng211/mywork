@@ -28,15 +28,22 @@ class UserPermService(MINIUIBaseHandler):
         key = self.get_argument('key',None)
         if key:
             db = self.settings['db']
-            result=yield db.users.find({'id':ObjectId(key)},{'perms':1}).to_list(length=None)
+            result=yield db.users.find_one({'_id':ObjectId(key)},{'perms':1,"_id":0})
+            ids=[ObjectId(id) for id in result.get('perms',[])]
+            result=yield db.perms.find({'_id':{'$in':ids}}).to_list(length=None)
             self.send_message(result)
         else:
             pass
 
     @coroutine
     def post(self, *args, **kwargs):
-        print self.request.body
-        pass
+        body=escape.json_decode(self.request.body)
+        userid=body.get('uid',None)
+        perms=body.get('perms',[])
+        if userid and perms:
+            db = self.settings['db']
+            for p in perms:
+                yield db.users.update({'_id':ObjectId(userid)},{'$addToSet':{"perms":p['id']}})
 
 # class OrgnService(RequestHandler):
 #     """
