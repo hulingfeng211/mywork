@@ -69,13 +69,13 @@
                  style="width:100%;height:50%;">
                 <div property="columns">
                     <div type="checkcolumn"></div>
-                    <div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号
+                    <div field="loginname" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">员工帐号
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
                     <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
-                    <div field="email" required="true" required vtype="email" width="100" allowSort="true" align="center"
+                    <div field="email" required="true"  vtype="email" width="100" allowSort="true" align="center"
                          headerAlign="center">邮箱
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
@@ -153,7 +153,8 @@
     grid.on('select', function (e) {
         //alert(e.record['id']);
         //todo 根据用户id查找用户的权限列表填充到gridPerms中
-
+        var selectUser = grid.getSelected();
+        gridPerms.load({'key': selectUser['id']})
     });
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
