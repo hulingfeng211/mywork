@@ -43,10 +43,11 @@ MONGO_URI="mongo_uri"
 DB_NAME="db_name"
 
 # redis配置
-REDIS='redis'
-HOST='host'
-PORT='port'
-SELECTED_DB='selected_db'
-MAX_CONNECTIONS='max_connections'
+REDIS_HOST = 'redis_host'
+REDIS_PORT ='redis_port'
+MAX_CONNECTIONS = 'max_connections'
+REDIS_DB = 'redis_db'
+SESSION_DB= 'session_db'
+SELECTED_DB='db'
 CONNECTION_POOL='connection_pool'
 

@@ -21,29 +21,30 @@ STATIC_PATH = os.path.join(os.path.dirname(__file__), "static")
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'templates')
 # TEMPLATE_PATH=os.path.join(os.path.dirname(__file__),'front')
 
-# session相关的配置
+# REDIS Server相关配置
+REDIS_HOST = '192.168.2.14'
+REDIS_PORT = 6379
+MAX_CONNECTIONS = 1024
+REDIS_DB = 5
+SESSION_DB= 4
 
+# session相关的配置
 # redis as session store
 SESSION = {
      'driver': 'redis',#memory/redis
      'force_persistence': True,
      'driver_settings': dict(
-         host='192.168.2.14',
-         port=6379,
-         db=4,
-         max_connections=1024
+         host=REDIS_HOST,
+         port=REDIS_PORT,
+         db=SESSION_DB,
+         max_connections=MAX_CONNECTIONS
      )
  }
 
-REDIS={
-    'host':'192.168.2.14',
-    'port':6379,
-    'selected_db':5,
-    'max_connections':1024
-}
-
-
-CONNECTION_POOL=ConnectionPool(**REDIS)
+CONNECTION_POOL=ConnectionPool(wait_for_available=True,**dict(
+    host=REDIS_HOST,
+    port=REDIS_PORT
+))
 
 # 生成方法 core/utils/generate_cookie_secret
 COOKIE_SECRET = '0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='

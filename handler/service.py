@@ -9,16 +9,72 @@
 |
 |
 ============================================================="""
+import time
+
+import tornadoredis
 from bson import ObjectId
 from tornado import escape
-from tornado.escape import json_decode
-from tornado.gen import coroutine
-from tornado.web import RequestHandler
-from core import clone_dict, bson_encode
-from core.common import MINIUIBaseHandler
-from core.treeutils import to_list
+from tornado.gen import coroutine, engine, Task
+from tornado.ioloop import IOLoop
+from tornado.web import RequestHandler, asynchronous
+from torndsession.sessionhandler import SessionBaseHandler
+
+import constant
+from core.common import MINIUIBaseHandler, create_redis_client
 
 __author__ = 'george'
+
+class TimeoutService(SessionBaseHandler):
+
+    def initialize(self, *args, **kwargs):
+        self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS_DB])
+        #self.client = tornadoredis.Client(selected_db=5, host='192.168.2.14', port=6379)
+        self.client.connect()
+
+    @asynchronous
+    def get(self, *args, **kwargs):
+        channel_name=self.get_argument('channel_name',None)
+        if channel_name:
+            self.channel_name=channel_name
+            self.get_data(channel_name)
+    @engine
+    def subscribe(self,channel_name):
+        yield Task(self.client.subscribe, channel_name)
+        self.client.listen(self.on_message)
+
+    # @coroutine
+    def get_data(self,channel_name):
+        if self.request.connection.stream.closed():
+            return
+        self.subscribe(channel_name)
+        num = 90  # 设置超时时间,
+
+        IOLoop.current().add_timeout(time.time() + num, lambda: self.on_timeout(num))
+
+    def on_timeout(self, num):
+        self.send_data('0')
+        if self.client.connection.connected():
+            self.client.disconnect()
+
+    def send_data(self, body):
+        if self._finished:
+            # if self.request.connection.stream.closed():
+            return
+        self.set_header('Content-Type', 'application/json;charset=UTF-8')
+        self.write(body)
+        self.finish()
+
+    def on_message(self, msg):
+        if msg.kind == 'message':
+            self.send_data(str(msg.body))
+        elif msg.kind == 'unsubscribe':
+            self.client.disconnect()
+
+    def on_finish(self):
+        if hasattr(self,'channel_name'):
+            if self.client.subscribed:
+                self.client.unsubscribe(self.channel_name)
+        super(TimeoutService, self).on_finish()
 
 class UserPermService(MINIUIBaseHandler):
     """用户权限服务"""
@@ -129,5 +185,6 @@ routes=[
     #(r'/s/menu',MenuService),
     #(r'/s/orgn',OrgnService),
     (r'/s/userperms',UserPermService),
+    (r'/s/sessiontimeout',TimeoutService),
 ]
 

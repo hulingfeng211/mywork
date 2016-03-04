@@ -13,6 +13,10 @@ import json
 import logging
 
 import functools
+from copy import copy
+
+import redis
+import tornadoredis
 from bson import ObjectId
 import re
 from tornado import gen
@@ -21,6 +25,9 @@ from tornado.web import escape, authenticated, HTTPError
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient
 from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
+
+import config
+import constant
 from core import bson_encode, is_json_request, clone_dict_without_id, clone_dict
 from core.treeutils import to_list
 from core.utils import format_datetime
@@ -35,6 +42,11 @@ DEFAULT_HEADERS = {
 
 
 class BaseHandler(SessionBaseHandler):
+
+    def initialize(self):
+        self.redis_client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS_DB])
+        self.redis_client.connect()
+
     @coroutine
     def prepare(self):
         current_user = self.current_user
@@ -46,12 +58,29 @@ class BaseHandler(SessionBaseHandler):
             # raise HTTPError(code=401,message='未授权')
             # self.finish()
 
+    #@coroutine
     def get_current_user(self):
-        return self.session.get('user', None)
+        sid = self.session.id
+        current_user= self.session.get('user', None)
+        if not current_user:
+            #self.client.publish(self.channel_name, self.request.body)
+            channel_name='session_time_out_%s'%sid
+            self.redis_client.publish(channel_name,1)
+            # 当前登录用户为空的时候给用户5秒的请求延时
+
+            #yield gen.sleep(5)
+            pass
+        else:
+            #channel_name='session_time_out_%s'%sid
+            #self.redis_client.publish(channel_name,0)
+            return current_user
 
     def on_finish(self):
         # todo update session expire when client call service.
         # SessionBaseHandler.on_finish()
+
+        if hasattr(self,'redis_client') and self.redis_client.connection.connected():
+            self.redis_client.disconnect()
         self.session.set('last_access_time', datetime.now())
         super(BaseHandler, self).on_finish()
 
@@ -94,7 +123,7 @@ class MINIUIBaseHandler(BaseHandler):
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(BaseHandler, self).initialize()
+        super(MINIUIBaseHandler, self).initialize()
 
     def get(self, *args, **kwargs):
         """提供默认的get方法的实现,如果template属性存在则进行页面模板的绘制后输出
@@ -479,6 +508,16 @@ def has_perms(perms):
 
     return decorator
 
+
+def create_redis_client():
+    if 'max_connections' in config.REDIS:
+        connection_pool = redis.ConnectionPool(**config.REDIS)
+        settings = copy(config.REDIS)
+        del settings['max_connections']
+        settings['connection_pool'] = connection_pool
+    else:
+        settings = config.REDIS
+    return redis.Redis(**settings)
 
 if __name__ == "__main__":
     from tornado.gen import IOLoop, coroutine

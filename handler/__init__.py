@@ -15,6 +15,7 @@ import pickle
 import tornadoredis
 from tornado.gen import coroutine, Task
 
+import constant
 from core import make_password
 from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler
 from core.utils import utc_to_local, format_datetime
@@ -30,15 +31,13 @@ class OnlineUserHandler(BaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
     def initialize(self):
         """"""""
-        cache_config = self.settings['session']['driver_settings']
-        host = cache_config['host']
-        port = cache_config['port']
-        db = cache_config['db']
-        self.client = tornadoredis.Client(selected_db=db, host=host, port=port)
-        self.client.connect()
+
 
     @coroutine
     def get(self, *args, **kwargs):
+
+        self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
+        self.client.connect()
         # todo
         keys = yield Task(self.client.keys)
 
@@ -63,8 +62,9 @@ class OnlineUserHandler(BaseHandler):
         self.send_message(result)
 
     def finish(self, chunk=None):
-        self.client.disconnect()
-        super(BaseHandler,self).finish()
+        if hasattr(self,'client') and self.client.connection.connected():
+            self.client.disconnect()
+        super(OnlineUserHandler,self).finish()
 
 
 # 公共的路由

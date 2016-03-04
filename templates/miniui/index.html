@@ -97,6 +97,7 @@
     </li>
 </ul>
 <script src="{{static_url('miniui/boot.js')}}"></script>
+<script src="{{static_url('miniui/jquery.cookie.js')}}"></script>
 <script type="text/javascript">
     mini.parse();
     $("body").css('display','inline');
@@ -179,6 +180,30 @@
             }
         }
     }
+    function timeout_polling() {
+        var url = '/s/sessiontimeout';
+        var sid = $.cookie('msid');
+        var channel_name='session_time_out_'+sid;
+
+        $.ajax({
+            url: url,
+            type: 'get',
+            data:{"channel_name":channel_name},
+            success: function (data) {
+                if(data==1)
+                        goToHome();
+                else
+                    window.setTimeout(timeout_polling, 0);
+            },
+            error: function (error) {
+                //mini.alert('服务器忙，请稍后重试');
+                window.setTimeout(timeout_polling, 10);
+            }
+
+        })
+    }
+    timeout_polling();
+
 </script>
 
 </body>
