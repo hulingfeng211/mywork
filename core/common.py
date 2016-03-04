@@ -509,15 +509,6 @@ def has_perms(perms):
     return decorator
 
 
-def create_redis_client():
-    if 'max_connections' in config.REDIS:
-        connection_pool = redis.ConnectionPool(**config.REDIS)
-        settings = copy(config.REDIS)
-        del settings['max_connections']
-        settings['connection_pool'] = connection_pool
-    else:
-        settings = config.REDIS
-    return redis.Redis(**settings)
 
 if __name__ == "__main__":
     from tornado.gen import IOLoop, coroutine

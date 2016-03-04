@@ -20,7 +20,7 @@ from tornado.web import RequestHandler, asynchronous
 from torndsession.sessionhandler import SessionBaseHandler
 
 import constant
-from core.common import MINIUIBaseHandler, create_redis_client
+from core.common import MINIUIBaseHandler
 
 __author__ = 'george'
 

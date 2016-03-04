@@ -9,17 +9,44 @@
 +============================================================"""
 import logging
 import motor
-from tornado.ioloop import IOLoop
+import pickle
+import tornadoredis
+from tornado import gen
+from tornado.ioloop import IOLoop, PeriodicCallback
 from tornado.options import define, options, parse_command_line
 from tornado.web import Application, RequestHandler, StaticFileHandler, RedirectHandler
-from tornado.gen import coroutine
+from tornado.gen import coroutine, Task
 from tornado.httpclient import AsyncHTTPClient
 import os
 from tornadoredis import ConnectionPool
+
+import config
 from core import settings
 from handler import auth, oa, chat, routes, miniui, service
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
+
+redis_client = tornadoredis.Client(connection_pool=config.CONNECTION_POOL,selected_db=config.SESSION_DB)
+redis_client.connect()
+
+@coroutine
+def session_time_out_check():
+    """用户登录会话超时检查"""
+    print 'session_timeout_check'
+    channel_name_pre="session_time_out_"
+    keys = yield Task(redis_client.keys)
+    for key in keys:
+        tmp_user=yield Task(redis_client.get,key)
+        user=pickle.loads(tmp_user)
+        if user and not user.get('user',None):
+            channel_name=channel_name_pre+key
+            redis_client.publish(channel_name,"1")
+            #continue
+    yield gen.sleep(10)
+    IOLoop.current().spawn_callback(session_time_out_check)
+    # 1分钟一次
+    #p=PeriodicCallback(session_time_out_check,10000)
+    #p.start()
 
 
 class IndexHandler(RequestHandler):
@@ -70,4 +97,6 @@ if __name__ == "__main__":
     app = WorkApplication()
     logging.info('server at http://*:%s' % options.port)
     app.listen(options.port)
-    IOLoop.current().start()
+    ioloop=IOLoop.current()
+    ioloop.run_sync(session_time_out_check)
+    ioloop.start()
