@@ -27,19 +27,19 @@ __author__ = 'george'
 class TimeoutService(SessionBaseHandler):
 
     def initialize(self, *args, **kwargs):
-        self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS_DB])
+        self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
         #self.client = tornadoredis.Client(selected_db=5, host='192.168.2.14', port=6379)
         self.client.connect()
 
     @asynchronous
     def get(self, *args, **kwargs):
-        channel_name=self.get_argument('channel_name',None)
+        channel_name='__keyevent@%s__:expired'%self.settings[constant.SESSION_DB]#self.get_argument('channel_name',None)
         if channel_name:
             self.channel_name=channel_name
             self.get_data(channel_name)
     @engine
     def subscribe(self,channel_name):
-        yield Task(self.client.subscribe, channel_name)
+        yield Task(self.client.psubscribe, channel_name)
         self.client.listen(self.on_message)
 
     # @coroutine
@@ -65,8 +65,9 @@ class TimeoutService(SessionBaseHandler):
         self.finish()
 
     def on_message(self, msg):
-        if msg.kind == 'message':
-            self.send_data(str(msg.body))
+        if msg.kind == 'pmessage':
+            if self.session.id==msg.body:
+                self.send_data("1")
         elif msg.kind == 'unsubscribe':
             self.client.disconnect()
 

@@ -43,9 +43,9 @@ DEFAULT_HEADERS = {
 
 class BaseHandler(SessionBaseHandler):
 
-    def initialize(self):
-        self.redis_client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS_DB])
-        self.redis_client.connect()
+    # def initialize(self):
+    #     self.redis_client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.REDIS_DB])
+    #     self.redis_client.connect()
 
     @coroutine
     def prepare(self):
@@ -62,25 +62,26 @@ class BaseHandler(SessionBaseHandler):
     def get_current_user(self):
         sid = self.session.id
         current_user= self.session.get('user', None)
-        if not current_user:
-            #self.client.publish(self.channel_name, self.request.body)
-            channel_name='session_time_out_%s'%sid
-            self.redis_client.publish(channel_name,1)
-            # 当前登录用户为空的时候给用户5秒的请求延时
-
-            #yield gen.sleep(5)
-            pass
-        else:
-            #channel_name='session_time_out_%s'%sid
-            #self.redis_client.publish(channel_name,0)
-            return current_user
+        return current_user
+        # if not current_user:
+        #     #self.client.publish(self.channel_name, self.request.body)
+        #     channel_name='session_time_out_%s'%sid
+        #     self.redis_client.publish(channel_name,1)
+        #     # 当前登录用户为空的时候给用户5秒的请求延时
+        #
+        #     #yield gen.sleep(5)
+        #     pass
+        # else:
+        #     #channel_name='session_time_out_%s'%sid
+        #     #self.redis_client.publish(channel_name,0)
+        #     return current_user
 
     def on_finish(self):
         # todo update session expire when client call service.
         # SessionBaseHandler.on_finish()
 
-        if hasattr(self,'redis_client') and self.redis_client.connection.connected():
-            self.redis_client.disconnect()
+        # if hasattr(self,'redis_client') and self.redis_client.connection.connected():
+        #     self.redis_client.disconnect()
         self.session.set('last_access_time', datetime.now())
         super(BaseHandler, self).on_finish()
 

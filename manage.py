@@ -98,5 +98,5 @@ if __name__ == "__main__":
     logging.info('server at http://*:%s' % options.port)
     app.listen(options.port)
     ioloop=IOLoop.current()
-    ioloop.run_sync(session_time_out_check)
+    #ioloop.run_sync(session_time_out_check)
     ioloop.start()
