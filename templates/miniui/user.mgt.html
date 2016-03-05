@@ -157,7 +157,7 @@
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
             //mini.alert(e.node.id);
-            grid.load({role_id: e.node.code})
+            grid.load({role: e.node.code})
         } else {
             grid.setData([]);
             grid.setTotalCount(0);
@@ -346,7 +346,7 @@
         var node = tree.getSelectedNode();
         if (node) {
             var newRow = {name: "新用户"};
-            newRow.role_id = node.code;
+            newRow.role = node.code;
             grid.addRow(newRow, 0);
         }
     }

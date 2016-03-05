@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="mini-splitter" style="width:100%;height:100%;">
+    <div size="230px" minSize="100px" maxSize="300px" showCollapseButton="true" style="padding:0px;">
+        <!--ajaxOptions='{type:"get"}' -->
+        <ul id="roleTree" url="/s/roles" ajaxOptions='{type:"get"}' class="mini-tree"
+            style="width:100%;height:100%;padding:5px;"
+            showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
+            allowLeafDropIn="true"
+            idField="id" parentField="pid" resultAsTree="false">
+        </ul>
+    </div>
+    <div showCollapseButton="false" style="padding-left: 5px;">
+        <div class="mini-toolbar">
+            <a class="mini-button" onclick="choice_menus" iconCls="icon-goto">选择菜单</a>
+            <a class="mini-button" onclick="save_data" iconCls="icon-save">保存</a>
+            <a class="mini-button" onclick="delete_data" iconCls="icon-remove">删除</a>
+        </div>
+        <div class="mini-fit">
+            <div id="menu_grid" url="/s/role/menus"
+                 multiSelect="true"
+                 ajaxOptions="{type:'get'}" class="mini-datagrid" style="width:100%;height:100%">
+                <div property="columns">
+                    <div type="checkcolumn"></div>
+                    <div field="id" headerAlign="center">编号</div>
+                    <div field="name" headerAlign="center">菜单名</div>
+                    <div field="url" headerAlign="center">URL</div>
+                    <div field="desc" headerAlign="center">菜单描述</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% end %}
+
+{% block script %}
+<script type="text/javascript">
+    var roleTree = mini.get('roleTree');
+    var menu_grid = mini.get('menu_grid');
+    roleTree.on('nodeselect', function (e) {
+        if (e.isLeaf) {
+            menu_grid.load({"role_id": e.selected.id});
+        }
+    });
+    function load_data() {
+        var current_role = roleTree.getSelectedNode();
+        if (!roleTree.isLeaf(current_role)) {
+            mini.alert('请选择子节点的角色');
+            return false;
+        }
+        menu_grid.load({"role_id": current_role.id});
+
+    }
+    function delete_data() {
+        var rows = menu_grid.getSelecteds();
+        if (rows.length > 0) {
+            menu_grid.removeRows(rows, true);
+        }
+    }
+    function save_data() {
+        var current_role = roleTree.getSelectedNode();
+        if (!roleTree.isLeaf(current_role)) {
+            mini.alert('请选择子节点的角色');
+            return false;
+        }
+        var data = menu_grid.getChanges();
+        if (!data) {
+            mini.alert('没有需要保存的数据');
+            return false;
+        }
+        $.ajax({
+                    url: '/s/role/menus',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: mini.encode({'role_id': current_role.id, 'menus': data}),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                    },
+                    success: function (result) {
+                        load_data();
+                    },
+                    error: function (error) {
+
+                    }
+                }
+        )
+
+    }
+
+    function choice_menus() {
+        var current_role = roleTree.getSelectedNode();
+        if (!roleTree.isLeaf(current_role)) {
+            mini.alert('请选择子节点的角色');
+            return false;
+        }
+        mini.open({
+            url: '/page/choice_menus',
+            title: '选择菜单',
+            width: 650,
+            height: 380,
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);
+                    if (data) {
+                        //mini.forEach()
+                        for (var i = 0; i < data.length; i++) {
+                            menu_grid.addRow(data[i], 0);
+                        }
+                    }
+                }
+            }
+
+        });
+    }
+</script>
+{% end %}

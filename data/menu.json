@@ -48,6 +48,13 @@
           "name": "在线用户",
           "url": "/page/onlineuser",
           "desc": "在线用户管理"
+        },
+        {
+          "_id": 9,
+          "_pid": 1,
+          "name": "角色菜单",
+          "url": "/page/role2menu",
+          "desc": "角色菜单"
         }
       ]
     }

@@ -46,7 +46,7 @@ class LoginHandler(MINIUIBaseHandler):
         if user and pwd:
             if make_password(pwd) == user.get('pwd'):
                 # self.send_error(status_code=500,reason='用户名和密码不能违空')
-                self.session.set('user',{'username':username,'remote_ip':self.request.remote_ip,'login_time':datetime.datetime.now()})
+                self.session.set('user',{'username':username,'role':user.get('role'),'remote_ip':self.request.remote_ip,'login_time':datetime.datetime.now()})
                 self.send_message("登录成功")
             else:
                 self.send_message("密码错误",status_code=1)
@@ -66,5 +66,7 @@ routes = [
     (r'/page/perms', MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
     (r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
     (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
+    (r'/page/choice_menus', MINIUIBaseHandler,{'template':'miniui/menu.choice.html','title':'选择菜单'}),
+    (r'/page/role2menu', MINIUIBaseHandler,{'template':'miniui/role2menu.mgt.html','title':'角色菜单'}),
 ]
 
