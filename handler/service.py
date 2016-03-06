@@ -82,7 +82,9 @@ class TimeoutService(BaseHandler):
         if hasattr(self,'channel_name'):
             if self.client.subscribed:
                 self.client.unsubscribe(self.channel_name)
-        super(TimeoutService, self).on_finish()
+
+        # 不需要进行session的expire的刷新
+        #super(TimeoutService, self).on_finish()
 
 class UserPermService(MINIUIBaseHandler):
     """用户权限服务"""
