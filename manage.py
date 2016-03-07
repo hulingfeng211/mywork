@@ -26,28 +26,8 @@ from handler import auth, oa, chat, routes, miniui, service
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
 
-redis_client = tornadoredis.Client(connection_pool=config.CONNECTION_POOL,selected_db=config.SESSION_DB)
-redis_client.connect()
-
-@coroutine
-def session_time_out_check():
-    """用户登录会话超时检查"""
-    print 'session_timeout_check'
-    channel_name_pre="session_time_out_"
-    keys = yield Task(redis_client.keys)
-    for key in keys:
-        tmp_user=yield Task(redis_client.get,key)
-        user=pickle.loads(tmp_user)
-        if user and not user.get('user',None):
-            channel_name=channel_name_pre+key
-            redis_client.publish(channel_name,"1")
-            #continue
-    yield gen.sleep(10)
-    IOLoop.current().spawn_callback(session_time_out_check)
-    # 1分钟一次
-    #p=PeriodicCallback(session_time_out_check,10000)
-    #p.start()
-
+def add(a,b):
+    return a+b
 
 class IndexHandler(RequestHandler):
     @coroutine
@@ -62,7 +42,7 @@ class IndexHandler(RequestHandler):
         status = self.get_argument('status', None)
         sid = self.get_argument('sid', None)
 
-        self.render('index.html', title='炎黄表单', pid=pid, tid=tid, status=status, sid=sid)
+        self.render('index.html', title='炎黄表单', pid=pid, tid=tid, status=status, sid=sid,add=add)
         # query_args=self.get_arguments()
         # self.write(self.request.body)
 

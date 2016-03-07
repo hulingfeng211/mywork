@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>{{site_name}}</title>
+    <title>{{ site_name }}</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <!--
     <script src="{{static_url('miniui/jquery-1.6.2.min.js')}}"></script>
@@ -23,18 +23,17 @@
             height: 100%;
             overflow: hidden;
         }
-
-        .header {
-            background: url("{{static_url('miniui/miniui/themes/default/images/header.gif')}}") repeat-x 0 -1px;
-        }
     </style>
 </head>
 <body style="display: none;">
 
 <!--Layout-->
 <div id="layout1" class="mini-layout" style="width:100%;height:100%;">
-    <div class="header" region="north" height="70" showSplit="false" showHeader="false">
-        <h1 style="margin:0;padding:15px;cursor:default;font-family:微软雅黑,黑体,宋体;">{{site_name}}</h1>
+    <div class="app-header" region="north" height="70" showSplit="false" showHeader="false">
+        <div>
+            <h1 style="margin:0;padding:15px;cursor:default;font-family:微软雅黑,黑体,宋体;">{{ site_name }}
+            </h1>
+        </div>
 
         <div style="position:absolute;top:18px;right:10px;">
             <a class="mini-button mini-button-iconTop" iconCls="icon-add" onclick="onQuickClick" plain="true">快捷</a>
@@ -96,11 +95,12 @@
         </ul>
     </li>
 </ul>
-<script src="{{static_url('miniui/boot.js')}}"></script>
-<script src="{{static_url('miniui/jquery.cookie.js')}}"></script>
+<script src="{{ static_url('miniui/boot.js') }}"></script>
+<script src="{{ static_url('miniui/jquery.cookie.js') }}"></script>
 <script type="text/javascript">
     mini.parse();
-    $("body").css('display','inline');
+    $("body").css('display', 'inline');
+
     var tree = mini.get("leftTree");
     window.onload = function () {
         //alert('dfds');
@@ -108,8 +108,7 @@
             var menu = mini.get("contextMenu");
             menu.showAtPos(e.pageX, e.pageY);
             return false;
-        })
-
+        });
     };
     function onSkinChange(node) {
         var skin = node.text;
@@ -183,15 +182,15 @@
     function timeout_polling() {
         var url = '/s/sessiontimeout';
         var sid = $.cookie('msid');
-        var channel_name='session_time_out_'+sid;
+        var channel_name = 'session_time_out_' + sid;
 
         $.ajax({
             url: url,
             type: 'get',
-            data:{"channel_name":channel_name},
+            data: {"channel_name": channel_name},
             success: function (data) {
-                if(data==1)
-                        goToHome();
+                if (data == 1)
+                    goToHome();
                 else
                     window.setTimeout(timeout_polling, 0);
             },

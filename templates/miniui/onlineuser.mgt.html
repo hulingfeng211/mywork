@@ -5,8 +5,10 @@
         <table style="width:100%">
             <tr>
                 <td style="width:100%">
+                    {%   if has_perm('onlineuser:logout') %}
                     <a class="mini-button" iconCls="icon-close" onClick="logout" plain="true"
                        tooltip="注销用户">注销用户</a>
+                    {% end %}
                     <a class="mini-button" iconCls="icon-reload" onClick="reload" plain="true" tooltip="刷新">刷新</a>
                 </td>
             </tr>

@@ -17,7 +17,20 @@
           "_pid": 1,
           "name": "超级管理员",
           "code":"root"
+        },
+         {
+          "_id": 4,
+          "_pid": 1,
+          "name": "普通访客",
+          "code":"guest"
+        },
+        {
+          "_id": 5,
+          "_pid": 1,
+          "name": "菜单管理员",
+          "code":"cdgl"
         }
+
       ]
     }
   ]

@@ -1,50 +1,50 @@
 {% extends "base.html" %}
 {% block style %}
-    <style type="text/css">
+<style type="text/css">
     {# .mini-panel {
         float: left;
          width: 300px;
          height: 190px;
          margin-right: 2px;
     }#}
-    </style>
+</style>
 
 {% end %}
-{%block body %}
-  <div class="mini-panel" title="header" iconCls="icon-add" style="height: 200px;width:300px;float: left;"
-    showToolbar="true" showCloseButton="true" showFooter="true">
+{% block body %}
+<!--
+<div class="mini-panel" id="onlineuser" title="在线用户" iconCls="icon-node" style="height: 300px;width:600px;float: left;"
+     showToolbar="true" url="/page/onlineuser" showCloseButton="true" showFooter="true">
 
-    <!--body-->
-    body<br />
-    1<br />1<br />1<br />1<br />
-</div>
-<div class="mini-panel" url="/page/onlineuser" title="header" iconCls="icon-add" style="height: 200px;width:300px;float: left;"
-    showToolbar="true" showCloseButton="true" showFooter="true">
 
-    <!--body-->
-    body<br />
-    1<br />1<br />1<br />1<br />
-</div>
-<div class="mini-panel" title="header" iconCls="icon-add" style="height: 200px;width:300px;float: left;"
-    showToolbar="true" showCloseButton="true" showFooter="true">
 
-    <!--body-->
-    body<br />
-    1<br />1<br />1<br />1<br />
-</div>
-<div class="mini-panel" title="header" iconCls="icon-add" style="height: 200px;width:300px;float: left;"
-    showToolbar="true" showCloseButton="true" showFooter="true">
+</div> -->
 
-    <!--body-->
-    body<br />
-    1<br />1<br />1<br />1<br />
-</div>
+<button id="ccc">fff</button>
+{% end %}
 
-{%end%}
-{%block script%}
-    <script type="text/javascript">
-        function onClick(e){
-            mini.alert('test');
-        }
-    </script>
-{%end%}
+{% block script %}
+<script src="{{ static_url('miniui/miniui/Portal.js') }}"></script>
+<style href="{{ static_url('miniui/miniui/Portal.css') }}" type="text/css"></style>
+<script type="text/javascript">
+    var portal = new mini.ux.Portal();
+    portal.set({
+        style: "width: 100%;height:800px",
+        columns: [300, "100%", 300]
+    });
+    portal.render(document.body);
+    //panel
+    portal.setPanels([
+        {column: 0, id: "p1", title: "panel1", showCloseButton: true,body:'#ccc',width:300},
+        {column: 0, id: "p2", title: "panel2", showCollapseButton: true},
+
+        {column: 1, id: "p3", title: "panel3", showCloseButton: true},
+        {column: 1, id: "p4", title: "panel4", showCollapseButton: true},
+
+        {column: 2, id: "p5", title: "panel5", showCloseButton: true},
+        {column: 2, id: "p6", title: "panel6", showCollapseButton: true}
+    ]);
+    function onClick(e) {
+        mini.alert('test');
+    }
+</script>
+{% end %}

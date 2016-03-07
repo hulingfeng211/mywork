@@ -2,6 +2,8 @@
 import time
 
 import datetime
+
+from bson import ObjectId
 from tornado import gen
 from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
@@ -23,7 +25,12 @@ class LogoutHandler(MINIUIBaseHandler):
     def prepare(self):
         pass
 
+    @coroutine
     def get(self, *args, **kwargs):
+        skin=self.get_cookie('miniuiSkin')
+        # 保存用户设置
+        db=self.settings['db']
+        yield db.user.profile.save({'_id':self.current_user.get('username'),'skin':skin})
         self.session.delete('user')
         self.redirect('/app')
 
@@ -45,8 +52,21 @@ class LoginHandler(MINIUIBaseHandler):
         user = yield db.users.find_one({"$or":[{"email":username},{"loginname":username}]})
         if user and pwd:
             if make_password(pwd) == user.get('pwd'):
+                if user.get('nologin')==1:
+                    self.send_message('用户被禁止登录，请联系管理员!',status_code=1)
+                    return
                 # self.send_error(status_code=500,reason='用户名和密码不能违空')
-                self.session.set('user',{'username':username,'role':user.get('role'),'remote_ip':self.request.remote_ip,'login_time':datetime.datetime.now()})
+                # 验证通过后，获取用户的权限列表信息并保存到用户会话中
+                user_perm_ids=[ObjectId(id) for id in user.get('perms',[])]
+                perms=yield db.perms.find({"_id":{"$in":user_perm_ids}},{'_id':0,'name':1}).to_list(length=None)
+                self.session.set('user',{'username':username,
+                                         'role':user.get('role'),
+                                         'perms':[item['name'] for item in perms],
+                                         'remote_ip':self.request.remote_ip,
+                                         'login_time':datetime.datetime.now()})
+                user_profile=yield db.user.profile.find_one({'_id':username})
+                skin=user_profile.get('skin','default') if user_profile else 'default'
+                self.set_cookie('miniuiSkin',skin)
                 self.send_message("登录成功")
             else:
                 self.send_message("密码错误",status_code=1)
@@ -57,14 +77,24 @@ routes = [
     (r'/app/', IndexHandler),
     (r'/app$', IndexHandler),
     (r'/page/home', MINIUIBaseHandler,{'template':'miniui/home.html','title':'首页'}),
-    (r'/page/menu', MINIUIBaseHandler,{'template':'miniui/menu.mgt.html','title':'菜单管理'}),
+    (r'/page/menu', MINIUIBaseHandler,{'template':'miniui/menu.mgt.html',
+                                       'title':'菜单管理',
+                                       'role_map':{
+                                           'get':'ptyh','post':'ptyh'
+                                       }}),
     (r'/page/orgn', MINIUIBaseHandler,{'template':'miniui/orgn.mgt.html','title':'组织管理'}),
     (r'/page/employee', MINIUIBaseHandler,{'template':'miniui/employee.mgt.html','title':'员工管理'}),
     (r'/page/user', MINIUIBaseHandler,{'template':'miniui/user.mgt.html','title':'用户管理'}),
     (r'/page/login', LoginHandler),
     (r'/page/logout', LogoutHandler),
     (r'/page/perms', MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
-    (r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
+
+    # 仅root角色的用户可以访问此url
+    (r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html',
+                                             'title':'在线用户管理',
+                                             'role_map':{'post':'root,ptyh'}}),
+
+    #(r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
     (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
     (r'/page/choice_menus', MINIUIBaseHandler,{'template':'miniui/menu.choice.html','title':'选择菜单'}),
     (r'/page/role2menu', MINIUIBaseHandler,{'template':'miniui/role2menu.mgt.html','title':'角色菜单'}),

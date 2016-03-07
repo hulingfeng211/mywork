@@ -117,7 +117,21 @@ class BaseHandler(SessionBaseHandler):
 class MINIUIBaseHandler(BaseHandler):
     @authenticated
     def prepare(self):
-        pass
+        """检查用户的角色(role)和权限(perms),从redis中获取"""
+        # 检查用户的角色和权限，从redis中获取
+        method=self.request.method.lower()
+        default_guest_role_code=self.settings[constant.GUEST_ROLE_CODE]
+        default_root_role_code=self.settings[constant.ROOT_ROLE_CODE]
+
+        # 超级管理员可以做任何操作
+        if self.current_user.get('role')==default_root_role_code:
+            return
+
+        if hasattr(self,'role_map'):
+            if not self.role_map.get(method,default_guest_role_code)==default_guest_role_code:
+                if  self.current_user.get('role',None) not in self.role_map.get(method) :
+                    self.send_error(status_code=401,reason="用户没有权限")
+
 
     def initialize(self, *args, **kwargs):
         if kwargs:
@@ -133,10 +147,15 @@ class MINIUIBaseHandler(BaseHandler):
         (r'/s/perms',MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
 
         """
-        if self.template and self.title:
-            self.render(self.template, title=self.title)
+        if hasattr(self,'template') and hasattr(self,'title'):
+            self.render(self.template, title=self.title,has_perm=self.has_perm)
         else:
             raise HTTPError(405)
+
+    def has_perm(self,perm):
+        """判断用户有没有某权限"""
+        user_perms=self.current_user.get('perms',None)
+        return perm in user_perms if user_perms else False
 
 
 class MINIUITreeHandler(MINIUIBaseHandler):
@@ -476,38 +495,38 @@ class MongoBaseHandler(BaseHandler):
         self.send_message("保存成功")
 
 
-def has_roles(roles):
-    """装饰器
-    :param roles 角色列表
-    :return 装饰后的方法"""
-
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            print '%s %s()' % (roles, func.__name__)
-            # todo 判断当前角色列表roles数据是否在登陆的用户角色列表中，如果存在则执行方法func，否则提示没有权限
-            return func(self, *args, **kwargs)
-
-        return wrapper
-
-    return decorator
-
-
-def has_perms(perms):
-    """装饰器
-    :param perms 权限列表
-    :return 装饰后的方法"""
-
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            print '%s %s()' % (perms, func.__name__)
-            # todo 判断当前权限列表perms数据是否在登陆的用户权限列表中，如果存在则执行方法func，否则提示没有权限
-            return func(self, *args, **kwargs)
-
-        return wrapper
-
-    return decorator
+# def has_roles(roles):
+#     """装饰器
+#     :param roles 角色列表
+#     :return 装饰后的方法"""
+#
+#     def decorator(func):
+#         @functools.wraps(func)
+#         def wrapper(self, *args, **kwargs):
+#             print '%s %s()' % (roles, func.__name__)
+#             # todo 判断当前角色列表roles数据是否在登陆的用户角色列表中，如果存在则执行方法func，否则提示没有权限
+#             return func(self, *args, **kwargs)
+#
+#         return wrapper
+#
+#     return decorator
+#
+#
+# def has_perms(perms):
+#     """装饰器
+#     :param perms 权限列表
+#     :return 装饰后的方法"""
+#
+#     def decorator(func):
+#         @functools.wraps(func)
+#         def wrapper(self, *args, **kwargs):
+#             print '%s %s()' % (perms, func.__name__)
+#             # todo 判断当前权限列表perms数据是否在登陆的用户权限列表中，如果存在则执行方法func，否则提示没有权限
+#             return func(self, *args, **kwargs)
+#
+#         return wrapper
+#
+#     return decorator
 
 
 

@@ -31,16 +31,14 @@ class OnlineUserHandler(BaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
     def initialize(self):
         """"""""
+        self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
+        self.client.connect()
 
 
     @coroutine
     def get(self, *args, **kwargs):
 
-        self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
-        self.client.connect()
-        # todo
         keys = yield Task(self.client.keys)
-
         result = []
         for key in keys:
             tmp_user=yield Task(self.client.get,key)
