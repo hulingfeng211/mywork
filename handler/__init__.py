@@ -17,7 +17,7 @@ from tornado.gen import coroutine, Task
 
 import constant
 from core import make_password
-from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler
+from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler, MINIUIBaseHandler
 from core.utils import utc_to_local, format_datetime
 
 class MD5Handler(BaseHandler):
@@ -27,11 +27,12 @@ class MD5Handler(BaseHandler):
         md5=make_password(key if key else '111111')
         self.send_message(md5)
 
-class OnlineUserHandler(BaseHandler):
+class OnlineUserHandler(MINIUIBaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
     def initialize(self):
         """"""""
         self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
+        #self.client = tornadoredis.Client(selected_db=4, host='192.168.2.14', port=6379)
         self.client.connect()
 
 
@@ -58,11 +59,11 @@ class OnlineUserHandler(BaseHandler):
             })
 
         self.send_message(result)
-
-    def finish(self, chunk=None):
+    @coroutine
+    def on_finish(self):
         if hasattr(self,'client') and self.client.connection.connected():
-            self.client.disconnect()
-        super(OnlineUserHandler,self).finish()
+            yield Task(self.client.disconnect)
+        super(OnlineUserHandler,self).on_finish()
 
 
 # 公共的路由

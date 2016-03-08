@@ -98,5 +98,6 @@ routes = [
     (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
     (r'/page/choice_menus', MINIUIBaseHandler,{'template':'miniui/menu.choice.html','title':'选择菜单'}),
     (r'/page/role2menu', MINIUIBaseHandler,{'template':'miniui/role2menu.mgt.html','title':'角色菜单'}),
+    (r'/page/userprofile', MINIUIBaseHandler,{'template':'miniui/user.profile.html','title':'用户配置'}),
 ]
 

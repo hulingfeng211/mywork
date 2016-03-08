@@ -8,10 +8,9 @@
 +Description:应用程序配置文件
 +============================================================"""
 import os
-import datetime
-# 开启程序的debug模式
 from tornadoredis import ConnectionPool
 
+# 开启程序的debug模式
 DEBUG = True
 
 # 指定静态文件的路经
@@ -28,6 +27,12 @@ MAX_CONNECTIONS = 1024
 REDIS_DB = 5
 SESSION_DB= 4
 
+
+
+CONNECTION_POOL=ConnectionPool(wait_for_available=True,**dict(
+    host=REDIS_HOST,
+    port=REDIS_PORT
+))
 # session相关的配置
 # redis as session store
 SESSION = {
@@ -37,14 +42,10 @@ SESSION = {
          host=REDIS_HOST,
          port=REDIS_PORT,
          db=SESSION_DB,
+         #connection_pool=CONNECTION_POOL
          max_connections=MAX_CONNECTIONS
      )
  }
-
-CONNECTION_POOL=ConnectionPool(wait_for_available=False,**dict(
-    host=REDIS_HOST,
-    port=REDIS_PORT
-))
 
 # 生成方法 core/utils/generate_cookie_secret
 COOKIE_SECRET = '0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='

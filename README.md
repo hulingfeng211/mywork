@@ -27,6 +27,9 @@
 
 > 使用psubcribe进行订阅，通道名字为`'__keyevent@0__:expired'`
     在终端中通过`expire key timeout`设置`key`的超时时间
+
+
+### multi-mechanize压力测试
     
 
 

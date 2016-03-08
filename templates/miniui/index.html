@@ -39,7 +39,7 @@
             <a class="mini-button mini-button-iconTop" iconCls="icon-add" onclick="onQuickClick" plain="true">快捷</a>
             <a class="mini-button mini-button-iconTop" iconCls="icon-edit" onclick="goToHome()" plain="true">首页</a>
             <a class="mini-button mini-button-iconTop" iconCls="icon-date" onclick="onClick" plain="true">消息</a>
-            <a class="mini-button mini-button-iconTop" iconCls="icon-edit" onclick="onClick" plain="true">设置</a>
+            <a class="mini-button mini-button-iconTop" iconCls="icon-edit" onclick="onProfileClick" plain="true">设置</a>
             <a class="mini-button mini-button-iconTop" iconCls="icon-unlock" onclick="onLogoutClick" plain="true">注销</a>
 
         </div>
@@ -178,6 +178,31 @@
                 tree.selectNode(node);
             }
         }
+    }
+    /**
+     * 用户设置按钮点击后弹出用户信息设置窗口
+     * */
+    function onProfileClick(){
+       mini.open({
+            url: '/page/userprofile',
+            title: '用户信息设置',
+            width: 650,
+            height: 360,
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);
+                    if (data) {
+                        //mini.forEach()
+                        for (var i = 0; i < data.length; i++) {
+                            gridPerms.addRow(data[i], 0);
+                        }
+                    }
+                }
+            }
+
+        })
     }
     function timeout_polling() {
         var url = '/s/sessiontimeout';

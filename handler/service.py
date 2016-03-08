@@ -35,7 +35,7 @@ class TimeoutService(BaseHandler):
 
     def initialize(self, *args, **kwargs):
         self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
-        #self.client = tornadoredis.Client(selected_db=5, host='192.168.2.14', port=6379)
+        #self.client = tornadoredis.Client(selected_db=4, host='192.168.2.14', port=6379)
         self.client.connect()
 
     @asynchronous
@@ -78,10 +78,13 @@ class TimeoutService(BaseHandler):
         elif msg.kind == 'unsubscribe':
             self.client.disconnect()
 
+    @coroutine
     def on_finish(self):
         if hasattr(self,'channel_name'):
             if self.client.subscribed:
                 self.client.unsubscribe(self.channel_name)
+            if self.client.connection.connected():
+                yield Task(self.client.disconnect)
 
         # 不需要进行session的expire的刷新
         #super(TimeoutService, self).on_finish()

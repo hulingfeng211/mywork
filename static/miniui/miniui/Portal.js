@@ -82,7 +82,7 @@ mini.extend(mini.ux.Portal, mini.Control, {
             showCloseButton: true,
             showCollapseButton: true,
             width: "100%",
-            height: "100px"
+            height: "200px"
         };
     },
     getPanelBodyEl: function (panel) {
