@@ -11,7 +11,7 @@ def get_user_session(cookie=""):
     cookies={
 
     }
-    cookie_str="msid=b9b1c197b6084731a1842e7f16eb0fe7; _xsrf=2|104e19af|70037b46a5ec209814572f53ddeb6b09|1457395534"
+    cookie_str="msid=8dc48fd69f80446fa2304786d54053dd; _xsrf=2|0e2212d9|be3a7f3c45c84f0d31f411bd2e67e1d6|1457438251"
     for cookie in cookie_str.split(';'):
         item=cookie.strip().split('=')
         cookies[item[0].strip()]=item[1]
@@ -39,15 +39,16 @@ class Transaction(object):
         },cookies=cookies)
 
         end=time.time()
-        #assert res.status_code==200
-        print res.status_code
+        assert res.status_code==200
+        #print res.status_code
         self.custom_timers['Example_Timer'] = end-start
 
 
 if __name__ == '__main__':
     trans = Transaction()
-    for i in range(1,1000):
-        print i
+    #for i in range(1,1000):
+    #    print i
         #time.sleep(1)
-        trans.run()
+    #    trans.run()
+    trans.run()
     print trans.custom_timers

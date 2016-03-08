@@ -46,7 +46,7 @@ def get_user_session(cookie=""):
     cookies={
 
     }
-    cookie_str="msid=915f7debf86b49538d431bbd3e680dfc; _xsrf=2|73f9c1a9|b920913465f8726eb69e0521f5cbacc3|1456810602"
+    cookie_str="msid=8dc48fd69f80446fa2304786d54053dd; _xsrf=2|0e2212d9|be3a7f3c45c84f0d31f411bd2e67e1d6|1457438251"
     for cookie in cookie_str.split(';'):
         item=cookie.strip().split('=')
         cookies[item[0].strip()]=item[1]
@@ -108,15 +108,15 @@ if __name__=="__main__":
     #    print args.op
 
     # menus
-    #menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
-    #import_data(menu_json_path,resources='menus')
+    menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
+    import_data(menu_json_path,resources='menus')
     #
 
     # roles
-    #role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
-    #import_data(role_json_path,resources='roles')
+    role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
+    import_data(role_json_path,resources='roles')
 
     # add root
-    add_root_user()
+    #add_root_user()
 
 

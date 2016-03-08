@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-{% block style %}
-<link href="{{ static_url('miniui/miniui/Portal.css') }}" rel="stylesheet" type="text/css">
-{% end %}
+
 {% block body %}
 
 {#<div class="mini-panel" allowDrag="true" id="onlineuser" title="在线用户" iconCls="icon-node" style="height: 300px;width:600px;float: left;"
@@ -13,7 +11,9 @@
 
 {% end %}
 
-{% block script %}
+
+{% block end %}
+<link href="{{ static_url('miniui/miniui/portal.css') }}" rel="stylesheet" type="text/css">
 <script src="{{ static_url('miniui/miniui/Portal.js') }}"></script>
 
 <script type="text/javascript">
@@ -24,7 +24,7 @@
     });
     //panel
     portal.setPanels([
-        {column: 0, id: "p1", title: "待办任务", showCloseButton: true,body:'#ccc'},
+        {column: 0, id: "p1", title: "待办任务", showCloseButton: true},
         {column: 0, id: "p2", title: "消息列表", showCollapseButton: true},
         {column: 0, id: "p7", title: "销量统计", showCollapseButton: true},
 

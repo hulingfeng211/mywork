@@ -29,7 +29,7 @@
     {% block style %}
     {% end %}
 </head>
-<body style="display: none">
+<body style="display: none; ">
 
 {%block body %}
 {%end%}
@@ -44,10 +44,12 @@
 <script src="{{static_url('miniui/jquery.md5.js')}}"></script>
 <script type="text/javascript">
     mini.parse();
-    $('body').css('display','block');
+   $('body').css('display','block');
 </script>
 {%block script %}
 {%end%}
 
 </body>
 </html>
+{% block end %}
+{% end %}

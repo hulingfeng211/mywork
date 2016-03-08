@@ -24,6 +24,8 @@ from core.common import MINIUIBaseHandler, BaseHandler
 
 __author__ = 'george'
 
+
+
 class TimeoutService(BaseHandler):
 
     def prepare(self):
@@ -54,14 +56,14 @@ class TimeoutService(BaseHandler):
         if self.request.connection.stream.closed():
             return
         self.subscribe(channel_name)
-        num = 90  # 设置超时时间,
+        num = 5  # 设置超时时间,
 
         IOLoop.current().add_timeout(time.time() + num, lambda: self.on_timeout(num))
 
     def on_timeout(self, num):
         self.send_data('0')
-        if self.client.connection.connected():
-            self.client.disconnect()
+        #if self.client.connection.connected():
+        #    self.client.disconnect()
 
     def send_data(self, body):
         if self._finished:
@@ -83,8 +85,8 @@ class TimeoutService(BaseHandler):
         if hasattr(self,'channel_name'):
             if self.client.subscribed:
                 self.client.unsubscribe(self.channel_name)
-            if self.client.connection.connected():
-                yield Task(self.client.disconnect)
+            #if self.client.connection.connected():
+            #    yield Task(self.client.disconnect)
 
         # 不需要进行session的expire的刷新
         #super(TimeoutService, self).on_finish()
