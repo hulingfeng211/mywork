@@ -54,3 +54,6 @@ CONNECTION_POOL='connection_pool'
 ROOT_ROLE_CODE = 'root_role_code'
 GUEST_ROLE_CODE = 'guest_role_code'
 
+# 最大的轮询超时时间
+MAX_POLLING_TIMEOUT = 'max_polling_timeout'
+

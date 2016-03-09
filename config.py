@@ -21,7 +21,7 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'templates')
 # TEMPLATE_PATH=os.path.join(os.path.dirname(__file__),'front')
 
 # REDIS Server相关配置
-REDIS_HOST = '192.168.2.14'
+REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 MAX_CONNECTIONS = 1024
 REDIS_DB = 5
@@ -57,14 +57,17 @@ LOGIN_URL = "/page/login"
 XSRF_COOKIES = True
 
 # MONGODB设置
-MONGO_URI = "mongodb://192.168.2.14:27017/"
+MONGO_URI = "mongodb://localhost:27017/"
 DB_NAME = 'mywork'
 
 # 站点设置
-SITE_NAME = "XXX后台系统"
+SITE_NAME = "XXX管理系统"
 
 # 超级管理员的角色编码
 ROOT_ROLE_CODE = 'root'
 
 # 访客用户的角色编码
 GUEST_ROLE_CODE = 'guest'
+
+# 最大的轮询超时时间
+MAX_POLLING_TIMEOUT = 20

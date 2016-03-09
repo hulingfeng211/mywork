@@ -8,20 +8,23 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:100%;">
-                      {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
+                        {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
                           <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
                         <a class="mini-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
                     </td>
                 </tr>
             </table>
         </div>
-        <!--ajaxOptions='{type:"get"}' -->
-        <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}' class="mini-tree"
-            style="width:100%;height:100%;padding:5px;"
-            showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
-            allowLeafDropIn="true"
-            idField="id" parentField="pid" resultAsTree="false">
-        </ul>
+        <div class="mini-fit">
+            <!--ajaxOptions='{type:"get"}' -->
+            <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}'
+                class="mini-tree"
+                style="width:100%;height:100%;padding:5px;"
+                showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
+                allowLeafDropIn="true"
+                idField="id" parentField="pid" resultAsTree="false">
+            </ul>
+        </div>
         <ul id="contextMenu" class="mini-contextmenu">
             <li>
                 <span>插入</span>
@@ -75,7 +78,7 @@
                     <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
-                    <div field="email" required="true"  vtype="email" width="100" allowSort="true" align="center"
+                    <div field="email" required="true" vtype="email" width="100" allowSort="true" align="center"
                          headerAlign="center">邮箱
                         <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
                     </div>
@@ -176,16 +179,16 @@
     function savePermData() {
         var selectUser = grid.getSelected();
         var perms = gridPerms.getChanges();
-        var data={'uid': selectUser['id'], 'perms': perms};
+        var data = {'uid': selectUser['id'], 'perms': perms};
         $.ajax(
                 {
                     url: '/s/userperms',
                     type: 'post',
-                    contentType:'application/json',
+                    contentType: 'application/json',
                     data: mini.encode(data),
                     beforeSend: function (xhr) {
-		                xhr.setRequestHeader('X-Xsrftoken',$.cookie('_xsrf'));
-	                },
+                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                    },
                     success: function (result) {
                         gridPerms.load({'key': selectUser['id']})
                     }
@@ -237,7 +240,7 @@
                 data: {key: row.loginname},
                 success: function (result) {
                     //row['pwd'] = result.data;
-                    grid.updateRow(row,{"pwd":result.data})
+                    grid.updateRow(row, {"pwd": result.data})
                 }
             });
         }
@@ -279,7 +282,7 @@
     }
 
     function upDateNode(options) {
-       // var tree = mini.get("tree1");
+        // var tree = mini.get("tree1");
         var node = tree.getSelectedNode();
         options = mini.clone(options);
         tree.updateNode(node, options)
@@ -391,8 +394,8 @@
     function OnCellBeginEdit(e) {
         var record = e.record;
         var field = e.field;
-        var editableFields=['name','superuser','nologin'];
-        if (record['id'] != null && editableFields.indexOf(field)==-1) {
+        var editableFields = ['name', 'superuser', 'nologin'];
+        if (record['id'] != null && editableFields.indexOf(field) == -1) {
             e.cancel = true;
         }
     }

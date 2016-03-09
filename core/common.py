@@ -164,6 +164,17 @@ class MINIUIBaseHandler(BaseHandler):
         user_role=self.current_user.get('role',[])
         return role in user_role if user_role else False
 
+    @coroutine
+    def write_page(self,cursor,pageIndex=0,pageSize=20):
+        """向浏览器输出一页数据
+        :param cursor mongodb的数据库游标
+        :param pageIndex 浏览器传入的当前页码
+        :param pageSize 当前页显示的行数"""
+        total=yield cursor.count()
+        data=yield cursor.skip(pageIndex*pageSize).limit(pageSize).to_list(length=None)
+        self.set_header('Content-Type', 'application/json;charset=UTF-8')
+        self.write(bson_encode({'data':data,'total':total}))
+
 
 class MINIUITreeHandler(MINIUIBaseHandler):
     """

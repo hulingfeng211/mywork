@@ -15,13 +15,16 @@
                 </tr>
             </table>
         </div>
-        <!--ajaxOptions='{type:"get"}' -->
-        <ul id="tree1" onnodedblclick="onNodeDoubleClick()" url="/s/orgns" ajaxOptions='{type:"get"}' class="mini-tree"
-            style="width:100%;height:100%;padding:5px;"
-            showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
-            allowLeafDropIn="true"
-            idField="id" parentField="pid" resultAsTree="false">
-        </ul>
+        <div class="mini-fit">
+            <!--ajaxOptions='{type:"get"}' -->
+            <ul id="tree1" onnodedblclick="onNodeDoubleClick()" url="/s/orgns" ajaxOptions='{type:"get"}'
+                class="mini-tree"
+                style="width:100%;height:100%;padding:5px;"
+                showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
+                allowLeafDropIn="true"
+                idField="id" parentField="pid" resultAsTree="false">
+            </ul>
+        </div>
         <ul id="contextMenu" class="mini-contextmenu">
             <li>
                 <span>插入</span>
@@ -71,8 +74,8 @@
 </div>
 
 
-{%end%}
-{%block script %}
+{% end %}
+{% block script %}
 
 <script type="text/javascript">
 
@@ -191,4 +194,4 @@
     }
 
 </script>
-{%end%}
+{% end %}

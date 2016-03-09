@@ -60,7 +60,7 @@ class TimeoutService(BaseHandler):
         if self.request.connection.stream.closed():
             return
         self.subscribe(channel_name)
-        num = 5  # 设置超时时间,
+        num = int(self.settings[constant.MAX_POLLING_TIMEOUT])  # 设置超时时间,
 
         IOLoop.current().add_timeout(time.time() + num, lambda: self.on_timeout(num))
 
@@ -149,12 +149,16 @@ class RoleMenusService(MINIUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         role_id = self.get_argument('role_id', None)
+        pageIndex = int(self.get_query_argument('pageIndex', 0))
+        pageSize = int(self.get_query_argument('pageSize', 20))
         if role_id:
             db = self.settings['db']
             role = yield db.roles.find_one({'_id': ObjectId(role_id)})
             menu_ids = [ObjectId(id) for id in role.get('menus', [])]
-            menus = yield db.menus.find({"_id": {"$in": menu_ids}}).to_list(length=None)
-            self.send_message(menus)
+            cursor = db.menus.find({"_id": {"$in": menu_ids}}) #
+            yield self.write_page(cursor,pageIndex=pageIndex,pageSize=pageSize)
+            # .to_list(length=None)
+            #self.send_message(menus)
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -174,12 +178,17 @@ class RolePermsService(MINIUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         role_id = self.get_argument('role_id', None)
+        pageIndex = int(self.get_query_argument('pageIndex', 0))
+        pageSize = int(self.get_query_argument('pageSize', 20))
         if role_id:
             db = self.settings['db']
             role = yield db.roles.find_one({'_id': ObjectId(role_id)})
             perm_ids = [ObjectId(id) for id in role.get('perms', [])]
             perms = yield db.perms.find({"_id": {"$in": perm_ids}}).to_list(length=None)
-            self.send_message(perms)
+            cursor = db.perms.find({"_id": {"$in": perm_ids}})
+            yield self.write_page(cursor,pageIndex=pageIndex,pageSize=pageSize)
+            #self.send_message(perms)
+
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -206,9 +215,10 @@ class RoleUsersService(MINIUIBaseHandler):
             db = self.settings['db']
             role = yield db.roles.find_one({'_id': ObjectId(role_id)})
             cursor = db.users.find({"roles": {"$all": [role['code']]}})
-            total = yield cursor.count()
-            users = yield cursor.skip(page_index * page_size).limit(page_size).to_list(length=None)
-            self.send_message(users, total=total)
+            yield self.write_page(cursor,pageIndex=page_index,pageSize=page_size)
+            #total = yield cursor.count()
+            #users = yield cursor.skip(page_index * page_size).limit(page_size).to_list(length=None)
+            #self.send_message(users, total=total)
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -254,7 +264,13 @@ class RolesMenusService(RequestHandler):
     def check_xsrf_cookie(self):
         pass
 
+class LogoutService(MINIUIBaseHandler):
+    """管理员注销其他用户"""
+    @coroutine
+    def post(self, *args, **kwargs):
+        # todo
 
+        pass
 routes = [
     # (r'/s/menu',MenuService),
     # (r'/s/orgn',OrgnService),

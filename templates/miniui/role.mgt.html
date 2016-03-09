@@ -8,20 +8,23 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:100%;">
-                      {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
+                        {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
                           <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
-                        <a class="mini-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
+                        <a class="mini-button" style="float:right;" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
                     </td>
                 </tr>
             </table>
         </div>
-        <!--ajaxOptions='{type:"get"}' -->
-        <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}' class="mini-tree"
-            style="width:100%;height:100%;padding:5px;"
-            showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
-            allowLeafDropIn="true"
-            idField="id" parentField="pid" resultAsTree="false">
-        </ul>
+        <div class="mini-fit">
+            <!--ajaxOptions='{type:"get"}' -->
+            <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}'
+                class="mini-tree"
+                style="width:100%;height:100%;padding:5px;"
+                showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
+                allowLeafDropIn="true"
+                idField="id" parentField="pid" resultAsTree="false">
+            </ul>
+        </div>
         <ul id="contextMenu" class="mini-contextmenu">
             <li>
                 <span>插入</span>
@@ -170,15 +173,15 @@
     function save_role_perm() {
         var role_node = tree.getSelectedNode();
         var perms = gridPerms.getChanges();
-        var data={role_id: role_node.id, perms: perms};
+        var data = {role_id: role_node.id, perms: perms};
         $.ajax(
                 {
                     url: '/s/role/perms',
                     type: 'post',
                     data: mini.encode(data),
                     beforeSend: function (xhr) {
-		                xhr.setRequestHeader('X-Xsrftoken',$.cookie('_xsrf'));
-	                },
+                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                    },
                     success: function (result) {
                         gridPerms.load({'role_id': role_node.id})
                     }
@@ -253,7 +256,7 @@
     }
 
     function upDateNode(options) {
-       // var tree = mini.get("tree1");
+        // var tree = mini.get("tree1");
         var node = tree.getSelectedNode();
         options = mini.clone(options);
         tree.updateNode(node, options)
@@ -321,19 +324,19 @@
     }
     function save_role_menu() {
         var data = menu_grid.getChanges();
-        var role_node=tree.getSelectedNode();
-        var data={role_id:role_node.id,menus:data}
-        var json=mini.encode(data);
+        var role_node = tree.getSelectedNode();
+        var data = {role_id: role_node.id, menus: data}
+        var json = mini.encode(data);
 
         var msgid = menu_grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/role/menus",
-            data:  json,
+            data: json,
             //contentType:'application/json',
             type: "post",
-             beforeSend: function (xhr) {
-                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
-             },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+            },
             success: function (text) {
                 mini.hideMessageBox(msgid);
                 menu_grid.reload();
