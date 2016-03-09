@@ -223,7 +223,7 @@ class RoleUsersService(MINIUIBaseHandler):
                     yield db.users.update({'_id': ObjectId(item['id'])}, {'$pull': {'roles': role['code']}, "$set": {
                         "update_time": format_datetime(datetime.now()),
                         "update_user": self.current_user.get('username', '')}})
-                elif item['_state'] == 'added':
+                elif item['_state'] == 'added' and not item.get('id',None):
                     user = clone_dict(item)
                     if hasattr(user, 'roles'):
                         user['roles'].append(role['code'])
@@ -239,7 +239,8 @@ class RoleUsersService(MINIUIBaseHandler):
                     user = clone_dict(item)
                     user['update_time'] = format_datetime(datetime.now())
                     user['update_user'] = self.current_user.get('username', '')
-                    yield db.users.update({'_id': ObjectId(item['id'])}, {"$set": user})
+                    del user['roles']
+                    yield db.users.update({'_id': ObjectId(item['id'])}, {"$push":{"roles":role['code']},"$set": user})
 
 
 class RolesMenusService(RequestHandler):

@@ -111,6 +111,7 @@ routes = [
     #(r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
     (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
     (r'/page/choice_menus', MINIUIBaseHandler,{'template':'miniui/menu.choice.html','title':'选择菜单'}),
+    (r'/page/choice_users', MINIUIBaseHandler,{'template':'miniui/user.choice.html','title':'选择用户'}),
     (r'/page/role/menu', MINIUIBaseHandler,{'template':'miniui/role.menu.html','title':'角色菜单'}),
     (r'/page/role/user', MINIUIBaseHandler,{'template':'miniui/role.user.html','title':'角色用户'}),
     (r'/page/userprofile', MINIUIBaseHandler,{'template':'miniui/user.profile.html','title':'用户配置'}),

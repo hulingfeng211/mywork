@@ -50,7 +50,7 @@
                 <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
                 <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
                 <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choiceFromEmployee()">从员工中选择</a>
+                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
                 <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
             </div>
             <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
@@ -136,12 +136,36 @@
 
     });
     /**
-     * 选取员工作为用户
+     * 从用户中选取
      * @param e
      */
-    function choiceFromEmployee() {
+    function choice_from_user() {
 
-        //todo
+        var current_role = tree.getSelectedNode();
+        if (!tree.isLeaf(current_role)) {
+            mini.alert('请选择子节点的角色');
+            return false;
+        }
+        mini.open({
+            url: '/page/choice_users',
+            title: '选择用户',
+            width: 650,
+            height: 380,
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);
+                    if (data) {
+                        //mini.forEach()
+                        for (var i = 0; i < data.length; i++) {
+                            grid.addRow(data[i], 0);
+                        }
+                    }
+                }
+            }
+
+        });
 
     }
     /**
