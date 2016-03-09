@@ -40,22 +40,35 @@
             <a class="mini-button mini-button-iconTop" iconCls="icon-edit" onclick="goToHome()" plain="true">首页</a>
             <a class="mini-button mini-button-iconTop" iconCls="icon-date" onclick="onClick" plain="true">消息</a>
             <a class="mini-button mini-button-iconTop" iconCls="icon-edit" onclick="onProfileClick" plain="true">设置</a>
-            <a class=" mini-menubutton mini-button-iconTop" menu="#popupMenu" style="height: 30px;"   plain="true">操作</a>
+            <a class=" mini-menubutton mini-button-iconTop" menu="#popupMenu" style="height: 30px;" plain="true">操作</a>
 
         </div>
         <ul id="popupMenu" class="mini-menu" style="display:none;">
-            <li>
+            <li iconCls="icon-filter">
                 <span>角色切换</span>
                 <ul>
-                    <li iconCls="icon-new" onclick="onItemClick">超级管理员</li>
+                    {% for item in roles %}
+
+                    <li {% if current_role==item['code'] %}iconCls="icon-ok" {% end %} value="{{ item['code'] }}"
+                        onclick="on_change_role">{{ item['name'] }}</li>
                     <li class="separator"></li>
-                    <li iconCls="icon-add" onclick="onItemClick">增加</li>
-                    <li iconCls="icon-edit" onclick="onItemClick">修改</li>
-                    <li iconCls="icon-remove" onclick="onItemClick">删除</li>
+                    {% end %}
+
                 </ul>
             </li>
             <li class="separator"></li>
+            <li iconCls="icon-collapse">
+                <span>皮肤切换</span>
+                <ul>
+                    {% for item in skins %}
+
+                    <li {% if current_skin==item %} iconCls='icon-ok' {% end %}
+                                                    onclick="onSkinChange(this)">{{ item }}</li>
+                    {% end %}
+                </ul>
+            </li>
             <li iconCls="icon-unlock" iconCls="icon-unlock" onclick="onLogoutClick">注销</li>
+            <li class="separator"></li>
             <li iconCls="icon-remove">退出</li>
         </ul>
 
@@ -92,21 +105,11 @@
     <li>
         <span>皮肤切换</span>
         <ul>
-            <li onclick="onSkinChange(this)">default</li>
-            <li onclick="onSkinChange(this)">blue</li>
-            <li onclick="onSkinChange(this)">gray</li>
-            <li onclick="onSkinChange(this)">olive2003</li>
-            <li onclick="onSkinChange(this)">blue2003</li>
-            <li onclick="onSkinChange(this)">blue2010</li>
-            <li onclick="onSkinChange(this)">bootstrap</li>
-            <li onclick="onSkinChange(this)">metro</li>
-            <li onclick="onSkinChange(this)">metro-green</li>
-            <li onclick="onSkinChange(this)">metro-orange</li>
-            <li onclick="onSkinChange(this)">jqueryui-uilightness</li>
-            <li onclick="onSkinChange(this)">jqueryui-humanity</li>
-            <li onclick="onSkinChange(this)">jqueryui-excitebike</li>
-            <li onclick="onSkinChange(this)">jqueryui-cupertino</li>
-            <li onclick="onSkinChange(this)">nui</li>
+            {% for item in skins %}
+
+            <li {% if current_skin==item %} iconCls='icon-ok' {% end %} onclick="onSkinChange(this)">{{ item }}</li>
+            {% end %}
+
         </ul>
     </li>
 </ul>
@@ -117,6 +120,8 @@
     $("body").css('display', 'inline');
 
     var tree = mini.get("leftTree");
+
+
     window.onload = function () {
         //alert('dfds');
         $("#north").bind('contextmenu', function (e) {
@@ -125,6 +130,13 @@
             return false;
         });
     };
+    function on_change_role(e) {
+        //alert(e.sender.value);
+        //$.cookie('role', e.sender.value);
+        //document.cookie='role='+ e.sender.value;
+        mini.Cookie.set('role', e.sender.value);
+        window.location.reload();
+    }
     function onSkinChange(node) {
         var skin = node.text;
         mini.Cookie.set('miniuiSkin', skin);

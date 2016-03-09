@@ -14,10 +14,34 @@ from core.common import MINIUIBaseHandler
 
 __author__ = 'george'
 
+skins=["default","blue",'gray','olive2003','blue2003','blue2010','bootstrap',
+       'metro','metro-green','metro-orange','jqueryui-uilightness','jqueryui-humanity',
+       'jqueryui-excitebike','jqueryui-cupertino','nui']
 
 class IndexHandler(MINIUIBaseHandler):
+
+    @coroutine
     def get(self, *args, **kwargs):
-        self.render('miniui/index.html',site_name=self.settings['site_name'])
+
+        cookie_role=self.get_cookie('role',None)
+        if not cookie_role:
+            cookie_role=self.current_user.get('role')
+        else:
+            self.current_user['role']=cookie_role
+
+        current_skin=self.get_cookie('miniuiSkin','default')
+
+        db=self.settings['db']
+        username=self.current_user.get('username')
+        user = yield db.users.find_one({"$or":[{"email":username},{"loginname":username}]})
+        roles=yield db.roles.find({"code":{"$in":user.get('roles')}},{'_id':0,'code':1,'name':1}).to_list(length=None)
+        self.render('miniui/index.html',
+                    site_name=self.settings['site_name'],
+                    roles=roles,
+                    current_role=cookie_role,
+                    skins=skins,
+                    current_skin=current_skin
+                    )
 
 
 
@@ -78,6 +102,7 @@ class LoginHandler(MINIUIBaseHandler):
                                          'perms':[item['name'] for item in perms],
                                          'remote_ip':self.request.remote_ip,
                                          'login_time':datetime.datetime.now()})
+                self.set_cookie('role',role_code)
                 user_profile=yield db.user.profile.find_one({'_id':username})
                 skin=user_profile.get('skin','default') if user_profile else 'default'
                 self.set_cookie('miniuiSkin',skin)

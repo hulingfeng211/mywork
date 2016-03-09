@@ -15,14 +15,16 @@
     </div>
 </div>
 <div class="mini-fit">
-    <div id="grid" style="width: 100%;height: 100%;" idField="id" url="/s/perms"
+    <div id="grid" style="width: 100%;height: 100%;" idField="id"
          ajaxOptions='{type:"get"}'
          editNextOnEnterKey="true"
          allowCellSelect="true"
          allowCellEdit="true"
+         multiSelect="true"
+         url="/s/perms"
          class="mini-datagrid">
         <div property="columns">
-            <div type="indexcolumn"></div>
+            <div type="checkcolumn"></div>
             <div field="name" headerAlign="center">权限名
             <input property="editor" class="mini-textbox" style="width:100%;"/>
             </div>
@@ -39,9 +41,14 @@
     //todo
     var grid=mini.get('grid');
     grid.load();
-
+    function deleteRow() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
     function addNew(e){
-        var newRow={"read":1,"save":0};
+        var newRow={};
         grid.addRow(newRow,0);
 
     }

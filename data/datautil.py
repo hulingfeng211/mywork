@@ -108,15 +108,15 @@ if __name__=="__main__":
     #    print args.op
 
     # menus
-    menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
-    import_data(menu_json_path,resources='menus')
+    #menu_json_path=os.path.join(os.path.dirname(__file__),'menu.json')
+    #import_data(menu_json_path,resources='menus')
     #
 
     # roles
-    role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
-    import_data(role_json_path,resources='roles')
+    #role_json_path=os.path.join(os.path.dirname(__file__),'roles.json')
+    #import_data(role_json_path,resources='roles')
 
     # add root
-    #add_root_user()
+    add_root_user()
 
 

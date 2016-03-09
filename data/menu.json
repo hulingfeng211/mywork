@@ -62,6 +62,13 @@
           "name": "角色管理",
           "url": "/page/role",
           "desc": "角色管理"
+        },
+        {
+          "_id": 11,
+          "_pid": 1,
+          "name": "角色用户",
+          "url": "/page/role/user",
+          "desc": "角色用户"
         }
       ]
     }
