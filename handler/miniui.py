@@ -24,14 +24,18 @@ class IndexHandler(MINIUIBaseHandler):
     def get(self, *args, **kwargs):
 
         cookie_role=self.get_cookie('role',None)
+        db=self.settings['db']
         if not cookie_role:
             cookie_role=self.current_user.get('role')
         else:
             self.current_user['role']=cookie_role
+            role=yield db.roles.find_one({'code':cookie_role})
+            user_perm_ids=[ObjectId(id) for id in role.get('perms',[])]
+            perms=yield db.perms.find({"_id":{"$in":user_perm_ids}},{'_id':0,'name':1}).to_list(length=None)
+            self.current_user['perms']=[item['name'] for item in perms]
 
         current_skin=self.get_cookie('miniuiSkin','default')
 
-        db=self.settings['db']
         username=self.current_user.get('username')
         user = yield db.users.find_one({"$or":[{"email":username},{"loginname":username}]})
         roles=yield db.roles.find({"code":{"$in":user.get('roles')}},{'_id':0,'code':1,'name':1}).to_list(length=None)
