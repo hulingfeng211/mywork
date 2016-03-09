@@ -44,15 +44,15 @@
     </div>
     <div showCollapseButton="false" style="padding-left: 5px;">
 
-
+        <div class="mini-toolbar">
+            <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+            <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+            <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
+            <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
+            <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+        </div>
         <div class="mini-fit">
-            <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
-                <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
-                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
-                <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
-                <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
-            </div>
+
             <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
                  allowCellSelect="true"
                  allowCellEdit="true"
