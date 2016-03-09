@@ -53,8 +53,15 @@
           "_id": 9,
           "_pid": 1,
           "name": "角色菜单",
-          "url": "/page/role2menu",
+          "url": "/page/role/menu",
           "desc": "角色菜单"
+        },
+         {
+          "_id": 10,
+          "_pid": 1,
+          "name": "角色管理",
+          "url": "/page/role",
+          "desc": "角色管理"
         }
       ]
     }

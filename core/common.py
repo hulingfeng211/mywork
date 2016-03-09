@@ -102,7 +102,7 @@ class BaseHandler(SessionBaseHandler):
         else:
             raise gen.Return(None)
 
-    def send_message(self, obj, status_code=0):
+    def send_message(self, obj, status_code=0,total=None):
         """
         发送消息到客户端
         :param obj 带发送到客户端的对象一个字典对象
@@ -110,8 +110,11 @@ class BaseHandler(SessionBaseHandler):
         """
         # todo
         # if isinstance(obj,dict):
-        self.set_header("content-type", "application/json");
-        self.write(bson_encode({"data": obj, "status_code": status_code}))
+        self.set_header("content-type", "application/json")
+        if  not total :
+            self.write(bson_encode({"data": obj, "status_code": status_code,"total":len(obj) if type(obj)==list else 0}))
+        else:
+            self.write(bson_encode({"data": obj, "status_code": status_code,"total":total }))
 
 
 class MINIUIBaseHandler(BaseHandler):
@@ -148,7 +151,7 @@ class MINIUIBaseHandler(BaseHandler):
 
         """
         if hasattr(self,'template') and hasattr(self,'title'):
-            self.render(self.template, title=self.title,has_perm=self.has_perm)
+            self.render(self.template, title=self.title,has_perm=self.has_perm,has_role=self.has_role)
         else:
             raise HTTPError(405)
 
@@ -156,6 +159,10 @@ class MINIUIBaseHandler(BaseHandler):
         """判断用户有没有某权限"""
         user_perms=self.current_user.get('perms',None)
         return perm in user_perms if user_perms else False
+
+    def has_role(self,role):
+        user_role=self.current_user.get('role',[])
+        return role in user_role if user_role else False
 
 
 class MINIUITreeHandler(MINIUIBaseHandler):

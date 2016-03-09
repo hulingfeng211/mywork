@@ -5,7 +5,7 @@
       "name": "胡佐治",
       "email": "15921315347@163.com",
       "pwd": "96e79218965eb72c92a549dd5a330112",
-      "role":"root",
+      "roles":["root"],
       "nologin": 0,
       "superuser": 1
     }

@@ -49,7 +49,10 @@ class LoginHandler(MINIUIBaseHandler):
         username = self.get_argument('username',None)
         pwd = self.get_argument('pwd',None)
         db = self.settings['db']
+        role_code=self.get_argument('role',None)
+
         user = yield db.users.find_one({"$or":[{"email":username},{"loginname":username}]})
+
         if user and pwd:
             if make_password(pwd) == user.get('pwd'):
                 if user.get('nologin')==1:
@@ -57,10 +60,21 @@ class LoginHandler(MINIUIBaseHandler):
                     return
                 # self.send_error(status_code=500,reason='用户名和密码不能违空')
                 # 验证通过后，获取用户的权限列表信息并保存到用户会话中
-                user_perm_ids=[ObjectId(id) for id in user.get('perms',[])]
+                role=yield db.roles.find_one({'code':role_code})
+
+                if role['code'] not in user.get('roles',[]):
+                    self.send_message('选择的角色与用户角色不匹配，请重新选择!',status_code=1)
+                    return
+
+                user_perm_ids=[ObjectId(id) for id in role.get('perms',[])]
                 perms=yield db.perms.find({"_id":{"$in":user_perm_ids}},{'_id':0,'name':1}).to_list(length=None)
+
+                #user_role_ids=[ObjectId(id) for id in user.get('roles',[])]
+                #roles=yield db.roles.find({"_id":{"$in":user_role_ids}}).to_list(length=None)
+
+
                 self.session.set('user',{'username':username,
-                                         'role':user.get('role'),
+                                         'role':role_code,
                                          'perms':[item['name'] for item in perms],
                                          'remote_ip':self.request.remote_ip,
                                          'login_time':datetime.datetime.now()})
@@ -97,7 +111,9 @@ routes = [
     #(r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
     (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
     (r'/page/choice_menus', MINIUIBaseHandler,{'template':'miniui/menu.choice.html','title':'选择菜单'}),
-    (r'/page/role2menu', MINIUIBaseHandler,{'template':'miniui/role2menu.mgt.html','title':'角色菜单'}),
+    (r'/page/role/menu', MINIUIBaseHandler,{'template':'miniui/role.menu.html','title':'角色菜单'}),
+    (r'/page/role/user', MINIUIBaseHandler,{'template':'miniui/role.user.html','title':'角色用户'}),
     (r'/page/userprofile', MINIUIBaseHandler,{'template':'miniui/user.profile.html','title':'用户配置'}),
+    (r'/page/role', MINIUIBaseHandler,{'template':'miniui/role.mgt.html','title':'角色管理'}),
 ]
 
