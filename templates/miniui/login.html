@@ -3,7 +3,7 @@
 <div style="line-height:100px; padding:10px;height: 100px;background-color:#171812;color:white;" align="center">
     <strong style="font-size: 30px;">{{site_name}}-登录入口</strong>
 </div>
-<div id="loginWindow" class="mini-window" title="用户登录" style="width:360px;height:210px;"
+<div id="loginWindow" class="mini-window" title="用户登录" style="width:380px;height:220px;"
      showModal="true" showCloseButton="false"
         >
 
@@ -11,7 +11,7 @@
         <table>
            <!-- {% module xsrf_form_html() %} -->
             <tr>
-                <td style="width:60px;text-align: right;" ><label for="username$text">帐号：</label></td>
+                <td style="width:80px;text-align: right;" ><label for="username$text">帐号：</label></td>
                 <td>
                     <!-- onvalidation="onUserNameValidation" -->
                     <input id="username" name="username"  class="mini-textbox"
@@ -19,7 +19,7 @@
                 </td>
             </tr>
             <tr>
-                <td style="width:60px; text-align: right;"><label for="pwd$text">密码：</label></td>
+                <td style="width:80px; text-align: right;"><label for="pwd$text">密码：</label></td>
                 <td>
                     <input id="pwd" name="pwd" onvalidation="onPwdValidation" class="mini-password"
                            requiredErrorText="密码不能为空" required="true" style="width:150px;" onenter="onLoginClick"/>
@@ -27,7 +27,7 @@
                 </td>
             </tr>
             <tr>
-                <td style="width:60px;text-align: right;"><label>选择角色:</label></td>
+                <td style="width:80px;text-align: right;"><label>选择角色:</label></td>
                 <td><input id="role_combobox" class="mini-combobox" style="width:150px;" textField="name" valueField="code"
     url="/s/login/roles"  showNullItem="true" required="true" allowInput="false"
 />  </td>
@@ -58,6 +58,10 @@
 
     var loginWindow = mini.get("loginWindow");
     loginWindow.show();
+   // var username=mini.get('username');
+    //username.on('blur',function(e){
+       // mini.alert('aaa');
+    //});
 
     function onLoginClick(e) {
         var form = new mini.Form("#loginWindow");
