@@ -1,126 +1,67 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="mini-splitter" style="width:100%;height:100%;">
-    <div size="230px" minSize="100px" maxSize="300px" showCollapseButton="true" style="padding:0px;">
 
-        <div id="toolbar1" class="mini-toolbar" style="border-bottom:0;padding:0px;">
-            <table style="width:100%;">
-                <tr>
-                    <td style="width:100%;">
-                        {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
-                          <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
-                        <a class="mini-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="mini-fit">
-            <!--ajaxOptions='{type:"get"}' -->
-            <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}'
-                class="mini-tree"
-                style="width:100%;height:100%;padding:5px;"
-                showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
-                allowLeafDropIn="true"
-                idField="id" parentField="pid" resultAsTree="false">
-            </ul>
-        </div>
-        <ul id="contextMenu" class="mini-contextmenu">
-            <li>
-                <span>插入</span>
-                <ul>
-                    <li iconCls="icon-add" onclick="onAddBefore()">插入节点(前)</li>
-                    <li class="separator"></li>
-                    <li iconCls="icon-add" onclick="onAddAfter()">插入节点(后)</li>
-                    <li class="separator"></li>
-                    <li iconCls="icon-add" onclick="onAddNode()">插入节点(子节点)</li>
-                    <li class="separator"></li>
-                    <li iconCls="icon-add" onclick="onAddRootNode()">添加根节点</li>
-                </ul>
-            </li>
-            <li iconCls="icon-remove" onclick="onRemoveNode()">删除节点</li>
-            <li iconCls="icon-edit" onclick="onEditNode()">编辑</li>
-            <li class="separator"></li>
-            <li iconCls="icon-save" onclick="saveRoleData()">保存</li>
-        </ul>
-    </div>
-    <div showCollapseButton="false" style="padding-left: 5px;">
-
-
-        <div class="mini-fit">
-            <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+<div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+    <table style="width: 100%">
+        <tr>
+            <td style="width:100%;">
                 <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
                 <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
                 <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choiceFromEmployee()">从员工中选择</a>
+                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_employee()">从员工中选择</a>
                 <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+            </td>
+            <td style="white-space:nowrap;">
+                <input id="key" class="mini-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;"
+                       onenter="onKeyEnter"/>
+                <a class="mini-button" onclick="search()">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="mini-fit">
+
+    <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         allowCellValid="true"
+         idField="id"
+         multiSelect="true"
+         url="/s/users"
+         idField="id"
+         pageSize="20"
+         editNextOnEnterKey="true"
+         ajaxOptions='{type:"get"}'
+         oncellbeginedit="OnCellBeginEdit"
+         oncellendedit="onCellEndEdit"
+         style="width:100%;height:100%;">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="loginname" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">员工帐号
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
             </div>
-            <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
-                 allowCellSelect="true"
-                 allowCellEdit="true"
-                 allowCellValid="true"
-                 idField="id"
-                 multiSelect="false"
-                 url="/s/users"
-                 idField="id"
-
-                 pageSize="20"
-                 editNextOnEnterKey="true"
-                 ajaxOptions='{type:"get"}'
-                 oncellbeginedit="OnCellBeginEdit"
-                 oncellendedit="onCellEndEdit"
-                 style="width:100%;height:50%;">
-                <div property="columns">
-                    <div type="checkcolumn"></div>
-                    <div field="loginname" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">员工帐号
-                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
-                    </div>
-                    <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
-                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
-                    </div>
-                    <div field="email" required="true" vtype="email" width="100" allowSort="true" align="center"
-                         headerAlign="center">邮箱
-                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
-                    </div>
-                    <div field="pwd" readOnly="true" width="100" allowSort="true">密码
-                        <input property="editor" class="mini-textbox" style="width:100%;"/>
-                    </div>
-                    <div type="checkboxcolumn" field="nologin" trueValue="1" falseValue="0" width="60"
-                         headerAlign="center">停用
-                    </div>
-                    <div type="checkboxcolumn" field="superuser" trueValue="1" falseValue="0" width="60"
-                         headerAlign="center">超管
-                    </div>
-
-                </div>
-
+            <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
             </div>
-            <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
-                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removePermRow()">删除</a>
-                <a class="mini-button" iconCls="icon-save" plain="true" onclick="savePermData()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_perms">选择权限</a>
+            <div field="email" required="true" vtype="email" width="100" allowSort="true" align="left"
+                 headerAlign="center">邮箱
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+            </div>
+            <div field="pwd" readOnly="true" width="100" allowSort="true">密码
+                <input property="editor" class="mini-textbox" style="width:100%;"/>
+            </div>
+            <div type="checkboxcolumn" field="nologin" trueValue="1" falseValue="0" width="60"
+                 headerAlign="center">停用
+            </div>
+            <div type="checkboxcolumn" field="superuser" trueValue="1" falseValue="0" width="60"
+                 headerAlign="center">超管
             </div>
 
-            <div id="permsGrid" class="mini-datagrid" boderStyle="border:0"
-                 allowCellSelect="true"
-                 allowCellEdit="true"
-                 idField="id"
-                 multiSelect="true"
-                 url="/s/userperms"
-                 editNextOnEnterKey="true"
-                 ajaxOptions='{type:"get"}'
-                 style="width: 100%;height: 40%">
-                <div property="columns">
-                    <div type="checkcolumn"></div>
-                    <div field="name">名字
-                    </div>
-                    <div field="desc">描述
-                    </div>
-
-                </div>
-            </div>
         </div>
+
     </div>
+
 </div>
 
 
@@ -130,13 +71,9 @@
 
 <script type="text/javascript">
 
-    function onNodeDoubleClick(e) {
-        onEditNode(e);
-    }
-    var tree = mini.get('roleTree');
-    var grid = mini.get('userGrid');
-    var gridPerms = mini.get('permsGrid');
 
+    var grid = mini.get('userGrid');
+    grid.load();
     window.onload = function () {
 
         {# $("#roleTree").bind("contextmenu", function (e) {
@@ -145,6 +82,39 @@
             return false;
         });#}
     };
+    function onKeyEnter(e){
+        search();
+    }
+    function search(){
+        var key=mini.get('key').getValue();
+        //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
+        //q=String.format(q,key);
+        // monogodb的查询表达式
+        q={
+            $or:[
+                {
+                    loginname:{
+                        $regex:key
+                    }
+                },
+                {
+                    name:{
+                        $regex:key
+                    }
+                },
+                {
+                    email:{
+                        $regex:key
+                    }
+                }
+            ]
+        };
+
+
+        //alert(q);
+        //grid.load({q:'{"$or":{"loginname":}'})
+        grid.load({q:mini.encode(q)});
+    }
     /**
      * usergrid行选择事件
      */
@@ -152,82 +122,16 @@
         //alert(e.record['id']);
         //todo 根据用户id查找用户的权限列表填充到gridPerms中
         var selectUser = grid.getSelected();
-        gridPerms.load({'key': selectUser['id']})
     });
-    tree.on('nodeselect', function (e) {
-        if (e.isLeaf) {
-            //mini.alert(e.node.id);
-            grid.load({role: e.node.code})
-        } else {
-            grid.setData([]);
-            grid.setTotalCount(0);
-        }
 
-    });
     /**
      * 选取员工作为用户
      * @param e
      */
-    function choiceFromEmployee() {
-
+    function choice_from_employee() {
         //todo
-
     }
-    /**
-     * 保存用户权限
-     * */
-    function savePermData() {
-        var selectUser = grid.getSelected();
-        var perms = gridPerms.getChanges();
-        var data = {'uid': selectUser['id'], 'perms': perms};
-        $.ajax(
-                {
-                    url: '/s/userperms',
-                    type: 'post',
-                    contentType: 'application/json',
-                    data: mini.encode(data),
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
-                    },
-                    success: function (result) {
-                        gridPerms.load({'key': selectUser['id']})
-                    }
 
-                }
-        );
-    }
-    /**
-     *选取用户的权限
-     */
-    function choice_perms(e) {
-        var selectUser = grid.getSelected();
-        if (selectUser == null) {
-            mini.alert('请先选择用户');
-            return;
-        }
-        var btn = this;
-        mini.open({
-            url: '/page/choice_perms',
-            title: '选择权限',
-            width: 650,
-            height: 380,
-            ondestroy: function (action) {
-                if (action == "ok") {
-                    var iframe = this.getIFrameEl();
-                    var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);
-                    if (data) {
-                        //mini.forEach()
-                        for (var i = 0; i < data.length; i++) {
-                            gridPerms.addRow(data[i], 0);
-                        }
-                    }
-                }
-            }
-
-        })
-
-    }
     /**
      * 初始化选中的用户的密码
      */
@@ -246,87 +150,7 @@
         }
 
     }
-    function onAddRootNode(e) {
-        //var tree = mini.get('tree1');
-        var newNode = {name: "root"};
-        tree.addNode(newNode)
-    }
-    function onAddBefore(e) {
-        //var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-        var newNode = {};
-        tree.addNode(newNode, "before", node);
-    }
 
-    function onAddAfter(e) {
-        //var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-
-        var newNode = {};
-        tree.addNode(newNode, "after", node);
-    }
-
-    function onAddNode(e) {
-        //var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-
-        var newNode = {name: 'node'};
-        tree.addNode(newNode, "add", node);
-    }
-
-    function onEditNode(e) {
-        //var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-
-        tree.beginEdit(node);
-    }
-
-    function upDateNode(options) {
-        // var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-        options = mini.clone(options);
-        tree.updateNode(node, options)
-    }
-
-    function onRemoveNode(e) {
-        //var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-        if (node) {
-            if (confirm("确定删除选中节点?")) {
-                tree.removeNode(node);
-            }
-        }
-    }
-    function reloadData(e) {
-        var tree = mini.get('tree1');
-        tree.reload();
-    }
-
-    function saveRoleData() {
-        //var tree = mini.get("tree1");
-        var data = tree.getData();
-        var removed = tree.getChanges("removed");
-        var paramsObj = {
-            data: mini.encode(data),
-            removed: mini.encode(removed),
-            '_xsrf': $.cookie('_xsrf')
-        };
-
-        var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
-        $.ajax({
-            url: "/s/roles",
-            data: paramsObj,
-            type: "post",
-            success: function (text) {
-                mini.hideMessageBox(msgid);
-
-                tree.reload();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR.responseText);
-            }
-        });
-    }
     var Genders = [{id: 1, text: '男'}, {id: 2, text: '女'}];
     function onGenderRenderer(e) {
         for (var i = 0, l = Genders.length; i < l; i++) {
@@ -343,12 +167,8 @@
         }
     });
     function addRow() {
-        var node = tree.getSelectedNode();
-        if (node) {
-            var newRow = {name: "新用户"};
-            newRow.role = node.code;
-            grid.addRow(newRow, 0);
-        }
+        var newRow = {name: "新用户"};
+        grid.addRow(newRow, 0);
     }
     function removeRow() {
         var rows = grid.getSelecteds();

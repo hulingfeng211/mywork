@@ -315,7 +315,12 @@
             }
         }
     });
-
+    function remove_role_perm(){
+        var rows = gridPerms.getSelecteds();
+        if (rows.length > 0) {
+            gridPerms.removeRows(rows, true);
+        }
+    }
     function remove_role_menu() {
         var rows = menu_grid.getSelecteds();
         if (rows.length > 0) {

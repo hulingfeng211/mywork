@@ -135,7 +135,9 @@ routes = [
     # 仅root角色的用户可以访问此url
     (r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html',
                                              'title':'在线用户管理',
-                                             'role_map':{'post':'root,ptyh'}}),
+                                             #'role_map':{'post':['root','ptyh']},
+                                             'perm_map':{'post':['onlineuser:logout'],
+                                                           'get':['onlineuser:logout']}}),
 
     #(r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
     (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),

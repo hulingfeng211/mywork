@@ -130,10 +130,25 @@ class MINIUIBaseHandler(BaseHandler):
         if self.current_user.get('role')==default_root_role_code:
             return
 
-        if hasattr(self,'role_map'):
-            if not self.role_map.get(method,default_guest_role_code)==default_guest_role_code:
-                if  self.current_user.get('role',None) not in self.role_map.get(method) :
-                    self.send_error(status_code=401,reason="用户没有权限")
+        def can_pass():
+            """请求是否能通过"""
+            role_map=self.role_map.get(method,{}) if hasattr(self,'role_map') else {}
+            perm_map=self.perm_map.get(method,{}) if hasattr(self,'perm_map') else {}
+            result=True
+            # 没有进行配置表示只要登录的用户即可进行访问
+            if not role_map and not perm_map:
+                return result
+
+            if role_map and self.current_user.get('role',None)  in self.role_map.get(method):
+                pass
+            elif perm_map and [item for item in self.perm_map.get(method)  if item in self.current_user.get('perms',None)]:
+                pass
+            else:
+                result = False
+            return result
+
+        if not can_pass():
+            self.send_error(status_code=401,reason="用户没有权限")
 
 
     def initialize(self, *args, **kwargs):

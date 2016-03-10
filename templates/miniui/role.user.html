@@ -47,11 +47,21 @@
     <div showCollapseButton="false" style="padding-left: 5px;">
 
         <div class="mini-toolbar">
-            <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
-            <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
-            <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
-            <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
-            <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;">
+                        <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+                        <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+                        <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
+                        <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
+                        <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <input id="key" class="mini-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;" onenter="onKeyEnter"/>
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div class="mini-fit">
 
@@ -121,6 +131,45 @@
             return false;
         });#}
     };
+    function onKeyEnter(e){
+        search();
+    }
+    function search(){
+        var current_role = tree.getSelectedNode();
+        if (!tree.isLeaf(current_role)) {
+            mini.alert('请选择子节点的角色');
+            return false;
+        }
+        var key=mini.get('key').getValue();
+        //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
+        //q=String.format(q,key);
+        // monogodb的查询表达式
+        q={
+         $or:[
+                {
+                    loginname:{
+                        $regex:key
+                    }
+                },
+                {
+                    name:{
+                        $regex:key
+                    }
+                },
+                {
+                    email:{
+                        $regex:key
+                    }
+                }
+            ],roles:{$all:[current_role.code]}
+        }
+
+
+        //alert(q);
+        //grid.load({q:'{"$or":{"loginname":}'})
+        grid.setUrl('/s/users');
+        grid.load({q:mini.encode(q)});
+    }
     /**
      * usergrid行选择事件
      */
@@ -130,7 +179,8 @@
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
             //mini.alert(e.node.id);
-            grid.load({role_id: e.node.id})
+            grid.setUrl('/s/role/users');
+            grid.load({role_id: e.node.id});
         } else {
             grid.setData([]);
             grid.setTotalCount(0);
@@ -139,7 +189,7 @@
     });
     /**
      * 从用户中选取
-     * @param e
+     * @param
      */
     function choice_from_user() {
 
