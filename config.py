@@ -71,3 +71,6 @@ GUEST_ROLE_CODE = 'guest'
 
 # 最大的轮询超时时间
 MAX_POLLING_TIMEOUT = 20
+
+# 首页的URL
+HOME_URL ='/app/'

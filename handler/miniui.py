@@ -9,6 +9,7 @@ from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
 from tornado.web import RequestHandler
 
+import constant
 from core import make_password
 from core.common import MINIUIBaseHandler
 
@@ -69,7 +70,7 @@ class LoginHandler(MINIUIBaseHandler):
         pass
 
     def get(self, *args, **kwargs):
-        self.render('miniui/login.html',site_name=self.settings['site_name'],title="用户登录")
+        self.render('miniui/login.html',site_name=self.settings['site_name'],title="用户登录",home_url=self.settings[constant.HOME_URL])
 
     @coroutine
     def post(self, *args, **kwargs):
