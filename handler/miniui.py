@@ -148,5 +148,6 @@ routes = [
     (r'/page/role/user', MINIUIBaseHandler,{'template':'miniui/role.user.html','title':'角色用户'}),
     (r'/page/userprofile', MINIUIBaseHandler,{'template':'miniui/user.profile.html','title':'用户配置'}),
     (r'/page/role', MINIUIBaseHandler,{'template':'miniui/role.mgt.html','title':'角色管理'}),
+     (r'/page/url', MINIUIBaseHandler,{'template':'miniui/url.mgt.html','title':'URL管理'}),
 ]
 

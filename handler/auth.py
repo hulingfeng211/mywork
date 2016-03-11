@@ -119,10 +119,10 @@ class SignupHandler(RequestHandler):
 
 
 routes = [
-    # 用户登陆
-    (r'/auth/login', LoginHandler),
-    # 用户注册
-    (r'/auth/signup', SignupHandler),
-    # 用户登出
-    (r'/auth/logout', LogoutHandler)
+    # # 用户登陆
+    # (r'/auth/login', LoginHandler),
+    # # 用户注册
+    # (r'/auth/signup', SignupHandler),
+    # # 用户登出
+    # (r'/auth/logout', LogoutHandler)
 ]

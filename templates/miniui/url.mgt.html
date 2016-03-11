@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="mini-toolbar" style="width: 100%;">
+    <a class="mini-button" iconCls="icon-save">保存</a>
+</div>
+
+<div class="mini-fit">
+
+    <div id="user_grid" class="mini-datagrid" borderStyle="border:0"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         allowCellValid="true"
+         idField="id"
+         multiSelect="true"
+         url="/s/app/handlers"
+         idField="id"
+         pageSize="20"
+         editNextOnEnterKey="true"
+         ajaxOptions='{type:"get"}'
+
+         style="width:100%;height:100%;">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="url_pattern" width="120" headerAlign="center" allowSort="true">URL
+
+            </div>
+            <div field="desc" width="120" headerAlign="center" allowSort="true">URL描述
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+            </div>
+
+            <div field="needlogin" required="true" trueValue="1" falseValue="0" type="checkboxcolumn" width="60"
+                 align="center"
+                 headerAlign="center">需要登录
+                　
+            </div>
+
+            <div header="角色" headerAlign="center">
+                <div property="columns">
+                    <div field="role_get" headerAlign="center" width="20">GET</div>
+                    <div field="role_post" headerAlign="center" width="20">POST</div>
+                    <div field="role_put" headerAlign="center" width="20">PUT</div>
+                    <div field="role_delete" headerAlign="center" width="20">DELETE</div>
+                </div>
+            </div>
+            <div header="权限" headerAlign="center">
+                <div property="columns">
+                    <div field="perm_get" headerAlign="center" width="20">GET</div>
+                    <div field="perm_post" headerAlign="center" width="20">POST</div>
+                    <div field="perm_put" headerAlign="center" width="20">PUT</div>
+                    <div field="perm_delete" headerAlign="center" width="20">DELETE</div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+{% end %}
+
+{% block script %}
+<script type="text/javascript">
+    var grid = mini.get('user_grid');
+    grid.load();
+</script>
+{% end %}

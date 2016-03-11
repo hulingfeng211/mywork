@@ -269,8 +269,26 @@ class LogoutService(MINIUIBaseHandler):
     @coroutine
     def post(self, *args, **kwargs):
         # todo
-
         pass
+
+class QueryHandlersService(MINIUIBaseHandler):
+    """查询系统所有的Hanlder"""
+    def get(self, *args, **kwargs):
+        handlers=self.application.handlers
+        result=[]
+        exception=['static','robots','favicon']
+        for s in handlers[0][1]:
+            tmp={}
+            if s._path[:6] in exception:
+                continue
+            tmp['url_pattern']=s._path
+            for k,v in s.kwargs.iteritems():
+                tmp[k]=v
+            result.append(tmp)
+        #url_list={{'path':s._path,'kwargs':s.kwargs} for s in handlers[0][1]}
+        self.send_message(result)
+
+
 routes = [
     # (r'/s/menu',MenuService),
     # (r'/s/orgn',OrgnService),
@@ -281,4 +299,5 @@ routes = [
     (r'/s/role/users', RoleUsersService),
     (r'/s/user/menus', UserMenusService),
     (r'/s/login/roles', RolesMenusService),
+    (r'/s/app/handlers',QueryHandlersService),
 ]

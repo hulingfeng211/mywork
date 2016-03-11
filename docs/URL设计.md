@@ -44,3 +44,17 @@
 #### 页面
 #### 服务
 
+---
+## 权限总表
+| URL        | 功能描述           |     需要   |  角色     |      权限    |
+| ------------- |-------------:| :-----:|:---------------:|:----:|  
+| /app/      | 首页 |Y |所有 |所有   |
+| /page/login      | 用户登录|N      |  所有 | 所有  |
+| /s/onlineuser | 在线用户|Y      |    {"post":"root"} |{"post":"onelineuser:logout"}   |
+| /s/perms | 权限管理服务|Y      |    {"post":"root"} |    |
+| /s/orgns | 组织管理服务|Y      |    {"post":"root"} |    |
+| /s/users | 用户管理服务|Y      |    {"post":"root"} |    |
+| /s/users/(.+) | 查询用户信息服务|Y      |    {"post":"root"} |    |
+| /s/roles | 角色管理服务|Y      |    {"post":"root"} |   |
+| /s/menus | 菜单管理服务|Y      |    {"post":"root"} |    |
+
