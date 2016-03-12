@@ -41,6 +41,21 @@ def utc_to_local(utctime):
     utc=utctime.replace(tzinfo=from_zone)
     return utc.astimezone(to_zone)
 
+
+def create_class(module_name,class_name):
+    """获取类实例
+    :param module_name 模块名
+    :param class_name 类名
+    :return 返回对应的类
+
+    ：：用法
+        cls=get_class(module_name,class_name)
+        instance=cls(**kwargs) # 创建实例
+    """
+    module=__import__(module_name,globals(),locals(),['object'])
+    cls=getattr(module,class_name)
+    return cls
+
 if __name__=="__main__":
     print generate_cookie_secret()
 

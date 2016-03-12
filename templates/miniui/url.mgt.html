@@ -193,7 +193,19 @@
         });#}
     };
     function apply_url() {
-        //todo
+        var msgid = grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "/s/app/urls",
+            data: {'_xsrf': $.cookie('_xsrf')},
+            //contentType:'application/json',
+            type: "post",
+            success: function (text) {
+                mini.hideMessageBox(msgid);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
     }
     function onRoleRowDblclick(e) {
         role_grid.commitEdit();
