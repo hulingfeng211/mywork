@@ -215,7 +215,7 @@ class RoleUsersService(MINIUIBaseHandler):
             db = self.settings['db']
             role = yield db.roles.find_one({'_id': ObjectId(role_id)})
             cursor = db.users.find({"roles": {"$all": [role['code']]}})
-            yield self.write_page(cursor,pageIndex=page_index,pageSize=page_size)
+            yield self.write_page(cursor)
             #total = yield cursor.count()
             #users = yield cursor.skip(page_index * page_size).limit(page_size).to_list(length=None)
             #self.send_message(users, total=total)

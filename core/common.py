@@ -124,8 +124,8 @@ class MINIUIBaseHandler(BaseHandler):
            2.获取前端url中传入的查询参数
         """
         # 检查用户的角色和权限，从redis中获取
-        self.page_index=self.get_query_argument('pageIndex',0)
-        self.page_size=self.get_query_argument('pageSize',20)
+        self.page_index=int(self.get_query_argument('pageIndex',0))
+        self.page_size=int(self.get_query_argument('pageSize',20))
         self.sort_field=self.get_query_argument('sortFiled','')
         self.sort_order=self.get_query_argument('sortOrder','desc')
 
@@ -187,7 +187,7 @@ class MINIUIBaseHandler(BaseHandler):
         return role in user_role if user_role else False
 
     @coroutine
-    def write_page(self,cursor):
+    def write_page(self,cursor,*args,**kwargs):
         """向浏览器输出一页数据
         :param cursor mongodb的数据库游标
         :param pageIndex 浏览器传入的当前页码
