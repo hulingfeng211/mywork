@@ -30,6 +30,7 @@ class MD5Handler(BaseHandler):
 class OnlineUserHandler(MINIUIBaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
     def initialize(self):
+
         """"""""
         #self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
         self.client = tornadoredis.Client(selected_db=self.settings[constant.SESSION_DB], host=self.settings[constant.REDIS_HOST], port=self.settings[constant.REDIS_PORT])
