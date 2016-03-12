@@ -271,6 +271,41 @@ class LogoutService(MINIUIBaseHandler):
         # todo
 
         pass
+
+class URLService(MINIUIBaseHandler):
+    """URL服务，获取所有系统的url"""
+
+    @coroutine
+    def get(self, *args, **kwargs):
+
+        def exception_url(url_pattern):
+            exception=['static','robots','favicon']
+            for item in exception:
+                if item in url_pattern:
+                    return True
+            return False
+
+        url_list=self.application.handlers[0][1]
+        result=[]
+        for s in url_list:
+            tmp={}
+            if exception_url(s._path):
+                continue
+            tmp['url_pattern']=s._path.replace('%s','(.*)')
+            tmp['handler_class']='%s.%s'%(s.handler_class.__module__,s.handler_class.__name__)
+            for k,v in s.kwargs.iteritems():
+                if k=='role_map':
+                    for rk,rv in v.iteritems():
+                        tmp['role_%s'%rk]=rv
+                elif k=='perm_map':
+                    for pk,pv in v.iteritems():
+                        tmp['perm_%s'%pk]=reduce(lambda x,y:x+','+y,pv)
+                    pass
+                else:
+                    tmp[k]=v
+            result.append(tmp)
+        self.send_message(result)
+
 routes = [
     # (r'/s/menu',MenuService),
     # (r'/s/orgn',OrgnService),
@@ -281,4 +316,5 @@ routes = [
     (r'/s/role/users', RoleUsersService),
     (r'/s/user/menus', UserMenusService),
     (r'/s/login/roles', RolesMenusService),
+    (r'/s/app/urls', URLService),
 ]

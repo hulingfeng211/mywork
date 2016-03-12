@@ -53,14 +53,14 @@ class WorkApplication(Application):
             (r'/', IndexHandler),
 
             # 所有html静态文件都默认被StaticFileHandler处理
-            (r'/tpl/(.*)', StaticFileHandler, {
-                'path': os.path.join(os.path.dirname(__file__), 'templates')
-            }),
+            # (r'/tpl/(.*)', StaticFileHandler, {
+            #     'path': os.path.join(os.path.dirname(__file__), 'templates')
+            # }),
             # PC端网页
-            (r'/f/', RedirectHandler, {'url': '/f/index.html'}),
-            (r'/f/(.*)', StaticFileHandler, {
-                'path': os.path.join(os.path.dirname(__file__), 'front')
-            }),
+            # (r'/f/', RedirectHandler, {'url': '/f/index.html'}),
+            # (r'/f/(.*)', StaticFileHandler, {
+            #     'path': os.path.join(os.path.dirname(__file__), 'front')
+            # }),
         ]
         handlers.extend(auth.routes)
         handlers.extend(oa.routes)

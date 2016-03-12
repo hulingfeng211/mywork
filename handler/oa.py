@@ -127,9 +127,9 @@ class CirculationUserHandler(BaseHandler):
         self.write(result)
 
 routes= [
-    (r'/circulations',CirculationHandler),
-    (r'/circulations/(.+)',CirculationHandler),
-    (r'/circulation/comments/(.+)',CirculationCommentHandler),
-    (r'/circulation/(.+)/user',CirculationUserHandler),
-    (r'/circulation/attachfile',CirculationFileHandler),
+    # (r'/circulations',CirculationHandler),
+    # (r'/circulations/(.+)',CirculationHandler),
+    # (r'/circulation/comments/(.+)',CirculationCommentHandler),
+    # (r'/circulation/(.+)/user',CirculationUserHandler),
+    # (r'/circulation/attachfile',CirculationFileHandler),
 ]
