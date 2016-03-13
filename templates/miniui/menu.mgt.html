@@ -65,7 +65,8 @@
                 <tr>
                     <td>URL：</td>
                     <td>
-                        <input name="url" id="url" class="mini-textbox"/>
+                        <input  class="mini-buttonedit" onbuttonclick="onButtonEdit" name="url" textName="url"/>
+                        {#<input name="url" id="url" class="mini-textbox"/> #}
                     </td>
                 </tr>
             </table>
@@ -95,6 +96,29 @@
 
 
     };
+    function onButtonEdit(e) {
+            var btnEdit = this;
+            mini.open({
+                url:  "/page/choice_url",
+                title: "选择菜单",
+                width: 650,
+                height: 380,
+                ondestroy: function (action) {
+                    //if (action == "close") return false;
+                    if (action == "ok") {
+                        var iframe = this.getIFrameEl();
+                        var data = iframe.contentWindow.GetData();
+                        data = mini.clone(data);    //必须
+                        if (data) {
+                            btnEdit.setValue(data.url_pattern);
+                            btnEdit.setText(data.url_pattern);
+                        }
+                    }
+
+                }
+            });
+
+        }
     function onAddRootNode(e) {
         var tree = mini.get('tree1');
         var newNode = {name: "root"};

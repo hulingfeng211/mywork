@@ -17,7 +17,6 @@ from tornado.httpclient import AsyncHTTPClient
 from tornado import  autoreload
 import os
 
-import route_map
 from core import settings
 from handler import auth, oa, chat, routes, miniui, service, get_handlers
 
@@ -80,7 +79,7 @@ class WorkApplication(Application):
 if __name__ == "__main__":
     parse_command_line()
     AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
-    #addwatchfiles('route_map.py')
+    addwatchfiles('restart.txt')
     app = WorkApplication()
     logging.info('server at http://*:%s' % options.port)
     app.listen(options.port)

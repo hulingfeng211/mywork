@@ -23,7 +23,7 @@ from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler,
 from core.utils import utc_to_local, format_datetime, create_class
 
 
-class MD5Handler(BaseHandler):
+class MD5Handler(MINIUIBaseHandler):
 
     def get(self, *args, **kwargs):
         key=self.get_argument('key',None)
