@@ -254,7 +254,15 @@ class RoleUsersService(MINIUIBaseHandler):
                     yield db.users.update({'_id': ObjectId(item['id'])}, {"$push":{"roles":role['code']},"$set": user})
 
 
-class RolesMenusService(RequestHandler):
+class LoginRolesService(MINIUIBaseHandler):
+
+
+    def prepare(self):
+        pass
+
+    def initialize(self, *args, **kwargs):
+        super(LoginRolesService,self).initialize(*args,**kwargs)
+
     @coroutine
     def get(self, *args, **kwargs):
         db = self.settings['db']
@@ -395,6 +403,6 @@ routes = [
     (r'/s/role/perms', RolePermsService),
     (r'/s/role/users', RoleUsersService),
     (r'/s/user/menus', UserMenusService),
-    (r'/s/login/roles', RolesMenusService),
+    (r'/s/login/roles', LoginRolesService),
     (r'/s/app/urls', URLService),
 ]
