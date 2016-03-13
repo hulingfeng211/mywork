@@ -46,30 +46,34 @@
     </div>
     <div showCollapseButton="false" style="padding-left: 5px;">
 
-        <h1>菜单信息</h1>
 
-        <form id="menu_form">
-            <table border="0" cellpadding="1" cellspacing="2">
+
+        <form id="menu_form" style="padding-top:20px;">
+            <fieldset>
+                <legend>菜单信息</legend>
+                <table border="0" cellpadding="1" cellspacing="2">
                 <tr>
-                    <td style="width:60px;">Name：</td>
+                    <td style="width:60px;">菜单名：</td>
                     <td style="width:100px">
                         <input name="name" id="name" class="mini-textbox"/>
                     </td>
                 </tr>
                 <tr>
-                    <td>Desc：</td>
+                    <td>菜单描述：</td>
                     <td>
                         <input name="desc" id="desc" class="mini-textbox"/>
                     </td>
                 </tr>
                 <tr>
-                    <td>URL：</td>
+                    <td>菜单地址：</td>
                     <td>
                         <input  class="mini-buttonedit" onbuttonclick="onButtonEdit" name="url" textName="url"/>
                         {#<input name="url" id="url" class="mini-textbox"/> #}
                     </td>
                 </tr>
             </table>
+            </fieldset>
+
         </form>
     </div>
 </div>
