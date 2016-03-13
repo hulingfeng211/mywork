@@ -6,11 +6,13 @@
     <table style="width: 100%">
         <tr>
             <td style="width:100%;">
+                {% if has_role('root') %}
                 <a class="mini-button" iconCls="icon-add" plain="true" onclick="add_url()">新增</a>
                 <a class="mini-button" iconCls="icon-remove" plain="true" onclick="remove_url()">删除</a>
                 <a class="mini-button" iconCls="icon-save" plain="true" onclick="save_url()">保存</a>
                 <a class="mini-button" iconCls="icon-goto" plain="true" onclick="import_url()">导入</a>
                 <a class="mini-button" iconCls="icon-collapse" plain="true" onclick="apply_url()">应用</a>
+                {% end %}
             </td>
             <td style="white-space:nowrap;">
                 <input id="key" class="mini-textbox" emptyText="请输url或url描述" style="width:150px;"
@@ -129,14 +131,23 @@
                 <td style="width:250px"><input name="title" style="width:100%" class="mini-textbox"></td>
             </tr>
             <tr>
+                <td style="width: 80px;">文档集合名(cname):</td>
+                <td colspan="5"><input name="cname" style="width:100%" class="mini-textbox"></td>
+            </tr>
+
+            <tr>
                 <td style="width: 80px;">备注:</td>
                 <td colspan="5"><textarea name="remark" style="width: 100%;height: 40px;" class="mini-textarea"
                                           emptyText="请输入备注"></textarea></td>
             </tr>
-            <td style="text-align:right;padding-top:5px;padding-right:20px;" colspan="6">
-                <a class="mini-button" iconCls="icon-ok" onclick="update_row();">保存</a>
-                <a class="mini-button" iconCls="icon-no" onclick="cancel_row();">取消</a>
-            </td>
+            <tr> {% if has_role('root') %}
+                <td style="text-align:right;padding-top:5px;padding-right:20px;" colspan="6">
+                    <a class="mini-button" iconCls="icon-ok" onclick="update_row();">保存</a>
+                    <a class="mini-button" iconCls="icon-no" onclick="cancel_row();">取消</a>
+
+                </td>
+                {% end %}
+            </tr>
         </table>
     </div>
     <!--角色选择面板-->
@@ -193,14 +204,13 @@
         });#}
     };
     function apply_url() {
-        var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/app/urls",
             data: {'_xsrf': $.cookie('_xsrf')},
             //contentType:'application/json',
             type: "post",
             success: function (text) {
-                mini.hideMessageBox(msgid);
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert(jqXHR.responseText);
@@ -339,7 +349,7 @@
     }
     function remove_url() {
         var row = grid.getSelected();
-        if (row!=undefined) {
+        if (row != undefined) {
             grid.removeRow(row, true);
         }
     }

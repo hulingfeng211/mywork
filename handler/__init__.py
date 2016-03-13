@@ -12,13 +12,16 @@
 # 定义url模板
 import pickle
 #import  pytz
+import pymongo
 import tornadoredis
-from tornado.gen import coroutine, Task
+from tornado.gen import coroutine, Task, Return
 
+import config
 import constant
-from core import make_password
+from core import make_password, settings
 from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler, MINIUIBaseHandler
-from core.utils import utc_to_local, format_datetime
+from core.utils import utc_to_local, format_datetime, create_class
+
 
 class MD5Handler(BaseHandler):
 
@@ -27,14 +30,50 @@ class MD5Handler(BaseHandler):
         md5=make_password(key if key else '111111')
         self.send_message(md5)
 
+#@coroutine
+def get_handlers():
+    client=pymongo.MongoClient(config.MONGO_URI)
+    db=client[config.DB_NAME]
+    urls=db.urls.find()
+    handlers=[]
+
+    for url in urls:
+        role_map={}
+        perm_map={}
+        url_pattern=url.get('url_pattern',None)
+        template_path=url.get('template',None)
+        title=url.get('title',None)
+        cname=url.get('cname',None)
+
+        role_map['get']=url.get('role_get').split(',') if url.get('role_get','') else []
+        role_map['put']=url.get('role_put').split(',') if url.get('role_put','') else []
+        role_map['post']=url.get('role_post').split(',') if url.get('role_post','') else []
+        role_map['delete']=url.get('role_delete').split(',') if url.get('role_delete','') else []
+
+        perm_map['get']=url.get('perm_get').split(',') if url.get('perm_get','') else []
+        perm_map['put']=url.get('perm_put').split(',') if url.get('perm_put','') else []
+        perm_map['post']=url.get('perm_post').split(',') if url.get('perm_post','') else []
+        perm_map['delete']=url.get('perm_delete').split(',') if url.get('perm_delete','') else []
+
+
+        full_class_str=url.get('handler_class')
+        full_class_str_split=full_class_str.split('.')
+        module_name='.'.join(full_class_str_split[:-1])
+        class_name=full_class_str_split[-1]
+        cls=create_class(module_name,class_name)
+
+        handlers.append((r'%s'%url_pattern,cls,{'cname':cname,'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}))
+    return handlers
+
 class OnlineUserHandler(MINIUIBaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
-    def initialize(self):
+    def initialize(self, *args, **kwargs):
 
         """"""""
         #self.client=tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],selected_db=self.settings[constant.SESSION_DB])
         self.client = tornadoredis.Client(selected_db=self.settings[constant.SESSION_DB], host=self.settings[constant.REDIS_HOST], port=self.settings[constant.REDIS_PORT])
         self.client.connect()
+        super(OnlineUserHandler,self).initialize( *args, **kwargs)
 
 
     @coroutine

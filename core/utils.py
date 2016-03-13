@@ -56,6 +56,8 @@ def create_class(module_name,class_name):
     cls=getattr(module,class_name)
     return cls
 
+
+
 if __name__=="__main__":
     print generate_cookie_secret()
 
