@@ -8,26 +8,26 @@
 |   Description:应用程序入口
 +============================================================"""
 import logging
-import motor
-import pickle
-import tornadoredis
 from tornado import gen
-from tornado.ioloop import IOLoop, PeriodicCallback
+from tornado.ioloop import IOLoop
 from tornado.options import define, options, parse_command_line
-from tornado.web import Application, RequestHandler, StaticFileHandler, RedirectHandler
-from tornado.gen import coroutine, Task
+from tornado.web import Application, RequestHandler
+from tornado.gen import coroutine
 from tornado.httpclient import AsyncHTTPClient
+from tornado import  autoreload
 import os
-from tornadoredis import ConnectionPool
 
-import config
 from core import settings
-from handler import auth, oa, chat, routes, miniui, service
+from handler import auth, oa, chat, routes, miniui, service, get_handlers
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
 
 def add(a,b):
     return a+b
+
+def addwatchfiles(*paths):
+    for p in paths:
+        autoreload.watch(os.path.abspath(p))
 
 class IndexHandler(RequestHandler):
     @coroutine
@@ -49,31 +49,37 @@ class IndexHandler(RequestHandler):
 
 class WorkApplication(Application):
     def __init__(self):
-        handlers = [
-            (r'/', IndexHandler),
+        # handlers = [
+        #      (r'/', IndexHandler),
+        #
+        #     # 所有html静态文件都默认被StaticFileHandler处理
+        #      # (r'/tpl/(.*)', StaticFileHandler, {
+        #      #     'path': os.path.join(os.path.dirname(__file__), 'templates')
+        #      # }),
+        #      # PC端网页
+        #      # (r'/f/', RedirectHandler, {'url': '/f/index.html'}),
+        #      # (r'/f/(.*)', StaticFileHandler, {
+        #      #     'path': os.path.join(os.path.dirname(__file__), 'front')
+        #      # }),
+        #  ]
+        # handlers.extend(auth.routes)
+        # handlers.extend(oa.routes)
+        # handlers.extend(chat.routes)
+        # handlers.extend(miniui.routes)
+        # handlers.extend(service.routes)
+        # handlers.extend(routes)
+        handlers =  get_handlers()
 
-            # 所有html静态文件都默认被StaticFileHandler处理
-            (r'/tpl/(.*)', StaticFileHandler, {
-                'path': os.path.join(os.path.dirname(__file__), 'templates')
-            }),
-            # PC端网页
-            (r'/f/', RedirectHandler, {'url': '/f/index.html'}),
-            (r'/f/(.*)', StaticFileHandler, {
-                'path': os.path.join(os.path.dirname(__file__), 'front')
-            }),
-        ]
-        handlers.extend(auth.routes)
-        handlers.extend(oa.routes)
-        handlers.extend(chat.routes)
-        handlers.extend(miniui.routes)
-        handlers.extend(service.routes)
-        handlers.extend(routes)
+        #handlers=[]
+        #handlers.extend(route_map.routes)
+
         Application.__init__(self, handlers=handlers, **settings)
 
 
 if __name__ == "__main__":
     parse_command_line()
     AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
+    addwatchfiles('restart.txt')
     app = WorkApplication()
     logging.info('server at http://*:%s' % options.port)
     app.listen(options.port)

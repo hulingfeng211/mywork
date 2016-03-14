@@ -23,7 +23,7 @@ from torndsession.sessionhandler import SessionBaseHandler
 import constant
 from core import clone_dict
 from core.common import MINIUIBaseHandler, BaseHandler
-from core.utils import format_datetime
+from core.utils import format_datetime, create_class
 
 __author__ = 'george'
 
@@ -215,7 +215,7 @@ class RoleUsersService(MINIUIBaseHandler):
             db = self.settings['db']
             role = yield db.roles.find_one({'_id': ObjectId(role_id)})
             cursor = db.users.find({"roles": {"$all": [role['code']]}})
-            yield self.write_page(cursor,pageIndex=page_index,pageSize=page_size)
+            yield self.write_page(cursor)
             #total = yield cursor.count()
             #users = yield cursor.skip(page_index * page_size).limit(page_size).to_list(length=None)
             #self.send_message(users, total=total)
@@ -249,11 +249,20 @@ class RoleUsersService(MINIUIBaseHandler):
                     user = clone_dict(item)
                     user['update_time'] = format_datetime(datetime.now())
                     user['update_user'] = self.current_user.get('username', '')
-                    del user['roles']
+                    if user.get('roles',None):
+                        del user['roles']
                     yield db.users.update({'_id': ObjectId(item['id'])}, {"$push":{"roles":role['code']},"$set": user})
 
 
-class RolesMenusService(RequestHandler):
+class LoginRolesService(MINIUIBaseHandler):
+
+
+    def prepare(self):
+        pass
+
+    def initialize(self, *args, **kwargs):
+        super(LoginRolesService,self).initialize(*args,**kwargs)
+
     @coroutine
     def get(self, *args, **kwargs):
         db = self.settings['db']
@@ -269,25 +278,121 @@ class LogoutService(MINIUIBaseHandler):
     @coroutine
     def post(self, *args, **kwargs):
         # todo
+
         pass
 
-class QueryHandlersService(MINIUIBaseHandler):
-    """查询系统所有的Hanlder"""
+class URLService(MINIUIBaseHandler):
+    """URL服务，获取所有系统的url"""
+
+    @coroutine
     def get(self, *args, **kwargs):
-        handlers=self.application.handlers
+
+        def exception_url(url_pattern):
+            exception=['static','robots','favicon']
+            for item in exception:
+                if item in url_pattern:
+                    return True
+            return False
+
+        url_list=self.application.handlers[0][1]
         result=[]
-        exception=['static','robots','favicon']
-        for s in handlers[0][1]:
+        for s in url_list:
             tmp={}
-            if s._path[:6] in exception:
+            if exception_url(s._path):
                 continue
-            tmp['url_pattern']=s._path
+            tmp['url_pattern']=s._path.replace('%s','(.*)')
+            tmp['handler_class']='%s.%s'%(s.handler_class.__module__,s.handler_class.__name__)
             for k,v in s.kwargs.iteritems():
-                tmp[k]=v
+                if k=='role_map':
+                    for rk,rv in v.iteritems():
+                        tmp['role_%s'%rk]=rv
+                elif k=='perm_map':
+                    for pk,pv in v.iteritems():
+                        tmp['perm_%s'%pk]=reduce(lambda x,y:x+','+y,pv)
+                    pass
+                else:
+                    tmp[k]=v
             result.append(tmp)
-        #url_list={{'path':s._path,'kwargs':s.kwargs} for s in handlers[0][1]}
         self.send_message(result)
 
+    @coroutine
+    def post(self, *args, **kwargs):
+        """重新创建URL列表"""
+        # todo write restart.txt file
+        import os
+        path=os.path.dirname(__file__)
+        file_path='/'.join(path.split('/')[:-1])+'/restart.txt'
+        with open(file_path,'a') as f:
+            f.write('restart\n')
+
+
+#         header="""import tornado
+# import core
+# import handler
+# routes=[
+#         """
+#         end="]"
+#         import_module=set()
+#         db=self.settings['db']
+#         urls=yield db.urls.find().to_list(length=None)
+#         handlers=[]
+#         lines=[]
+#         with open(file_path,'w') as f:
+#
+#             #f.write(header)
+#             for url in urls:
+#                 role_map={}
+#                 perm_map={}
+#                 url_pattern=url.get('url_pattern')
+#                 template_path=url.get('template',None)
+#                 title=url.get('title',None)
+#                 cname=url.get('cname',None)
+#
+#                 role_map['get']=url.get('role_get').split(',') if url.get('role_get','') else []
+#                 role_map['put']=url.get('role_put').split(',') if url.get('role_put','') else []
+#                 role_map['post']=url.get('role_post').split(',') if url.get('role_post','') else []
+#                 role_map['delete']=url.get('role_delete').split(',') if url.get('role_delete','') else []
+#
+#                 perm_map['get']=url.get('perm_get').split(',') if url.get('perm_get','') else []
+#                 perm_map['put']=url.get('perm_put').split(',') if url.get('perm_put','') else []
+#                 perm_map['post']=url.get('perm_post').split(',') if url.get('perm_post','') else []
+#                 perm_map['delete']=url.get('perm_delete').split(',') if url.get('perm_delete','') else []
+#
+#
+#                 full_class_str=url.get('handler_class')
+#                 full_class_str_split=full_class_str.split('.')
+#                 module_name='.'.join(full_class_str_split[:-1])
+#                 class_name=full_class_str_split[-1]
+#                 #cls=create_class(module_name,class_name)
+#                 import_module.add('import '+module_name+'\n')
+#                 lines.append("(r'%(url)s',%(handler)s,%(kwargs)s),\n"%{
+#                     "url":url_pattern,
+#                     "handler":full_class_str,
+#                     "kwargs":{'cname':cname,'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}
+#                 })
+#             f.writelines(list(import_module))
+#             f.write('routes=[')
+#             f.writelines(lines)
+#             f.write(end)
+
+            #self.application.add_handler()
+        #     instance=cls()
+        #     if isinstance(instance,MINIUIBaseHandler):
+        #         handlers.append((r'%s'%url_pattern,cls,{'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}))
+        #     else:
+        #         handlers.append((r'%s'%url_pattern,cls))
+
+
+
+            #if template_path and title:
+            #    handlers.append((r'%s'%url_pattern,cls,{'template':template_path,'title':title}))
+            #elif cls==MINIUIBaseHandler:
+            #    handlers.append((r'%s'%url_pattern,cls,{'role_map':role_map,'perm_map':perm_map}))
+            #else:
+            #    handlers.append((r'%s'%url_pattern,cls))
+
+        #self.application.add_handlers(".*$", handlers)
+        self.send_message('ok')
 
 routes = [
     # (r'/s/menu',MenuService),
@@ -298,6 +403,6 @@ routes = [
     (r'/s/role/perms', RolePermsService),
     (r'/s/role/users', RoleUsersService),
     (r'/s/user/menus', UserMenusService),
-    (r'/s/login/roles', RolesMenusService),
-    (r'/s/app/handlers',QueryHandlersService),
+    (r'/s/login/roles', LoginRolesService),
+    (r'/s/app/urls', URLService),
 ]

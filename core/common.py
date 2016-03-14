@@ -120,8 +120,15 @@ class BaseHandler(SessionBaseHandler):
 class MINIUIBaseHandler(BaseHandler):
     @authenticated
     def prepare(self):
-        """检查用户的角色(role)和权限(perms),从redis中获取"""
+        """1.检查用户的角色(role)和权限(perms),从redis中获取
+           2.获取前端url中传入的查询参数
+        """
         # 检查用户的角色和权限，从redis中获取
+        self.page_index=int(self.get_query_argument('pageIndex',0))
+        self.page_size=int(self.get_query_argument('pageSize',20))
+        self.sort_field=self.get_query_argument('sortFiled','')
+        self.sort_order=self.get_query_argument('sortOrder','desc')
+
         method=self.request.method.lower()
         default_guest_role_code=self.settings[constant.GUEST_ROLE_CODE]
         default_root_role_code=self.settings[constant.ROOT_ROLE_CODE]
@@ -180,13 +187,13 @@ class MINIUIBaseHandler(BaseHandler):
         return role in user_role if user_role else False
 
     @coroutine
-    def write_page(self,cursor,pageIndex=0,pageSize=20):
+    def write_page(self,cursor,*args,**kwargs):
         """向浏览器输出一页数据
         :param cursor mongodb的数据库游标
         :param pageIndex 浏览器传入的当前页码
         :param pageSize 当前页显示的行数"""
         total=yield cursor.count()
-        data=yield cursor.skip(pageIndex*pageSize).limit(pageSize).to_list(length=None)
+        data=yield cursor.skip(self.page_index*self.page_size).limit(self.page_size).to_list(length=None)
         self.set_header('Content-Type', 'application/json;charset=UTF-8')
         self.write(bson_encode({'data':data,'total':total}))
 
@@ -341,7 +348,7 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
 
         db = self.settings['db']
         id = body.get('_id', None)
-        if id:  # update
+        if id :  # update
             body['update_time'] = format_datetime(datetime.now())
             body['update_user'] = self.current_user.get('username', '')
 
