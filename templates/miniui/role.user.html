@@ -234,7 +234,7 @@
                     contentType: 'application/json',
                     data: mini.encode(data),
                     beforeSend: function (xhr) {
-                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                        xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
                     },
                     success: function (result) {
                         gridPerms.load({'key': selectUser['id']})
@@ -326,7 +326,7 @@
         var paramsObj = {
             data: mini.encode(data),
             removed: mini.encode(removed),
-            '_xsrf': $.cookie('_xsrf')
+            '_xsrf': nui.Cookie.get('_xsrf')
         };
 
         var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
@@ -391,7 +391,7 @@
             //contentType:'application/json',
             type: "post",
             beforeSend: function (xhr) {
-                xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
             },
             success: function (text) {
                 mini.hideMessageBox(msgid);
@@ -406,7 +406,7 @@
         if (e.sender.value != null && e.sender.value != '') {
             $.ajax({
                 url: '/s/md5',
-                data: {key: e.sender.value, '_xsrf': $.cookie('_xsrf')},
+                data: {key: e.sender.value, '_xsrf': nui.Cookie.get('_xsrf')},
                 type: 'get',
                 success: function (result) {
                     e.sender.setValue(result.data);

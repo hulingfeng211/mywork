@@ -3,7 +3,7 @@
 <div style="line-height:100px; padding:10px;height: 100px;background-color:#171812;color:white;" align="center">
     <strong style="font-size: 30px;">{{site_name}}-登录入口</strong>
 </div>
-<div id="loginWindow" class="mini-window" title="用户登录" style="width:380px;height:220px;"
+<div id="loginWindow" class="nui-window" title="用户登录" style="width:380px;height:220px;"
      showModal="true" showCloseButton="false"
         >
 
@@ -14,21 +14,21 @@
                 <td style="width:80px;text-align: right;" ><label for="username$text">帐号：</label></td>
                 <td>
                     <!-- onvalidation="onUserNameValidation" -->
-                    <input id="username" name="username"  class="mini-textbox"
+                    <input id="username" name="username"  class="nui-textbox"
                            required="true" style="width:150px;"/>
                 </td>
             </tr>
             <tr>
                 <td style="width:80px; text-align: right;"><label for="pwd$text">密码：</label></td>
                 <td>
-                    <input id="pwd" name="pwd" onvalidation="onPwdValidation" class="mini-password"
+                    <input id="pwd" name="pwd" onvalidation="onPwdValidation" class="nui-password"
                            requiredErrorText="密码不能为空" required="true" style="width:150px;" onenter="onLoginClick"/>
                     &nbsp;&nbsp;<a href="#">忘记密码?</a>
                 </td>
             </tr>
             <tr>
                 <td style="width:80px;text-align: right;"><label>选择角色:</label></td>
-                <td><input id="role_combobox" class="mini-combobox" style="width:150px;" textField="name" valueField="code"
+                <td><input id="role_combobox" class="nui-combobox" style="width:150px;" textField="name" valueField="code"
     url="/s/login/roles"  showNullItem="true" required="true" allowInput="false"
 />  </td>
             </tr>
@@ -56,7 +56,7 @@
 {% block script %}
 <script type="text/javascript">
 
-    var loginWindow = mini.get("loginWindow");
+    var loginWindow = nui.get("loginWindow");
     loginWindow.show();
    // var username=mini.get('username');
     //username.on('blur',function(e){
@@ -64,25 +64,25 @@
     //});
 
     function onLoginClick(e) {
-        var form = new mini.Form("#loginWindow");
+        var form = new nui.Form("#loginWindow");
 
         form.validate();
         if (form.isValid() == false) return;
 
-        var username = mini.get('username').value;
-        var pwd = mini.get('pwd').value;
-         var role = mini.get("role_combobox");
+        var username = nui.get('username').value;
+        var pwd = nui.get('pwd').value;
+         var role = nui.get("role_combobox");
         loginWindow.hide();
         //mini.loading("正在登录，请稍候...", "登录");
         $.ajax({
             url: "/page/login",
-            data: {username: username, pwd: pwd,role:role.getValue(),'_xsrf': $.cookie('_xsrf')},
+            data: {username: username, pwd: pwd,role:role.getValue(),'_xsrf': nui.Cookie.get('_xsrf')},
             type: "post",
             success: function (result) {
                 //mini.hideMessageBox(msgid);
                 if (result.status_code == 0) {
                     $('#loginmessage').text("");
-                    mini.loading("登录成功，马上转到系统...", "登录成功");
+                    nui.loading("登录成功，马上转到系统...", "登录成功");
                     setTimeout(function () {
                         window.location = "{{ home_url }}";
                         }, 1500);
@@ -102,7 +102,7 @@
         });
     }
     function onResetClick(e) {
-        var form = new mini.Form("#loginWindow");
+        var form = new nui.Form("#loginWindow");
         form.clear();
     }
     /////////////////////////////////////

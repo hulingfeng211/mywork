@@ -188,9 +188,13 @@
 <script type="text/javascript">
 
 
-    var grid = mini.get('url_grid');
-    var role_grid = mini.get('role_datagrid');
-    var perm_grid = mini.get('perm_datagrid');
+    var grid = nui.get('url_grid');
+    var role_grid = nui.get('role_datagrid');
+    var perm_grid = nui.get('perm_datagrid');
+
+
+
+
 
     //role_grid.load();
     grid.load();
@@ -206,7 +210,7 @@
     function apply_url() {
         $.ajax({
             url: "/s/app/urls",
-            data: {'_xsrf': $.cookie('_xsrf')},
+            data: {'_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
             success: function (text) {
@@ -243,7 +247,7 @@
             type: 'put',
             data: json,
             beforeSend: function (xhr) {
-                xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
                 xhr.setRequestHeader('content-type', 'application/json');
             },
             success: function (text) {
@@ -359,7 +363,7 @@
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/urls",
-            data: {data: json, '_xsrf': $.cookie('_xsrf')},
+            data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
             success: function (text) {
