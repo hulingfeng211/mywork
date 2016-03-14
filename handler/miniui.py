@@ -17,7 +17,7 @@ __author__ = 'george'
 
 skins=["default","blue",'gray','olive2003','blue2003','blue2010','bootstrap',
        'metro','metro-green','metro-orange','jqueryui-uilightness','jqueryui-humanity',
-       'jqueryui-excitebike','jqueryui-cupertino','nui']
+       'jqueryui-excitebike','jqueryui-cupertino']
 
 class IndexHandler(MINIUIBaseHandler):
 

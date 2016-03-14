@@ -115,10 +115,10 @@
         </ul>
     </li>
 </ul>
-<script src="{{ static_url('miniui/boot.js') }}"></script>
-<script src="{{ static_url('miniui/jquery.cookie.js') }}"></script>
+<script src="{{ static_url('nui/nui.js') }}"></script>
+<!--<script src="{{ static_url('miniui/jquery.cookie.js') }}"></script> -->
 <script type="text/javascript">
-    mini.parse();
+    nui.parse();
     $("body").css('display', 'inline');
 
     var tree = mini.get("leftTree");
@@ -235,7 +235,7 @@
     }
     function timeout_polling() {
         var url = '/s/sessiontimeout';
-        var sid = $.cookie('msid');
+        var sid = nui.Cookie.get('msid');
         var channel_name = 'session_time_out_' + sid;
 
         $.ajax({

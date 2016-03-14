@@ -76,7 +76,7 @@
                     contentType: 'application/json',
                     data: mini.encode({'role_id': current_role.id, 'menus': data}),
                     beforeSend: function (xhr) {
-                        xhr.setRequestHeader('X-Xsrftoken', $.cookie('_xsrf'));
+                        xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
                     },
                     success: function (result) {
                         load_data();

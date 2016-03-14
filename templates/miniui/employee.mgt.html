@@ -151,7 +151,7 @@
             var msgid = grid.loading("保存中，请稍后......");
             $.ajax({
                 url: "/s/employees",
-                data: {data: json, '_xsrf': $.cookie('_xsrf')},
+                data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
                 //contentType:'application/json',
                 type: "post",
                 success: function (text) {
