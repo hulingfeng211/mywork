@@ -51,6 +51,13 @@
             <div field="pwd" readOnly="true" width="100" allowSort="true">密码
                 <input property="editor" class="mini-textbox" style="width:100%;"/>
             </div>
+            <!--displayField="roles_name"-->
+            <div field="roles" width="100"  name="roles" displayField="roles_name" >所属角色
+                <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                               valueField="code" popupWidth="auto"
+                               popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
+                               onshowpopup="onRoleShowPopup"/>
+            </div>
             <div type="checkboxcolumn" field="nologin" trueValue="1" falseValue="0" width="60"
                  headerAlign="center">停用
             </div>
@@ -60,6 +67,20 @@
 
         </div>
 
+    </div>
+    <!--角色选择面板-->
+    <div id="gridPanel" class="mini-panel" title="选择角色" iconCls="icon-add" style="width:450px;height:250px;"
+         visible="false"
+         showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
+        <div id="role_datagrid" class="mini-datagrid" style="width:100%;height:100%;"
+             borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
+             url='/s/roles?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
+            <div property="columns">
+                <div type="checkcolumn">#</div>
+                <div field="code" width="120" headerAlign="center" allowSort="true">编码</div>
+                <div field="name" width="120" headerAlign="center" allowSort="true">描述</div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -73,6 +94,7 @@
 
 
     var grid = mini.get('userGrid');
+    var role_grid = nui.get('role_datagrid');
     grid.load();
     window.onload = function () {
 
@@ -82,6 +104,10 @@
             return false;
         });#}
     };
+    function onRoleShowPopup(e) {
+        role_grid.load();
+    }
+
     function onKeyEnter(e){
         search();
     }
@@ -178,11 +204,20 @@
     }
     function saveUserData() {
         var data = grid.getChanges();
-        var json = mini.encode(data);
+        //var json = mini.encode(data);
+        var post_data=[];
+        var tmp;
+        for (var i=0;i<data.length;i++){
+            tmp=mini.clone(data[i]);
+            tmp.roles=tmp.roles.split(',');
+            post_data.push(tmp);
+        }
+
+
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/users",
-            data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
+            data: {data: mini.encode(post_data), '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
             success: function (text) {
@@ -214,7 +249,7 @@
     function OnCellBeginEdit(e) {
         var record = e.record;
         var field = e.field;
-        var editableFields = ['name', 'superuser', 'nologin'];
+        var editableFields = ['name', 'superuser', 'nologin','roles'];
         if (record['id'] != null && editableFields.indexOf(field) == -1) {
             e.cancel = true;
         }

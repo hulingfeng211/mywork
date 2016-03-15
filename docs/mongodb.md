@@ -27,3 +27,12 @@
 > `rs.add('george-pc:27020')` # add to replset members
 > `rs.remove('george-pc:27019')` # remove from replset members
 
+# 系统管理A
+
+## 认证（Authentication）
+
+- SCRAM-SHA-1
+-  MONGODB-CR
+- x.509 Certificate Authentication
+
+
