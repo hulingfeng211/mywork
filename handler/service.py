@@ -22,7 +22,7 @@ from torndsession.sessionhandler import SessionBaseHandler
 
 import constant
 from core import clone_dict
-from core.common import MINIUIBaseHandler, BaseHandler
+from core.common import NUIBaseHandler, BaseHandler
 from core.utils import format_datetime, create_class
 
 __author__ = 'george'
@@ -96,7 +96,7 @@ class TimeoutService(BaseHandler):
                 # super(TimeoutService, self).on_finish()
 
 
-class UserPermService(MINIUIBaseHandler):
+class UserPermService(NUIBaseHandler):
     """用户权限服务"""
 
     @coroutine
@@ -122,7 +122,7 @@ class UserPermService(MINIUIBaseHandler):
                 yield db.users.update({'_id': ObjectId(userid)}, {'$addToSet': {"perms": p['id']}})
 
 
-class UserMenusService(MINIUIBaseHandler):
+class UserMenusService(NUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         db = self.settings['db']
@@ -145,7 +145,7 @@ class UserMenusService(MINIUIBaseHandler):
             self.send_message(result)
 
 
-class RoleMenusService(MINIUIBaseHandler):
+class RoleMenusService(NUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         role_id = self.get_argument('role_id', None)
@@ -174,7 +174,7 @@ class RoleMenusService(MINIUIBaseHandler):
                     yield db.roles.update({'_id': ObjectId(role_id)}, {'$push': {'menus': item['id']}})
 
 
-class RolePermsService(MINIUIBaseHandler):
+class RolePermsService(NUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         role_id = self.get_argument('role_id', None)
@@ -204,7 +204,7 @@ class RolePermsService(MINIUIBaseHandler):
                     yield db.roles.update({'_id': ObjectId(role_id)}, {'$push': {'perms': item['id']}})
 
 
-class RoleUsersService(MINIUIBaseHandler):
+class RoleUsersService(NUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         role_id = self.get_argument('role_id', None)
@@ -254,7 +254,7 @@ class RoleUsersService(MINIUIBaseHandler):
                     yield db.users.update({'_id': ObjectId(item['id'])}, {"$push":{"roles":role['code']},"$set": user})
 
 
-class LoginRolesService(MINIUIBaseHandler):
+class LoginRolesService(NUIBaseHandler):
 
 
     def prepare(self):
@@ -273,7 +273,7 @@ class LoginRolesService(MINIUIBaseHandler):
     def check_xsrf_cookie(self):
         pass
 
-class LogoutService(MINIUIBaseHandler):
+class LogoutService(NUIBaseHandler):
     """管理员注销其他用户"""
     @coroutine
     def post(self, *args, **kwargs):
@@ -281,7 +281,7 @@ class LogoutService(MINIUIBaseHandler):
 
         pass
 
-class URLService(MINIUIBaseHandler):
+class URLService(NUIBaseHandler):
     """URL服务，获取所有系统的url"""
 
     @coroutine

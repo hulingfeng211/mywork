@@ -117,7 +117,7 @@ class BaseHandler(SessionBaseHandler):
             self.write(bson_encode({"data": obj, "status_code": status_code,"total":total }))
 
 
-class MINIUIBaseHandler(BaseHandler):
+class NUIBaseHandler(BaseHandler):
     @authenticated
     def prepare(self):
         """1.检查用户的角色(role)和权限(perms),从redis中获取
@@ -163,13 +163,13 @@ class MINIUIBaseHandler(BaseHandler):
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(MINIUIBaseHandler, self).initialize()
+        super(NUIBaseHandler, self).initialize()
 
     def get(self, *args, **kwargs):
         """提供默认的get方法的实现,如果template属性存在则进行页面模板的绘制后输出
         需要在定义url模板的时候指定template和title
 
-        (r'/s/perms',MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
+        (r'/s/perms',MINIUIBaseHandler,{'template':'miniui/perm.mgt.html','title':'权限管理'}),
 
         """
         if hasattr(self,'template') and hasattr(self,'title'):
@@ -198,7 +198,7 @@ class MINIUIBaseHandler(BaseHandler):
         self.write(bson_encode({'data':data,'total':total}))
 
 
-class MINIUITreeHandler(MINIUIBaseHandler):
+class NUITreeHandler(NUIBaseHandler):
     """
     组织服务
     """
@@ -209,7 +209,7 @@ class MINIUITreeHandler(MINIUIBaseHandler):
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(MINIUIBaseHandler, self).initialize()
+        super(NUIBaseHandler, self).initialize()
 
     @coroutine
     def get(self, *args, **kwargs):
@@ -244,7 +244,7 @@ class MINIUITreeHandler(MINIUIBaseHandler):
                 yield self.settings['db'][self.cname].remove({"_id": item['id']})
 
 
-class MINIUIMongoHandler(MINIUIBaseHandler):
+class NUIMongoHandler(NUIBaseHandler):
     """通用的mongodb的Handler，封装简单的CRUD的操作"""
 
     def is_object_id(self, id_str):
@@ -260,7 +260,7 @@ class MINIUIMongoHandler(MINIUIBaseHandler):
             for key, val in kwargs.items():
                 if not hasattr(self, key):
                     setattr(self, key, val)
-        super(MINIUIMongoHandler, self).initialize()
+        super(NUIMongoHandler, self).initialize()
 
     @coroutine
     def get(self, *args, **kwargs):

@@ -19,11 +19,13 @@ from tornado.gen import coroutine, Task, Return
 import config
 import constant
 from core import make_password, settings
-from core.common import MongoBaseHandler, MINIUIMongoHandler, MINIUITreeHandler, BaseHandler, MINIUIBaseHandler
+from core.common import MongoBaseHandler, NUIMongoHandler, NUITreeHandler, BaseHandler, NUIBaseHandler
 from core.utils import utc_to_local, format_datetime, create_class
+from handler.service import URLService, TimeoutService, LoginRolesService
+from nui import LoginHandler,LogoutHandler, IndexHandler
 
 
-class MD5Handler(MINIUIBaseHandler):
+class MD5Handler(NUIBaseHandler):
 
     def get(self, *args, **kwargs):
         key=self.get_argument('key',None)
@@ -34,8 +36,32 @@ class MD5Handler(MINIUIBaseHandler):
 def get_handlers():
     client=pymongo.MongoClient(config.MONGO_URI)
     db=client[config.DB_NAME]
-    urls=db.urls.find()
+    cursor=db.urls.find()
     handlers=[]
+    urls=list(cursor)
+    if not list(urls):
+        # 登录页
+        handlers.append((r'/page/login',LoginHandler))
+        # 登出服务
+        handlers.append((r'/page/logout',LoginHandler))
+        # 会话超时的服务
+        handlers.append((r'/s/sessiontimeout', TimeoutService))
+        # 系统首页
+        handlers.append((r'/app/', IndexHandler))
+        # 系统首页
+        handlers.append((r'/', IndexHandler))
+        # 登录时的角色服务
+        handlers.append((r'/s/login/roles', LoginRolesService))
+        # 系统首页
+        handlers.append((r'/app$', IndexHandler))
+        # url管理页面
+        handlers.append((r'/s/app/urls', URLService,{'role_map':{'post':'root'}}))
+        # url管理服务
+        # URL管理
+        handlers.append((r'/s/urls', NUIMongoHandler, {'cname': 'urls'}))
+        handlers.append((r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'}))
+        handlers.append((r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'}))
+        return handlers
 
     for url in urls:
         role_map={}
@@ -65,7 +91,7 @@ def get_handlers():
         handlers.append((r'%s'%url_pattern,cls,{'cname':cname,'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}))
     return handlers
 
-class OnlineUserHandler(MINIUIBaseHandler):
+class OnlineUserHandler(NUIBaseHandler):
     """从缓存服务器上获取当前登陆的所有用户"""
     def initialize(self, *args, **kwargs):
 
@@ -141,27 +167,27 @@ routes = [
     # (r'/s/menus/(.+)',MongoBaseHandler,{'cname':'menus'}),
 
     # 员工管理
-    (r'/s/employees',MINIUIMongoHandler,{'cname':'employees'}),
-    (r'/s/employees/(.+)',MINIUIMongoHandler,{'cname':'employees'}),
+    (r'/s/employees', NUIMongoHandler, {'cname': 'employees'}),
+    (r'/s/employees/(.+)', NUIMongoHandler, {'cname': 'employees'}),
 
     # 用户管理
-    (r'/s/users',MINIUIMongoHandler,{'cname':'users'}),
-    (r'/s/users/(.+)',MINIUIMongoHandler,{'cname':'users'}),
+    (r'/s/users', NUIMongoHandler, {'cname': 'users'}),
+    (r'/s/users/(.+)', NUIMongoHandler, {'cname': 'users'}),
 
     # 角色管理
-    (r'/s/roles',MINIUITreeHandler,{'cname':'roles'}),
+    (r'/s/roles', NUITreeHandler, {'cname': 'roles'}),
 
     # 菜单管理
-    (r'/s/menus',MINIUITreeHandler,{'cname':'menus'}),
+    (r'/s/menus', NUITreeHandler, {'cname': 'menus'}),
 
     # 组织管理
-    (r'/s/orgns',MINIUITreeHandler,{'cname':'orgns'}),
+    (r'/s/orgns', NUITreeHandler, {'cname': 'orgns'}),
 
     # 权限管理
-    (r'/s/perms',MINIUIMongoHandler,{'cname':'perms'}),
+    (r'/s/perms', NUIMongoHandler, {'cname': 'perms'}),
     # URL管理
-    (r'/s/urls',MINIUIMongoHandler,{'cname':'urls'}),
-    (r'/s/urls/(.+)',MINIUIMongoHandler,{'cname':'urls'}),
+    (r'/s/urls', NUIMongoHandler, {'cname': 'urls'}),
+    (r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'}),
 
     # 在线用户
     (r'/s/onlineuser',OnlineUserHandler),

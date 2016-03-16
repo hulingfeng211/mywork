@@ -18,7 +18,7 @@ from tornado import  autoreload
 import os
 
 from core import settings
-from handler import auth, oa, chat, routes, miniui, service, get_handlers
+from handler import  get_handlers
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
 

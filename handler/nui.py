@@ -11,7 +11,7 @@ from tornado.web import RequestHandler
 
 import constant
 from core import make_password
-from core.common import MINIUIBaseHandler
+from core.common import NUIBaseHandler
 
 __author__ = 'george'
 
@@ -19,7 +19,7 @@ skins=["default","blue",'gray','olive2003','blue2003','blue2010','bootstrap',
        'metro','metro-green','metro-orange','jqueryui-uilightness','jqueryui-humanity',
        'jqueryui-excitebike','jqueryui-cupertino']
 
-class IndexHandler(MINIUIBaseHandler):
+class IndexHandler(NUIBaseHandler):
 
     @coroutine
     def get(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class IndexHandler(MINIUIBaseHandler):
 
 
 
-class LogoutHandler(MINIUIBaseHandler):
+class LogoutHandler(NUIBaseHandler):
     def prepare(self):
         pass
 
@@ -63,14 +63,14 @@ class LogoutHandler(MINIUIBaseHandler):
         self.session.delete('user')
         self.redirect('/app')
 
-class LoginHandler(MINIUIBaseHandler):
+class LoginHandler(NUIBaseHandler):
 
     def prepare(self):
         """skip login valid"""
         pass
 
     def get(self, *args, **kwargs):
-        self.render('miniui/login.html',site_name=self.settings['site_name'],title="用户登录",home_url=self.settings[constant.HOME_URL])
+        self.render('nui/login.html',site_name=self.settings['site_name'],title="用户登录",home_url=self.settings[constant.HOME_URL])
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -120,34 +120,34 @@ class LoginHandler(MINIUIBaseHandler):
 routes = [
     (r'/app/', IndexHandler),
     (r'/app$', IndexHandler),
-    (r'/page/home', MINIUIBaseHandler,{'template':'miniui/home.html','title':'首页'}),
-    (r'/page/menu', MINIUIBaseHandler,{'template':'miniui/menu.mgt.html',
+    (r'/page/home', NUIBaseHandler, {'template': 'miniui/home.html', 'title': '首页'}),
+    (r'/page/menu', NUIBaseHandler, {'template': 'miniui/menu.mgt.html',
                                        'title':'菜单管理',
                                        'role_map':{
                                            'get':'ptyh','post':'ptyh'
                                        }}),
-    (r'/page/orgn', MINIUIBaseHandler,{'template':'miniui/orgn.mgt.html','title':'组织管理'}),
-    (r'/page/employee', MINIUIBaseHandler,{'template':'miniui/employee.mgt.html','title':'员工管理'}),
-    (r'/page/user', MINIUIBaseHandler,{'template':'miniui/user.mgt.html','title':'用户管理'}),
+    (r'/page/orgn', NUIBaseHandler, {'template': 'miniui/orgn.mgt.html', 'title': '组织管理'}),
+    (r'/page/employee', NUIBaseHandler, {'template': 'miniui/employee.mgt.html', 'title': '员工管理'}),
+    (r'/page/user', NUIBaseHandler, {'template': 'miniui/user.mgt.html', 'title': '用户管理'}),
     (r'/page/login', LoginHandler),
     (r'/page/logout', LogoutHandler),
-    (r'/page/perms', MINIUIBaseHandler,{'template':'miniui/perms.mgt.html','title':'权限管理'}),
+    (r'/page/perms', NUIBaseHandler, {'template': 'miniui/perm.mgt.html', 'title': '权限管理'}),
 
     # 仅root角色的用户可以访问此url
-    (r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html',
+    (r'/page/onlineuser', NUIBaseHandler, {'template': 'miniui/onlineuser.mgt.html',
                                              'title':'在线用户管理',
-                                             #'role_map':{'post':['root','ptyh']},
+                                           #'role_map':{'post':['root','ptyh']},
                                              'perm_map':{'post':['onlineuser:logout'],
                                                            'get':['onlineuser:logout']}}),
 
     #(r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
-    (r'/page/choice_perms', MINIUIBaseHandler,{'template':'miniui/perms.choice.html','title':'选择权限'}),
-    (r'/page/choice_menus', MINIUIBaseHandler,{'template':'miniui/menu.choice.html','title':'选择菜单'}),
-    (r'/page/choice_users', MINIUIBaseHandler,{'template':'miniui/user.choice.html','title':'选择用户'}),
-    (r'/page/role/menu', MINIUIBaseHandler,{'template':'miniui/role.menu.html','title':'角色菜单'}),
-    (r'/page/role/user', MINIUIBaseHandler,{'template':'miniui/role.user.html','title':'角色用户'}),
-    (r'/page/userprofile', MINIUIBaseHandler,{'template':'miniui/user.profile.html','title':'用户配置'}),
-    (r'/page/role', MINIUIBaseHandler,{'template':'miniui/role.mgt.html','title':'角色管理'}),
-    (r'/page/url', MINIUIBaseHandler,{'template':'miniui/url.mgt.html','title':'URL管理'}),
+    (r'/page/choice_perms', NUIBaseHandler, {'template': 'miniui/perm.choice.html', 'title': '选择权限'}),
+    (r'/page/choice_menus', NUIBaseHandler, {'template': 'miniui/menu.choice.html', 'title': '选择菜单'}),
+    (r'/page/choice_users', NUIBaseHandler, {'template': 'miniui/user.choice.html', 'title': '选择用户'}),
+    (r'/page/role/menu', NUIBaseHandler, {'template': 'miniui/role.menu.html', 'title': '角色菜单'}),
+    (r'/page/role/user', NUIBaseHandler, {'template': 'miniui/role.user.html', 'title': '角色用户'}),
+    (r'/page/userprofile', NUIBaseHandler, {'template': 'miniui/user.profile.html', 'title': '用户配置'}),
+    (r'/page/role', NUIBaseHandler, {'template': 'miniui/role.mgt.html', 'title': '角色管理'}),
+    (r'/page/url', NUIBaseHandler, {'template': 'miniui/url.mgt.html', 'title': 'URL管理'}),
 ]
 
