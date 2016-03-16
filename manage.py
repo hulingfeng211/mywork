@@ -18,7 +18,7 @@ from tornado import  autoreload
 import os
 
 from core import settings
-from handler import  get_handlers
+from handler import   routes,nui,service,get_handlers
 
 define('port', default=10000, type=int, help="在此端口接收用户请求")
 
@@ -62,17 +62,14 @@ class WorkApplication(Application):
         #      #     'path': os.path.join(os.path.dirname(__file__), 'front')
         #      # }),
         #  ]
+        handlers=[]
         # handlers.extend(auth.routes)
         # handlers.extend(oa.routes)
         # handlers.extend(chat.routes)
-        # handlers.extend(miniui.routes)
-        # handlers.extend(service.routes)
-        # handlers.extend(routes)
+        #handlers.extend(nui.routes)
+        #handlers.extend(service.routes)
+        #handlers.extend(routes)
         handlers =  get_handlers()
-
-        #handlers=[]
-        #handlers.extend(route_map.routes)
-
         Application.__init__(self, handlers=handlers, **settings)
 
 
