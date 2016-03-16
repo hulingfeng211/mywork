@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--<!DOCTYPE html>-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>{{title}}</title>
+    <style type="text/css">
+        html,body{
+            height:100%;
+            width:100%;
+            padding:0;
+            margin:0;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+    </style>
+    {% block style %}
+    {% end %}
+</head>
+<body style="display: none; ">
+
+{%block body %}
+{%end%}
+
+
+<script src="{{static_url('nui/nui.js')}}"></script>
+
+<script type="text/javascript">
+    nui.parse();
+   $('body').css('display','block');
+</script>
+{%block script %}
+{%end%}
+
+</body>
+</html>
+{% block end %}
+{% end %}

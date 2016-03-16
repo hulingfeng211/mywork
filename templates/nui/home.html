@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+{#<div class="mini-panel" allowDrag="true" id="onlineuser" title="在线用户" iconCls="icon-node" style="height: 300px;width:600px;float: left;"
+     showToolbar="true" url="/page/onlineuser" showCloseButton="true" showFooter="true">
+</div>
+<div class="mini-panel" allowDrag="true" id="onlineuser" title="在线用户" iconCls="icon-node" style="height: 300px;width:600px;float: left;"
+     showToolbar="true" url="/page/onlineuser" showCloseButton="true" showFooter="true">
+</div>#}
+
+{% end %}
+
+
+{% block end %}
+<link href="{{ static_url('miniui/miniui/portal.css') }}" rel="stylesheet" type="text/css">
+<script src="{{ static_url('miniui/miniui/Portal.js') }}"></script>
+
+<script type="text/javascript">
+    var portal = new mini.ux.Portal();
+    portal.set({
+        style: "width: 100%;height:400px",
+        columns: [300, "100%", 300]
+    });
+    //panel
+    portal.setPanels([
+        {column: 0, id: "p1", title: "待办任务", showCloseButton: true},
+        {column: 0, id: "p2", title: "消息列表", showCollapseButton: true},
+        {column: 0, id: "p7", title: "销量统计", showCollapseButton: true},
+
+        {column: 1, id: "p3", title: "在线用户", showCloseButton: true,height:410,url:'/page/onlineuser'},
+        //{column: 1, id: "p3", title: "在线用户", showCloseButton: true,height:410},
+        //{column: 1, id: "p4", title: "panel4", showCollapseButton: true},
+        {column: 1, id: "p8", title: "成本统计", showCollapseButton: true},
+
+        {column: 2, id: "p5", title: "panel5", showCloseButton: true},
+        {column: 2, id: "p6", title: "panel6", showCollapseButton: true},
+        {column: 2, id: "p9", title: "panel2", showCollapseButton: true}
+    ])
+    portal.render(document.body);
+
+    function onClick(e) {
+        mini.alert('test');
+    }
+</script>
+{% end %}

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+    <table style="width: 100%">
+        <tr>
+            <td style="width:100%;">
+                <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+                <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
+                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_employee()">从员工中选择</a>
+                <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+            </td>
+            <td style="white-space:nowrap;">
+                <input id="key" class="mini-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;"
+                       onenter="onKeyEnter"/>
+                <a class="mini-button"  onclick="search()">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="mini-fit">
+
+    <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         allowCellValid="true"
+         idField="id"
+         multiSelect="true"
+         url="/s/users"
+         idField="id"
+         pageSize="20"
+         editNextOnEnterKey="true"
+         ajaxOptions='{type:"get"}'
+         oncellbeginedit="OnCellBeginEdit"
+         oncellendedit="onCellEndEdit"
+         style="width:100%;height:100%;">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="loginname" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">员工帐号
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+            </div>
+            <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+            </div>
+            <div field="email" required="true" vtype="email" width="100" allowSort="true" align="left"
+                 headerAlign="center">邮箱
+                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+            </div>
+            <div field="pwd" readOnly="true" width="100" allowSort="true">密码
+                <input property="editor" class="mini-textbox" style="width:100%;"/>
+            </div>
+            <!--displayField="roles_name"-->
+            <div field="roles" width="100"  name="roles" displayField="roles_name" >所属角色
+                <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                               valueField="code" popupWidth="auto"
+                               popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
+                               onshowpopup="onRoleShowPopup"/>
+            </div>
+            <div type="checkboxcolumn" field="nologin" trueValue="1" falseValue="0" width="60"
+                 headerAlign="center">停用
+            </div>
+            <div type="checkboxcolumn" field="superuser" trueValue="1" falseValue="0" width="60"
+                 headerAlign="center">超管
+            </div>
+
+        </div>
+
+    </div>
+    <!--角色选择面板-->
+    <div id="gridPanel" class="mini-panel" title="选择角色" iconCls="icon-add" style="width:450px;height:250px;"
+         visible="false"
+         showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
+        <div id="role_datagrid" class="mini-datagrid" style="width:100%;height:100%;"
+             borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
+             url='/s/roles?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
+            <div property="columns">
+                <div type="checkcolumn">#</div>
+                <div field="code" width="120" headerAlign="center" allowSort="true">编码</div>
+                <div field="name" width="120" headerAlign="center" allowSort="true">描述</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% end %}
+
+{% block script %}
+
+<script type="text/javascript">
+
+
+    var grid = mini.get('userGrid');
+    var role_grid = nui.get('role_datagrid');
+    grid.load();
+    window.onload = function () {
+
+        {# $("#roleTree").bind("contextmenu", function (e) {
+            var menu = mini.get("contextMenu");
+            menu.showAtPos(e.pageX, e.pageY);
+            return false;
+        });#}
+    };
+    function onRoleShowPopup(e) {
+        role_grid.load();
+    }
+
+    function onKeyEnter(e){
+        search();
+    }
+    function search(){
+        var key=mini.get('key').getValue();
+        //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
+        //q=String.format(q,key);
+        // monogodb的查询表达式
+        q={
+            $or:[
+                {
+                    loginname:{
+                        $regex:key
+                    }
+                },
+                {
+                    name:{
+                        $regex:key
+                    }
+                },
+                {
+                    email:{
+                        $regex:key
+                    }
+                }
+            ]
+        };
+
+
+        //alert(q);
+        //grid.load({q:'{"$or":{"loginname":}'})
+        grid.load({q:mini.encode(q)});
+    }
+    /**
+     * usergrid行选择事件
+     */
+    grid.on('select', function (e) {
+        //alert(e.record['id']);
+        //todo 根据用户id查找用户的权限列表填充到gridPerms中
+        var selectUser = grid.getSelected();
+    });
+
+    /**
+     * 选取员工作为用户
+     * @param e
+     */
+    function choice_from_employee() {
+        //todo
+    }
+
+    /**
+     * 初始化选中的用户的密码
+     */
+    function initialpwd() {
+        var row = grid.getSelected();
+        if (row != null) {
+            $.ajax({
+                url: '/s/md5',
+                type: 'get',
+                data: {key: row.loginname},
+                success: function (result) {
+                    //row['pwd'] = result.data;
+                    grid.updateRow(row, {"pwd": result.data})
+                }
+            });
+        }
+
+    }
+
+    var Genders = [{id: 1, text: '男'}, {id: 2, text: '女'}];
+    function onGenderRenderer(e) {
+        for (var i = 0, l = Genders.length; i < l; i++) {
+            var g = Genders[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
+    }
+    grid.on("beforeload", function (e) {
+        if (grid.getChanges().length > 0) {
+            if (confirm("有增删改的数据未保存，是否取消本次操作？")) {
+                e.cancel = true;
+            }
+        }
+    });
+    function addRow() {
+        var newRow = {name: "新用户"};
+        grid.addRow(newRow, 0);
+    }
+    function removeRow() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+    function saveUserData() {
+        var data = grid.getChanges();
+        //var json = mini.encode(data);
+        var post_data=[];
+        var tmp;
+        for (var i=0;i<data.length;i++){
+            tmp=mini.clone(data[i]);
+            tmp.roles=tmp.roles.split(',');
+            post_data.push(tmp);
+        }
+
+
+        var msgid = grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "/s/users",
+            data: {data: mini.encode(post_data), '_xsrf': nui.Cookie.get('_xsrf')},
+            //contentType:'application/json',
+            type: "post",
+            success: function (text) {
+                mini.hideMessageBox(msgid);
+                grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+    function setMd5Value(e) {
+        if (e.sender.value != null && e.sender.value != '') {
+            $.ajax({
+                url: '/s/md5',
+                data: {key: e.sender.value, '_xsrf': nui.Cookie.get('_xsrf')},
+                type: 'get',
+                success: function (result) {
+                    e.sender.setValue(result.data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+
+                }
+
+            });
+            //e.sender.setValue($.md5(e.sender.value));
+        }
+    }
+    function OnCellBeginEdit(e) {
+        var record = e.record;
+        var field = e.field;
+        var editableFields = ['name', 'superuser', 'nologin','roles'];
+        if (record['id'] != null && editableFields.indexOf(field) == -1) {
+            e.cancel = true;
+        }
+    }
+    function onCellEndEdit(e) {
+        var record = e.record;
+        var field = e.field;
+        if (field == 'loginname') {
+            $.ajax({
+                url: '/s/md5',
+                type: 'get',
+                data: {key: record.loginname},
+                success: function (result) {
+                    e.record.pwd = result.data;
+                }
+            });
+        }
+    }
+</script>
+{% end %}

@@ -40,7 +40,7 @@ class IndexHandler(MINIUIBaseHandler):
         username=self.current_user.get('username')
         user = yield db.users.find_one({"$or":[{"email":username},{"loginname":username}]})
         roles=yield db.roles.find({"code":{"$in":user.get('roles')}},{'_id':0,'code':1,'name':1}).to_list(length=None)
-        self.render('miniui/index.html',
+        self.render('nui/index.html',
                     site_name=self.settings['site_name'],
                     roles=roles,
                     current_role=cookie_role,
