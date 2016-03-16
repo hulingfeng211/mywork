@@ -144,6 +144,8 @@ routes = [
     (r'/page/choice_perms', NUIBaseHandler, {'template': 'nui/perm.choice.html', 'title': '选择权限'}),
     (r'/page/choice_menus', NUIBaseHandler, {'template': 'nui/menu.choice.html', 'title': '选择菜单'}),
     (r'/page/choice_users', NUIBaseHandler, {'template': 'nui/user.choice.html', 'title': '选择用户'}),
+    (r'/page/choice_urls', NUIBaseHandler, {'template': 'nui/url.choice.html', 'title': '选择URL'}),
+
     (r'/page/role/menu', NUIBaseHandler, {'template': 'nui/role.menu.html', 'title': '角色菜单'}),
     (r'/page/role/user', NUIBaseHandler, {'template': 'nui/role.user.html', 'title': '角色用户'}),
     (r'/page/userprofile', NUIBaseHandler, {'template': 'nui/user.profile.html', 'title': '用户配置'}),
