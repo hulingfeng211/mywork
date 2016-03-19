@@ -153,5 +153,6 @@ routes = [
     (r'/page/userprofile', NUIBaseHandler, {'template': 'nui/user.profile.html', 'title': '用户配置'}),
     (r'/page/role', NUIBaseHandler, {'template': 'nui/role.mgt.html', 'title': '角色管理'}),
     (r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'}),
+    (r'/page/files', NUIBaseHandler, {'template': 'nui/file.mgt.html', 'title': '文件管理'}),
 ]
 

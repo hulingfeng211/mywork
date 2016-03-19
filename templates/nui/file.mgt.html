@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block body %}
+
+{# todo  #}
+<div style="width: 100%;height: 100%;padding: 0px;" class="nui-splitter">
+    <div size="250px;" showCollapseButton="true" style="padding: 0px">
+        <div id="toolbar1" class="nui-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;">
+                        <a class="nui-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
+                        <a class="nui-button" onclick="saveData()" iconCls="icon-save" plain="true">保存</a>
+                        <a class="nui-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="nui-fit">
+            <ul id="tree1" onnodedblclick="onNodeDoubleClick()" url="/s/file/catalogs" ajaxOptions='{type:"get"}'
+                class="nui-tree"
+                style="width:100%;height:100%;padding:5px;"
+                showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
+                allowLeafDropIn="true"
+                idField="id" parentField="pid" resultAsTree="false">
+            </ul>
+
+            <ul id="contextMenu" class="nui-contextmenu">
+                <li>
+                    <span>插入</span>
+                    <ul>
+                        <li iconCls="icon-add" onclick="onAddBefore()">插入节点(前)</li>
+                        <li class="separator"></li>
+                        <li iconCls="icon-add" onclick="onAddAfter()">插入节点(后)</li>
+                        <li class="separator"></li>
+                        <li iconCls="icon-add" onclick="onAddNode()">插入节点(子节点)</li>
+                        <li class="separator"></li>
+                        <li iconCls="icon-add" onclick="onAddRootNode()">添加根节点</li>
+                    </ul>
+                </li>
+                <li iconCls="icon-remove" onclick="onRemoveNode()">删除节点</li>
+                <li iconCls="icon-edit" onclick="onEditNode()">编辑</li>
+                <li class="separator"></li>
+                <li iconCls="icon-save" onclick="saveData()">保存</li>
+            </ul>
+        </div>
+
+    </div>
+    <div showCollapseButton="false">
+
+        <div class="nui-toolbar">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;">
+                        <a class="nui-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+                        <a class="nui-button" iconCls="icon-save" plain="true" onclick="saveData()">保存</a>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <input id="key" class="nui-textbox" emptyText="请输入文件名" style="width:150px;"
+                               onenter="onKeyEnter"/>
+                        <a class="nui-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="nui-fit">
+            <div class="nui-datagrid" borderStyle="border:0" style="width: 100%;height: 80%">
+                <div property="columns">
+                    <div type="checkcolumn">#</div>
+                    <div field="name">文件名</div>
+                    <div field="name">上传时间</div>
+                    <div field="name">上传人</div>
+                    <div field="name">文件描述</div>
+
+                </div>
+
+            </div>
+            <form>
+                <fieldset>
+                    <legend>上传文件</legend>
+                    <table>
+                        <tr>
+                            <td>
+                                <input id="fileupload1" class="mini-fileupload" name="Fdata" limitType="*.txt"
+                                       flashUrl="swfupload/swfupload.swf"
+                                       uploadUrl="upload.aspx"
+                                       onuploadsuccess="onUploadSuccess"
+                                       onuploaderror="onUploadError" onfileselect="onFileSelect"
+                                />
+                                <br/>
+                                <input type="button" value="上传" onclick="startUpload()"/></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% end %}
+
+{% block script %}
+
+<script type="text/javascript">
+
+
+    var tree = nui.get('tree1');
+
+    window.onload = function () {
+        $("#tree1").bind("contextmenu", function (e) {
+            var menu = nui.get("contextMenu");
+            menu.showAtPos(e.pageX, e.pageY);
+            return false;
+        });
+        //var tree = nui.get('tree1');
+        //var db = new nui.DataBinding();
+        //db.bindForm("menu_form", tree);
+
+
+    };
+    function onNodeDoubleClick(e) {
+        onEditNode(e);
+    }
+    function onAddRootNode(e) {
+        var newNode = {name: "root"};
+        tree.addNode(newNode)
+    }
+    function onAddBefore(e) {
+        var node = tree.getSelectedNode();
+        var newNode = {};
+        tree.addNode(newNode, "before", node);
+    }
+
+    function onAddAfter(e) {
+        var node = tree.getSelectedNode();
+
+        var newNode = {};
+        tree.addNode(newNode, "after", node);
+    }
+
+    function onAddNode(e) {
+        var node = tree.getSelectedNode();
+
+        var newNode = {name: 'node'};
+        tree.addNode(newNode, "add", node);
+    }
+
+    function onEditNode(e) {
+        var node = tree.getSelectedNode();
+
+        tree.beginEdit(node);
+    }
+
+    function onEditNode2(e) {
+        var node = tree.getSelectedNode();
+
+        nui.open({
+            url: "taskPanel/taskPanel.html",
+            title: "任务面板", width: 500, height: 300,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                iframe.contentWindow.SetData(node);
+            }
+        })
+    }
+
+    function upDateNode(options) {
+        var node = tree.getSelectedNode();
+        options = nui.clone(options);
+        tree.updateNode(node, options)
+    }
+
+    function onRemoveNode(e) {
+
+        var node = tree.getSelectedNode();
+
+        if (node) {
+            if (confirm("确定删除选中节点?")) {
+                tree.removeNode(node);
+            }
+        }
+    }
+
+    function saveData() {
+
+        var data = tree.getData();
+        var removed = tree.getChanges("removed");
+        var paramsObj = {
+            data: nui.encode(data),
+            removed: nui.encode(removed),
+            '_xsrf': nui.Cookie.get('_xsrf')
+        };
+
+        var msgid = nui.loading("数据保存中，请稍后......", "保存数据");
+
+
+        $.ajax({
+            url: "/s/file/catalogs",
+            data: paramsObj,
+            type: "post",
+            success: function (text) {
+                nui.hideMessageBox(msgid);
+
+                tree.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+
+    }
+    function reloadData() {
+        tree.reload();
+    }
+</script>
+
+
+{% end %}

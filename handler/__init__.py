@@ -155,6 +155,9 @@ routes = [
     # 组织管理
     (r'/s/orgns', NUITreeHandler, {'cname': 'orgns'}),
 
+    # 文件目录
+    (r'/s/file/catalogs', NUITreeHandler, {'cname': 'file.catalogs'}),
+
     # 权限管理
     (r'/s/perms', NUIMongoHandler, {'cname': 'perms'}),
     # URL管理
