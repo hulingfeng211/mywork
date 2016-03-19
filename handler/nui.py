@@ -119,6 +119,8 @@ class LoginHandler(NUIBaseHandler):
 
 routes = [
     (r'/app/', IndexHandler),
+    (r'/', IndexHandler),
+    (r'/$', IndexHandler),
     (r'/app$', IndexHandler),
     (r'/page/home', NUIBaseHandler, {'template': 'nui/home.html', 'title': '首页'}),
     (r'/page/menu', NUIBaseHandler, {'template': 'nui/menu.mgt.html',

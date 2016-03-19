@@ -2,27 +2,27 @@
 
 {% block body %}
 
-<div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+<div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
     <table style="width: 100%">
         <tr>
             <td style="width:100%;">
-                <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
-                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
-                <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_employee()">从员工中选择</a>
-                <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
+                <a class="nui-button" iconCls="icon-goto" plain="true" onclick="choice_from_employee()">从员工中选择</a>
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
             </td>
             <td style="white-space:nowrap;">
-                <input id="key" class="mini-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;"
+                <input id="key" class="nui-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;"
                        onenter="onKeyEnter"/>
-                <a class="mini-button"  onclick="search()">查询</a>
+                <a class="nui-button"  onclick="search()">查询</a>
             </td>
         </tr>
     </table>
 </div>
-<div class="mini-fit">
+<div class="nui-fit">
 
-    <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
+    <div id="userGrid" class="nui-datagrid" borderStyle="border:0"
          allowCellSelect="true"
          allowCellEdit="true"
          allowCellValid="true"
@@ -39,21 +39,21 @@
         <div property="columns">
             <div type="checkcolumn"></div>
             <div field="loginname" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">员工帐号
-                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
-                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="email" required="true" vtype="email" width="100" allowSort="true" align="left"
                  headerAlign="center">邮箱
-                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="pwd" readOnly="true" width="100" allowSort="true">密码
-                <input property="editor" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
             <!--displayField="roles_name"-->
             <div field="roles" width="100"  name="roles" displayField="roles_name" >所属角色
-                <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                <input property="editor" id="lookup2" class="nui-lookup" style="width:100%;" textField="name"
                                valueField="code" popupWidth="auto"
                                popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
                                onshowpopup="onRoleShowPopup"/>
@@ -69,10 +69,10 @@
 
     </div>
     <!--角色选择面板-->
-    <div id="gridPanel" class="mini-panel" title="选择角色" iconCls="icon-add" style="width:450px;height:250px;"
+    <div id="gridPanel" class="nui-panel" title="选择角色" iconCls="icon-add" style="width:450px;height:250px;"
          visible="false"
          showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
-        <div id="role_datagrid" class="mini-datagrid" style="width:100%;height:100%;"
+        <div id="role_datagrid" class="nui-datagrid" style="width:100%;height:100%;"
              borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
              url='/s/roles?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
             <div property="columns">
@@ -93,13 +93,13 @@
 <script type="text/javascript">
 
 
-    var grid = mini.get('userGrid');
+    var grid = nui.get('userGrid');
     var role_grid = nui.get('role_datagrid');
     grid.load();
     window.onload = function () {
 
         {# $("#roleTree").bind("contextmenu", function (e) {
-            var menu = mini.get("contextMenu");
+            var menu = nui.get("contextMenu");
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });#}
@@ -112,7 +112,7 @@
         search();
     }
     function search(){
-        var key=mini.get('key').getValue();
+        var key=nui.get('key').getValue();
         //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
         //q=String.format(q,key);
         // monogodb的查询表达式
@@ -139,7 +139,7 @@
 
         //alert(q);
         //grid.load({q:'{"$or":{"loginname":}'})
-        grid.load({q:mini.encode(q)});
+        grid.load({q:nui.encode(q)});
     }
     /**
      * usergrid行选择事件
@@ -204,11 +204,11 @@
     }
     function saveUserData() {
         var data = grid.getChanges();
-        //var json = mini.encode(data);
+        //var json = nui.encode(data);
         var post_data=[];
         var tmp;
         for (var i=0;i<data.length;i++){
-            tmp=mini.clone(data[i]);
+            tmp=nui.clone(data[i]);
             tmp.roles=tmp.roles.split(',');
             post_data.push(tmp);
         }
@@ -217,11 +217,11 @@
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/users",
-            data: {data: mini.encode(post_data), '_xsrf': nui.Cookie.get('_xsrf')},
+            data: {data: nui.encode(post_data), '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
             success: function (text) {
-                mini.hideMessageBox(msgid);
+                nui.hideMessageBox(msgid);
                 grid.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {

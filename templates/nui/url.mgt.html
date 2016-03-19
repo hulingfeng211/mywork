@@ -2,29 +2,29 @@
 
 {% block body %}
 
-<div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+<div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
     <table style="width: 100%">
         <tr>
             <td style="width:100%;">
                 {% if has_role('root') %}
-                <a class="mini-button" iconCls="icon-add" plain="true" onclick="add_url()">新增</a>
-                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="remove_url()">删除</a>
-                <a class="mini-button" iconCls="icon-save" plain="true" onclick="save_url()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="import_url()">导入</a>
-                <a class="mini-button" iconCls="icon-collapse" plain="true" onclick="apply_url()">应用</a>
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="add_url()">新增</a>
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_url()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_url()">保存</a>
+                <a class="nui-button" iconCls="icon-goto" plain="true" onclick="import_url()">导入</a>
+                <a class="nui-button" iconCls="icon-collapse" plain="true" onclick="apply_url()">应用</a>
                 {% end %}
             </td>
             <td style="white-space:nowrap;">
-                <input id="key" class="mini-textbox" emptyText="请输url或url描述" style="width:150px;"
+                <input id="key" class="nui-textbox" emptyText="请输url或url描述" style="width:150px;"
                        onenter="onKeyEnter"/>
-                <a class="mini-button" onclick="search()">查询</a>
+                <a class="nui-button" onclick="search()">查询</a>
             </td>
         </tr>
     </table>
 </div>
-<div class="mini-fit">
+<div class="nui-fit">
 
-    <div id="url_grid" class="mini-datagrid" borderStyle="border:0"
+    <div id="url_grid" class="nui-datagrid" borderStyle="border:0"
          allowCellSelect="true"
          allowCellEdit="true"
          allowCellValid="true"
@@ -42,43 +42,43 @@
         <div property="columns">
             <div type="expandcolumn">#</div>
             <div field="url_pattern" width="120" headerAlign="center" allowSort="true">URL
-                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="desc" width="120" headerAlign="center" allowSort="true">功能描述
-                <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
             </div>
             {#
 
             <div field="title"  headerAlign="center"  width="100" allowSort="true">页面标题
-                <input property="editor" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="template"  width="100" headerAlign="center" allowSort="true">模板路径
-                <input property="editor" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
             #}
             <div header="角色" headerAlign="center">
                 <div property="columns">
                     <div field="role_get" name="role_get" displayField="role_get_name" headerAlign="center" width="60">GET
-                        <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                        <input property="editor" id="lookup2" class="nui-lookup" style="width:100%;" textField="name"
                                valueField="code" popupWidth="auto"
                                popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
                                onshowpopup="onRoleShowPopup"/>
                     </div>
                     <div field="role_post"　name="role_post" displayField="role_post_name" headerAlign="center" width="60">POST
-                        <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                        <input property="editor" id="lookup2" class="nui-lookup" style="width:100%;" textField="name"
                                valueField="code" popupWidth="auto"
                                popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
                                onshowpopup="onRoleShowPopup"/>
                     </div>
                     <div field="role_put" name="role_put" displayField="role_put_name" headerAlign="center" width="60">PUT
 
-                        <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                        <input property="editor" id="lookup2" class="nui-lookup" style="width:100%;" textField="name"
                                valueField="code" popupWidth="auto"
                                popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
                                onshowpopup="onRoleShowPopup"/>
                     </div>
                     <div field="role_delete" name="role_delete" displayField="perm_get_name" headerAlign="center" width="60">DELETE
-                        <input property="editor" id="lookup2" class="mini-lookup" style="width:100%;" textField="name"
+                        <input property="editor" id="lookup2" class="nui-lookup" style="width:100%;" textField="name"
                                valueField="code" popupWidth="auto"
                                popup="#gridPanel" grid="#role_datagrid" multiSelect="true"
                                onshowpopup="onRoleShowPopup"/>
@@ -88,25 +88,25 @@
             <div header="权限" headerAlign="center">
                 <div property="columns">
                     <div field="perm_get" name="perm_get" displayField="perm_get_desc" headerAlign="center" width="60">GET
-                        <input property="editor" id="lookup3" class="mini-lookup" style="width:100%;" textField="desc"
+                        <input property="editor" id="lookup3" class="nui-lookup" style="width:100%;" textField="desc"
                                valueField="name" popupWidth="auto"
                                popup="#gridPanel2" grid="#perm_datagrid" multiSelect="true"
                                onshowpopup="onPermShowPopup"/>
                     </div>
                     <div field="perm_post" headerAlign="center" width="60">POST
-                        <input property="editor" id="lookup3" class="mini-lookup" style="width:100%;" textField="desc"
+                        <input property="editor" id="lookup3" class="nui-lookup" style="width:100%;" textField="desc"
                                valueField="name" popupWidth="auto"
                                popup="#gridPanel2" grid="#perm_datagrid" multiSelect="true"
                                onshowpopup="onPermShowPopup"/>
                     </div>
                     <div field="perm_put" headerAlign="center" width="60">PUT
-                        <input property="editor" id="lookup3" class="mini-lookup" style="width:100%;" textField="desc"
+                        <input property="editor" id="lookup3" class="nui-lookup" style="width:100%;" textField="desc"
                                valueField="name" popupWidth="auto"
                                popup="#gridPanel2" grid="#perm_datagrid" multiSelect="true"
                                onshowpopup="onPermShowPopup"/>
                     </div>
                     <div field="perm_delete" headerAlign="center" width="60">DELETE
-                        <input property="editor" id="lookup3" class="mini-lookup" style="width:100%;" textField="desc"
+                        <input property="editor" id="lookup3" class="nui-lookup" style="width:100%;" textField="desc"
                                valueField="name" popupWidth="auto"
                                popup="#gridPanel2" grid="#perm_datagrid" multiSelect="true"
                                onshowpopup="onPermShowPopup"/>
@@ -119,31 +119,31 @@
     </div>
 
     <div id="edit_form" style="display:none;padding:5px;">
-        <input class="mini-hidden" name="_id">
+        <input class="nui-hidden" name="_id">
         <table style="width: 100%">
             <tr>
                 <td style="width: 80px;">URL模板（可空):</td>
-                <td style="width:250px"><input style="width:100%" name="template" class="mini-textbox"></td>
+                <td style="width:250px"><input style="width:100%" name="template" class="nui-textbox"></td>
                 <td style="width: 80px;">Handler类:</td>
                 <td style="width:250px"><input name="handler_class" style="width: 100%"
-                                               class="mini-textbox"></td>
+                                               class="nui-textbox"></td>
                 <td style="width: 80px;">页面标题（可空):</td>
-                <td style="width:250px"><input name="title" style="width:100%" class="mini-textbox"></td>
+                <td style="width:250px"><input name="title" style="width:100%" class="nui-textbox"></td>
             </tr>
             <tr>
                 <td style="width: 80px;">文档集合名(cname):</td>
-                <td colspan="5"><input name="cname" style="width:100%" class="mini-textbox"></td>
+                <td colspan="5"><input name="cname" style="width:100%" class="nui-textbox"></td>
             </tr>
 
             <tr>
                 <td style="width: 80px;">备注:</td>
-                <td colspan="5"><textarea name="remark" style="width: 100%;height: 40px;" class="mini-textarea"
+                <td colspan="5"><textarea name="remark" style="width: 100%;height: 40px;" class="nui-textarea"
                                           emptyText="请输入备注"></textarea></td>
             </tr>
             <tr> {% if has_role('root') %}
                 <td style="text-align:right;padding-top:5px;padding-right:20px;" colspan="6">
-                    <a class="mini-button" iconCls="icon-ok" onclick="update_row();">保存</a>
-                    <a class="mini-button" iconCls="icon-no" onclick="cancel_row();">取消</a>
+                    <a class="nui-button" iconCls="icon-ok" onclick="update_row();">保存</a>
+                    <a class="nui-button" iconCls="icon-no" onclick="cancel_row();">取消</a>
 
                 </td>
                 {% end %}
@@ -151,10 +151,10 @@
         </table>
     </div>
     <!--角色选择面板-->
-    <div id="gridPanel" class="mini-panel" title="选择角色" iconCls="icon-add" style="width:450px;height:250px;"
+    <div id="gridPanel" class="nui-panel" title="选择角色" iconCls="icon-add" style="width:450px;height:250px;"
          visible="false"
          showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
-        <div id="role_datagrid" class="mini-datagrid" style="width:100%;height:100%;"
+        <div id="role_datagrid" class="nui-datagrid" style="width:100%;height:100%;"
              borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
              url='/s/roles?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
             <div property="columns">
@@ -165,10 +165,10 @@
         </div>
     </div>
     <!--权限选择面板-->
-    <div id="gridPanel2" class="mini-panel" title="选择权限" iconCls="icon-add" style="width:450px;height:250px;"
+    <div id="gridPanel2" class="nui-panel" title="选择权限" iconCls="icon-add" style="width:450px;height:250px;"
          visible="false"
          showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
-        <div id="perm_datagrid" class="mini-datagrid" style="width:100%;height:100%;"
+        <div id="perm_datagrid" class="nui-datagrid" style="width:100%;height:100%;"
              borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
              url='/s/perms?p={"_id":0,"name":1,"desc":1}' onrowdblclick="onPermRowDblclick">
             <div property="columns">
@@ -202,7 +202,7 @@
     window.onload = function () {
 
         {# $("#roleTree").bind("contextmenu", function (e) {
-            var menu = mini.get("contextMenu");
+            var menu = nui.get("contextMenu");
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });#}
@@ -241,10 +241,10 @@
     }
 
     function update_row() {
-        var form = new mini.Form("edit_form");
+        var form = new nui.Form("edit_form");
         var o = form.getData();
         grid.loading("保存中，请稍后......");
-        var json = mini.encode(o);
+        var json = nui.encode(o);
         $.ajax({
             url: "/s/urls",
             type: 'put',
@@ -270,7 +270,7 @@
         editForm.style.display = "";
 
         // load data
-        var form = new mini.Form("edit_form");
+        var form = new nui.Form("edit_form");
         if (grid.isNewRow(row)) {
             form.reset();
         }
@@ -280,7 +280,7 @@
                 url: '/s/urls/' + row.id,
                 type: 'get',
                 success: function (result) {
-                    var o = mini.decode(result);
+                    var o = nui.decode(result);
                     form.setData(o);
                     grid.unmask();
                 }
@@ -304,7 +304,7 @@
         search();
     }
     function search() {
-        var key = mini.get('key').getValue();
+        var key = nui.get('key').getValue();
         //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
         //q=String.format(q,key);
         // monogodb的查询表达式
@@ -331,7 +331,7 @@
 
         //alert(q);
         //grid.load({q:'{"$or":{"loginname":}'})
-        grid.load({q: mini.encode(q)});
+        grid.load({q: nui.encode(q)});
     }
     /**
      * usergrid行选择事件
@@ -362,7 +362,7 @@
     }
     function save_url() {
         var data = grid.getChanges();
-        var json = mini.encode(data);
+        var json = nui.encode(data);
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/urls",
@@ -370,7 +370,7 @@
             //contentType:'application/json',
             type: "post",
             success: function (text) {
-                mini.hideMessageBox(msgid);
+                nui.hideMessageBox(msgid);
                 grid.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {

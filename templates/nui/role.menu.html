@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
-<div class="mini-splitter" style="width:100%;height:100%;">
+<div class="nui-splitter" style="width:100%;height:100%;">
     <div size="230px" minSize="100px" maxSize="300px" showCollapseButton="true" style="padding:0px;">
         <!--ajaxOptions='{type:"get"}' -->
-        <ul id="roleTree" url="/s/roles" ajaxOptions='{type:"get"}' class="mini-tree"
+        <ul id="roleTree" url="/s/roles" ajaxOptions='{type:"get"}' class="nui-tree"
             style="width:100%;height:100%;padding:5px;"
             showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
             allowLeafDropIn="true"
@@ -11,15 +11,15 @@
         </ul>
     </div>
     <div showCollapseButton="false" style="padding-left: 5px;">
-        <div class="mini-toolbar">
-            <a class="mini-button" onclick="choice_menus" iconCls="icon-goto">选择菜单</a>
-            <a class="mini-button" onclick="save_data" iconCls="icon-save">保存</a>
-            <a class="mini-button" onclick="delete_data" iconCls="icon-remove">删除</a>
+        <div class="nui-toolbar">
+            <a class="nui-button" onclick="choice_menus" iconCls="icon-goto">选择菜单</a>
+            <a class="nui-button" onclick="save_data" iconCls="icon-save">保存</a>
+            <a class="nui-button" onclick="delete_data" iconCls="icon-remove">删除</a>
         </div>
-        <div class="mini-fit">
+        <div class="nui-fit">
             <div id="menu_grid" url="/s/role/menus"
                  multiSelect="true"
-                 ajaxOptions="{type:'get'}" class="mini-datagrid" style="width:100%;height:100%">
+                 ajaxOptions="{type:'get'}" class="nui-datagrid" style="width:100%;height:100%">
                 <div property="columns">
                     <div type="checkcolumn"></div>
                     <div field="id" headerAlign="center">编号</div>
@@ -37,8 +37,8 @@
 
 {% block script %}
 <script type="text/javascript">
-    var roleTree = mini.get('roleTree');
-    var menu_grid = mini.get('menu_grid');
+    var roleTree = nui.get('roleTree');
+    var menu_grid = nui.get('menu_grid');
     roleTree.on('nodeselect', function (e) {
         if (e.isLeaf) {
             menu_grid.load({"role_id": e.selected.id});
@@ -47,7 +47,7 @@
     function load_data() {
         var current_role = roleTree.getSelectedNode();
         if (!roleTree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
         menu_grid.load({"role_id": current_role.id});
@@ -62,19 +62,19 @@
     function save_data() {
         var current_role = roleTree.getSelectedNode();
         if (!roleTree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
         var data = menu_grid.getChanges();
         if (!data) {
-            mini.alert('没有需要保存的数据');
+            nui.alert('没有需要保存的数据');
             return false;
         }
         $.ajax({
                     url: '/s/role/menus',
                     type: 'post',
                     contentType: 'application/json',
-                    data: mini.encode({'role_id': current_role.id, 'menus': data}),
+                    data: nui.encode({'role_id': current_role.id, 'menus': data}),
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
                     },
@@ -92,10 +92,10 @@
     function choice_menus() {
         var current_role = roleTree.getSelectedNode();
         if (!roleTree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
-        mini.open({
+        nui.open({
             url: '/page/choice_menus',
             title: '选择菜单',
             width: 650,
@@ -104,9 +104,9 @@
                 if (action == "ok") {
                     var iframe = this.getIFrameEl();
                     var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);
+                    data = nui.clone(data);
                     if (data) {
-                        //mini.forEach()
+                        //nui.forEach()
                         for (var i = 0; i < data.length; i++) {
                             menu_grid.addRow(data[i], 0);
                         }

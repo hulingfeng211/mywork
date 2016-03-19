@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="mini-fit">
-    <div class="mini-datagrid" style="width:100%;height:100%;"
+<div class="nui-fit">
+    <div class="nui-datagrid" style="width:100%;height:100%;"
          url="/s/perms"
          multiSelect="true"
          selectOnLoad="true"
@@ -10,25 +10,25 @@
         <div property="columns">
             <div type="checkcolumn"></div>
             <div field="name" headerAlign="center">权限名
-                <input property="editor" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="desc" headerAlign="center">权限描述
-                <input property="editor" class="mini-textbox" style="width:100%;"/>
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
         </div>
 
     </div>
 </div>
-<div class="mini-toolbar" style="text-align:center;padding-top:8px;padding-bottom:8px;" borderStyle="border:0;">
-    <a class="mini-button" style="width:60px;" onclick="onOk()">确定</a>
+<div class="nui-toolbar" style="text-align:center;padding-top:8px;padding-bottom:8px;" borderStyle="border:0;">
+    <a class="nui-button" style="width:60px;" onclick="onOk()">确定</a>
     <span style="display:inline-block;width:25px;"></span>
-    <a class="mini-button" style="width:60px;" onclick="onCancel()">取消</a>
+    <a class="nui-button" style="width:60px;" onclick="onCancel()">取消</a>
 </div>
 
 {% end %}
 {% block script %}
 <script type="text/javascript">
-    var grid = mini.get('grid1');
+    var grid = nui.get('grid1');
     grid.load();
     function search() {
         grid.load();

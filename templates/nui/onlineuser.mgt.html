@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 {% block body %}
 <div style="width: 100%">
-    <div style="border-bottom:0;padding:0px;" class="mini-toolbar">
+    <div style="border-bottom:0;padding:0px;" class="nui-toolbar">
         <table style="width:100%">
             <tr>
                 <td style="width:100%">
                     {%   if has_perm('onlineuser:logout') %}
-                    <a class="mini-button" iconCls="icon-close" onClick="logout" plain="true"
+                    <a class="nui-button" iconCls="icon-close" onClick="logout" plain="true"
                        tooltip="注销用户">注销用户</a>
                     {% end %}
-                    <a class="mini-button" iconCls="icon-reload" onClick="reload" plain="true" tooltip="刷新">刷新</a>
+                    <a class="nui-button" iconCls="icon-reload" onClick="reload" plain="true" tooltip="刷新">刷新</a>
                 </td>
             </tr>
         </table>
 
     </div>
 </div>
-<div class="mini-fit"  >
+<div class="nui-fit"  >
 
     <div id="grid" style="width: 100%;height: 100%;" idField="id" url="/s/onlineuser"
          ajaxOptions='{type:"get"}'
          editNextOnEnterKey="true"
          allowCellSelect="true"
          allowCellEdit="true"
-         class="mini-datagrid">
+         class="nui-datagrid">
         <div property="columns">
             <div type="checkcolumn"></div>
             <div field="loginname" headerAlign="center">登录名
@@ -44,7 +44,7 @@
 {% block script %}
 <script type="text/javascript">
     //todo
-    var grid = mini.get('grid');
+    var grid = nui.get('grid');
     grid.load();
 
     function addNew(e) {

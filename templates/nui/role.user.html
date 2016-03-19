@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="mini-splitter" style="width:100%;height:100%;">
+<div class="nui-splitter" style="width:100%;height:100%;">
     <div size="230px" minSize="100px" maxSize="300px" showCollapseButton="true" style="padding:0px;">
 
-        <div id="toolbar1" class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <div id="toolbar1" class="nui-toolbar" style="border-bottom:0;padding:0px;">
             <table style="width:100%;">
                 <tr>
                     <td style="width:100%;">
-                        {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
-                          <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
-                        <a class="mini-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
+                        {#    <a class="nui-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
+                          <a class="nui-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
+                        <a class="nui-button" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
                     </td>
                 </tr>
             </table>
         </div>
-        <div class="mini-fit">
+        <div class="nui-fit">
             <!--ajaxOptions='{type:"get"}' -->
             <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}'
-                class="mini-tree"
+                class="nui-tree"
                 style="width:100%;height:100%;padding:5px;"
                 showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
                 allowLeafDropIn="true"
                 idField="id" parentField="pid" resultAsTree="false">
             </ul>
         </div>
-        <ul id="contextMenu" class="mini-contextmenu">
+        <ul id="contextMenu" class="nui-contextmenu">
             <li>
                 <span>插入</span>
                 <ul>
@@ -46,26 +46,28 @@
     </div>
     <div showCollapseButton="false" style="padding-left: 5px;">
 
-        <div class="mini-toolbar">
+        <div class="nui-toolbar">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;">
-                        <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
-                        <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
-                        <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
-                        <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
-                        <a class="mini-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
+                    <td style="width:80%;">
+                        <a class="nui-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+                        <a class="nui-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+                        <a class="nui-button" iconCls="icon-save" plain="true" onclick="saveUserData()">保存</a>
+                        <a class="nui-button" iconCls="icon-goto" plain="true" onclick="choice_from_user()">选择用户</a>
+                        <a class="nui-button" iconCls="icon-add" plain="true" onclick="initialpwd()">初始化密码</a>
                     </td>
                     <td style="white-space:nowrap;">
-                        <input id="key" class="mini-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;" onenter="onKeyEnter"/>
-                        <a class="mini-button" onclick="search()">查询</a>
+                        <input id="key" class="nui-textbox" emptyText="请输入账号或姓名或邮箱" style="width:150px;" onenter="onKeyEnter"/>
+                    </td>
+                    <td style="width: 50px;">
+                        <a class="nui-button" onclick="search()">查询</a>
                     </td>
                 </tr>
             </table>
         </div>
-        <div class="mini-fit">
+        <div class="nui-fit">
 
-            <div id="userGrid" class="mini-datagrid" borderStyle="border:0"
+            <div id="userGrid" class="nui-datagrid" borderStyle="border:0"
                  allowCellSelect="true"
                  allowCellEdit="true"
                  allowCellValid="true"
@@ -82,17 +84,17 @@
                 <div property="columns">
                     <div type="checkcolumn"></div>
                     <div field="loginname" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">员工帐号
-                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                        <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
                     </div>
                     <div field="name" width="120" headerAlign="center" allowSort="true">员工姓名
-                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                        <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
                     </div>
                     <div field="email" required="true" vtype="email" width="100" allowSort="true" align="center"
                          headerAlign="center">邮箱
-                        <input property="editor" required="true" class="mini-textbox" style="width:100%;"/>
+                        <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
                     </div>
                     <div field="pwd" readOnly="true" width="100" allowSort="true">密码
-                        <input property="editor" class="mini-textbox" style="width:100%;"/>
+                        <input property="editor" class="nui-textbox" style="width:100%;"/>
                     </div>
                     <div type="checkboxcolumn" field="nologin" trueValue="1" falseValue="0" width="60"
                          headerAlign="center">停用
@@ -119,14 +121,14 @@
     function onNodeDoubleClick(e) {
         onEditNode(e);
     }
-    var tree = mini.get('roleTree');
-    var grid = mini.get('userGrid');
-    var gridPerms = mini.get('permsGrid');
+    var tree = nui.get('roleTree');
+    var grid = nui.get('userGrid');
+    var gridPerms = nui.get('permsGrid');
 
     window.onload = function () {
 
         {# $("#roleTree").bind("contextmenu", function (e) {
-            var menu = mini.get("contextMenu");
+            var menu = nui.get("contextMenu");
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });#}
@@ -137,10 +139,10 @@
     function search(){
         var current_role = tree.getSelectedNode();
         if (!tree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
-        var key=mini.get('key').getValue();
+        var key=nui.get('key').getValue();
         //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
         //q=String.format(q,key);
         // monogodb的查询表达式
@@ -168,7 +170,7 @@
         //alert(q);
         //grid.load({q:'{"$or":{"loginname":}'})
         grid.setUrl('/s/users');
-        grid.load({q:mini.encode(q)});
+        grid.load({q:nui.encode(q)});
     }
     /**
      * usergrid行选择事件
@@ -178,7 +180,7 @@
     });
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
-            //mini.alert(e.node.id);
+            //nui.alert(e.node.id);
             grid.setUrl('/s/role/users');
             grid.load({role_id: e.node.id});
         } else {
@@ -195,10 +197,10 @@
 
         var current_role = tree.getSelectedNode();
         if (!tree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
-        mini.open({
+        nui.open({
             url: '/page/choice_users',
             title: '选择用户',
             width: 650,
@@ -207,9 +209,9 @@
                 if (action == "ok") {
                     var iframe = this.getIFrameEl();
                     var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);
+                    data = nui.clone(data);
                     if (data) {
-                        //mini.forEach()
+                        //nui.forEach()
                         for (var i = 0; i < data.length; i++) {
                             grid.addRow(data[i], 0);
                         }
@@ -232,7 +234,7 @@
                     url: '/s/userperms',
                     type: 'post',
                     contentType: 'application/json',
-                    data: mini.encode(data),
+                    data: nui.encode(data),
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
                     },
@@ -264,19 +266,19 @@
 
     }
     function onAddRootNode(e) {
-        //var tree = mini.get('tree1');
+        //var tree = nui.get('tree1');
         var newNode = {name: "root"};
         tree.addNode(newNode)
     }
     function onAddBefore(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
         var newNode = {};
         tree.addNode(newNode, "before", node);
     }
 
     function onAddAfter(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
 
         var newNode = {};
@@ -284,7 +286,7 @@
     }
 
     function onAddNode(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
 
         var newNode = {name: 'node'};
@@ -292,21 +294,21 @@
     }
 
     function onEditNode(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
 
         tree.beginEdit(node);
     }
 
     function upDateNode(options) {
-        // var tree = mini.get("tree1");
+        // var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
-        options = mini.clone(options);
+        options = nui.clone(options);
         tree.updateNode(node, options)
     }
 
     function onRemoveNode(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
         if (node) {
             if (confirm("确定删除选中节点?")) {
@@ -315,27 +317,27 @@
         }
     }
     function reloadData(e) {
-        var tree = mini.get('tree1');
+        var tree = nui.get('tree1');
         tree.reload();
     }
 
     function saveRoleData() {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var data = tree.getData();
         var removed = tree.getChanges("removed");
         var paramsObj = {
-            data: mini.encode(data),
-            removed: mini.encode(removed),
+            data: nui.encode(data),
+            removed: nui.encode(removed),
             '_xsrf': nui.Cookie.get('_xsrf')
         };
 
-        var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
+        var msgid = nui.loading("数据保存中，请稍后......", "保存数据");
         $.ajax({
             url: "/s/roles",
             data: paramsObj,
             type: "post",
             success: function (text) {
-                mini.hideMessageBox(msgid);
+                nui.hideMessageBox(msgid);
 
                 tree.reload();
             },
@@ -362,7 +364,7 @@
     function addRow() {
         var current_role = tree.getSelectedNode();
         if (!tree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
         var newRow = {name: "新用户"};
@@ -379,7 +381,7 @@
         var data = grid.getChanges();
         var current_role = tree.getSelectedNode();
         if (!tree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
         var data = {role_id: current_role.id, users: data};
@@ -387,14 +389,14 @@
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/role/users",
-            data: mini.encode(data),
+            data: nui.encode(data),
             //contentType:'application/json',
             type: "post",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
             },
             success: function (text) {
-                mini.hideMessageBox(msgid);
+                nui.hideMessageBox(msgid);
                 grid.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {

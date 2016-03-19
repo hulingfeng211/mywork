@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="mini-splitter" style="width:100%;height:100%;">
+<div class="nui-splitter" style="width:100%;height:100%;">
     <div size="230px" minSize="100px" maxSize="300px" showCollapseButton="true" style="padding:0px;">
 
-        <div id="toolbar1" class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <div id="toolbar1" class="nui-toolbar" style="border-bottom:0;padding:0px;">
             <table style="width:100%;">
                 <tr>
                     <td style="width:100%;">
-                        {#    <a class="mini-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
-                          <a class="mini-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
-                        <a class="mini-button" style="float:right;" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
+                        {#    <a class="nui-menubutton" iconCls="icon-edit" plain="true" menu="#contextMenu">操作</a>
+                          <a class="nui-button" onclick="saveRoleData()" iconCls="icon-save" plain="true">保存</a> #}
+                        <a class="nui-button" style="float:right;" onclick="reloadData()" iconCls="icon-reload" plain="true">刷新</a>
                     </td>
                 </tr>
             </table>
         </div>
-        <div class="mini-fit">
+        <div class="nui-fit">
             <!--ajaxOptions='{type:"get"}' -->
             <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}'
-                class="mini-tree"
+                class="nui-tree"
                 style="width:100%;height:100%;padding:5px;"
                 showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
                 allowLeafDropIn="true"
                 idField="id" parentField="pid" resultAsTree="false">
             </ul>
         </div>
-        <ul id="contextMenu" class="mini-contextmenu">
+        <ul id="contextMenu" class="nui-contextmenu">
             <li>
                 <span>插入</span>
                 <ul>
@@ -47,15 +47,15 @@
     <div showCollapseButton="false" style="padding-left: 5px;">
 
 
-        <div class="mini-fit">
-            <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
-                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="remove_role_menu()">删除</a>
-                <a class="mini-button" iconCls="icon-save" plain="true" onclick="save_role_menu()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_menu()">从菜单中选择</a>
+        <div class="nui-fit">
+            <div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_role_menu()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_role_menu()">保存</a>
+                <a class="nui-button" iconCls="icon-goto" plain="true" onclick="choice_from_menu()">从菜单中选择</a>
             </div>
             <div id="menu_grid" url="/s/role/menus"
                  multiSelect="true"
-                 ajaxOptions="{type:'get'}" class="mini-datagrid"
+                 ajaxOptions="{type:'get'}" class="nui-datagrid"
                  style="width:100%;height:50%;">
                 <div property="columns">
                     <div type="checkcolumn"></div>
@@ -66,13 +66,13 @@
                 </div>
 
             </div>
-            <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
-                <a class="mini-button" iconCls="icon-remove" plain="true" onclick="remove_role_perm()">删除</a>
-                <a class="mini-button" iconCls="icon-save" plain="true" onclick="save_role_perm()">保存</a>
-                <a class="mini-button" iconCls="icon-goto" plain="true" onclick="choice_from_perm()">选择权限</a>
+            <div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_role_perm()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_role_perm()">保存</a>
+                <a class="nui-button" iconCls="icon-goto" plain="true" onclick="choice_from_perm()">选择权限</a>
             </div>
 
-            <div id="permsGrid" class="mini-datagrid" boderStyle="border:0"
+            <div id="permsGrid" class="nui-datagrid" boderStyle="border:0"
                  allowCellSelect="true"
                  allowCellEdit="true"
                  idField="id"
@@ -100,16 +100,16 @@
 {% block script %}
 
 <script type="text/javascript">
-    var tree = mini.get('roleTree');
-    var menu_grid = mini.get('menu_grid');
-    var gridPerms = mini.get('permsGrid');
+    var tree = nui.get('roleTree');
+    var menu_grid = nui.get('menu_grid');
+    var gridPerms = nui.get('permsGrid');
     function choice_from_menu() {
         var current_role = tree.getSelectedNode();
         if (!tree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
-        mini.open({
+        nui.open({
             url: '/page/choice_menus',
             title: '选择菜单',
             width: 650,
@@ -118,9 +118,9 @@
                 if (action == "ok") {
                     var iframe = this.getIFrameEl();
                     var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);
+                    data = nui.clone(data);
                     if (data) {
-                        //mini.forEach()
+                        //nui.forEach()
                         for (var i = 0; i < data.length; i++) {
                             menu_grid.addRow(data[i], 0);
                         }
@@ -136,7 +136,7 @@
     window.onload = function () {
 
         {# $("#roleTree").bind("contextmenu", function (e) {
-            var menu = mini.get("contextMenu");
+            var menu = nui.get("contextMenu");
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });#}
@@ -154,7 +154,7 @@
     });#}
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
-            //mini.alert(e.node.id);
+            //nui.alert(e.node.id);
             menu_grid.load({role_id: e.node.id});
             gridPerms.load({role_id: e.node.id});
         } else {
@@ -178,7 +178,7 @@
                 {
                     url: '/s/role/perms',
                     type: 'post',
-                    data: mini.encode(data),
+                    data: nui.encode(data),
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
                     },
@@ -194,10 +194,10 @@
     function choice_from_perm(e) {
         var current_role = tree.getSelectedNode();
         if (!tree.isLeaf(current_role)) {
-            mini.alert('请选择子节点的角色');
+            nui.alert('请选择子节点的角色');
             return false;
         }
-        mini.open({
+        nui.open({
             url: '/page/choice_perms',
             title: '选择权限',
             width: 650,
@@ -206,9 +206,9 @@
                 if (action == "ok") {
                     var iframe = this.getIFrameEl();
                     var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);
+                    data = nui.clone(data);
                     if (data) {
-                        //mini.forEach()
+                        //nui.forEach()
                         for (var i = 0; i < data.length; i++) {
                             gridPerms.addRow(data[i], 0);
                         }
@@ -221,19 +221,19 @@
     }
 
     function onAddRootNode(e) {
-        //var tree = mini.get('tree1');
+        //var tree = nui.get('tree1');
         var newNode = {name: "root"};
         tree.addNode(newNode)
     }
     function onAddBefore(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
         var newNode = {};
         tree.addNode(newNode, "before", node);
     }
 
     function onAddAfter(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
 
         var newNode = {};
@@ -241,7 +241,7 @@
     }
 
     function onAddNode(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
 
         var newNode = {name: 'node'};
@@ -249,21 +249,21 @@
     }
 
     function onEditNode(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
 
         tree.beginEdit(node);
     }
 
     function upDateNode(options) {
-        // var tree = mini.get("tree1");
+        // var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
-        options = mini.clone(options);
+        options = nui.clone(options);
         tree.updateNode(node, options)
     }
 
     function onRemoveNode(e) {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var node = tree.getSelectedNode();
         if (node) {
             if (confirm("确定删除选中节点?")) {
@@ -276,22 +276,22 @@
     }
 
     function saveRoleData() {
-        //var tree = mini.get("tree1");
+        //var tree = nui.get("tree1");
         var data = tree.getData();
         var removed = tree.getChanges("removed");
         var paramsObj = {
-            data: mini.encode(data),
-            removed: mini.encode(removed),
+            data: nui.encode(data),
+            removed: nui.encode(removed),
             '_xsrf': nui.Cookie.get('_xsrf')
         };
 
-        var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
+        var msgid = nui.loading("数据保存中，请稍后......", "保存数据");
         $.ajax({
             url: "/s/roles",
             data: paramsObj,
             type: "post",
             success: function (text) {
-                mini.hideMessageBox(msgid);
+                nui.hideMessageBox(msgid);
 
                 tree.reload();
             },
@@ -331,7 +331,7 @@
         var data = menu_grid.getChanges();
         var role_node = tree.getSelectedNode();
         var data = {role_id: role_node.id, menus: data}
-        var json = mini.encode(data);
+        var json = nui.encode(data);
 
         var msgid = menu_grid.loading("保存中，请稍后......");
         $.ajax({
@@ -343,7 +343,7 @@
                 xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
             },
             success: function (text) {
-                mini.hideMessageBox(msgid);
+                nui.hideMessageBox(msgid);
                 menu_grid.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {

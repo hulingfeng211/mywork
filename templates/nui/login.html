@@ -35,8 +35,8 @@
             <tr>
                 <td></td>
                 <td style="padding-top:5px;">
-                    <a onclick="onLoginClick" class="mini-button" style="width:60px;">登录</a>
-                    <a onclick="onResetClick" class="mini-button" style="width:60px;">重置</a>
+                    <a onclick="onLoginClick" class="nui-button" style="width:60px;">登录</a>
+                    <a onclick="onResetClick" class="nui-button" style="width:60px;">重置</a>
                 </td>
             </tr>
             <tr>
@@ -58,9 +58,9 @@
 
     var loginWindow = nui.get("loginWindow");
     loginWindow.show();
-   // var username=mini.get('username');
+   // var username=nui.get('username');
     //username.on('blur',function(e){
-       // mini.alert('aaa');
+       // nui.alert('aaa');
     //});
 
     function onLoginClick(e) {
@@ -73,13 +73,13 @@
         var pwd = nui.get('pwd').value;
          var role = nui.get("role_combobox");
         loginWindow.hide();
-        //mini.loading("正在登录，请稍候...", "登录");
+        //nui.loading("正在登录，请稍候...", "登录");
         $.ajax({
             url: "/page/login",
             data: {username: username, pwd: pwd,role:role.getValue(),'_xsrf': nui.Cookie.get('_xsrf')},
             type: "post",
             success: function (result) {
-                //mini.hideMessageBox(msgid);
+                //nui.hideMessageBox(msgid);
                 if (result.status_code == 0) {
                     $('#loginmessage').text("");
                     nui.loading("登录成功，马上转到系统...", "登录成功");
@@ -88,7 +88,7 @@
                         }, 1500);
                 }
                 else {
-                    //mini.alert(result.data);
+                    //nui.alert(result.data);
                     $('#loginmessage').text(result.data);
                     loginWindow.show();
 

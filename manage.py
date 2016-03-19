@@ -47,13 +47,13 @@ class WorkApplication(Application):
         #      # }),
         #  ]
         handlers=[]
-        # handlers.extend(auth.routes)
-        # handlers.extend(oa.routes)
-        # handlers.extend(chat.routes)
-        #handlers.extend(nui.routes)
-        #handlers.extend(service.routes)
-        #handlers.extend(routes)
-        handlers =  get_handlers()
+        #handlers.extend(auth.routes)
+        #handlers.extend(oa.routes)
+        #handlers.extend(chat.routes)
+        handlers.extend(nui.routes)
+        handlers.extend(service.routes)
+        handlers.extend(routes)
+        #handlers =  get_handlers()
         Application.__init__(self, handlers=handlers, **settings)
 
 
