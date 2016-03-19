@@ -339,12 +339,18 @@ class UploadFileService(GridFSHandler,SessionMixin):
     def prepare(self):
         pass
 
-    #@coroutine
-    #def get(self, path, include_body=True):
-    #    super(UploadFileService,self).get(path=path,include_body=True)
 
     def get_gridfs_file(self, fs, path):
         return fs.get(file_id=ObjectId(path))
+
+    @coroutine
+    def delete(self, path):
+        if  path:
+            db=self.database
+            yield db.fs.files.remove({'_id':ObjectId(path)})
+            yield db.fs.chunks.remove({'file_id':ObjectId(path)})
+
+
 
     @coroutine
     def post(self, *args, **kwargs):

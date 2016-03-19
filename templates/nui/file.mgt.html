@@ -82,7 +82,7 @@
                         <tr>
                             <td><label>选择文件:</label></td>
                             <td>
-                                <input id="fileupload1" class="nui-fileupload" name="Fdata" limitType="*.txt"
+                                <input id="fileupload1" class="nui-fileupload" name="Fdata" limitType="*.*"
                                        flashUrl="{{ static_url('nui/resource/swfupload/swfupload.swf') }}"
                                        uploadUrl="/s/files"
                                        onuploadsuccess="onUploadSuccess"
@@ -152,6 +152,22 @@
                 e.cellHtml = '<a href="javascript:download_file(\'' + record.id + '\')">下载</a>';
         }
     });
+    function removeRow(){
+        var selected_row=file_grid.getSelected();
+         $.ajax(
+                {
+                    url: '/s/files/'+selected_row.id,
+                    type: 'delete',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
+                    },
+                    success: function (result) {
+                        file_grid.reload();
+                    }
+
+                }
+        );
+    }
     function download_file(file_id){
         window.open('/s/files/'+file_id);
     }
