@@ -9,19 +9,23 @@
 |
 |
 ============================================================="""
+import mimetypes
 import time
 from datetime import datetime
 
+import motor
 import tornadoredis
 from bson import ObjectId
+from motor.web import GridFSHandler
 from tornado import escape
 from tornado.gen import coroutine, engine, Task
 from tornado.ioloop import IOLoop
-from tornado.web import RequestHandler, asynchronous
+from tornado.web import RequestHandler, asynchronous, authenticated
+from torndsession.session import SessionMixin
 from torndsession.sessionhandler import SessionBaseHandler
 
 import constant
-from core import clone_dict
+from core import clone_dict, settings
 from core.common import NUIBaseHandler, BaseHandler
 from core.utils import format_datetime, create_class
 
@@ -324,75 +328,48 @@ class URLService(NUIBaseHandler):
         file_path='/'.join(path.split('/')[:-1])+'/restart.txt'
         with open(file_path,'a') as f:
             f.write('restart\n')
-
-
-#         header="""import tornado
-# import core
-# import handler
-# routes=[
-#         """
-#         end="]"
-#         import_module=set()
-#         db=self.settings['db']
-#         urls=yield db.urls.find().to_list(length=None)
-#         handlers=[]
-#         lines=[]
-#         with open(file_path,'w') as f:
-#
-#             #f.write(header)
-#             for url in urls:
-#                 role_map={}
-#                 perm_map={}
-#                 url_pattern=url.get('url_pattern')
-#                 template_path=url.get('template',None)
-#                 title=url.get('title',None)
-#                 cname=url.get('cname',None)
-#
-#                 role_map['get']=url.get('role_get').split(',') if url.get('role_get','') else []
-#                 role_map['put']=url.get('role_put').split(',') if url.get('role_put','') else []
-#                 role_map['post']=url.get('role_post').split(',') if url.get('role_post','') else []
-#                 role_map['delete']=url.get('role_delete').split(',') if url.get('role_delete','') else []
-#
-#                 perm_map['get']=url.get('perm_get').split(',') if url.get('perm_get','') else []
-#                 perm_map['put']=url.get('perm_put').split(',') if url.get('perm_put','') else []
-#                 perm_map['post']=url.get('perm_post').split(',') if url.get('perm_post','') else []
-#                 perm_map['delete']=url.get('perm_delete').split(',') if url.get('perm_delete','') else []
-#
-#
-#                 full_class_str=url.get('handler_class')
-#                 full_class_str_split=full_class_str.split('.')
-#                 module_name='.'.join(full_class_str_split[:-1])
-#                 class_name=full_class_str_split[-1]
-#                 #cls=create_class(module_name,class_name)
-#                 import_module.add('import '+module_name+'\n')
-#                 lines.append("(r'%(url)s',%(handler)s,%(kwargs)s),\n"%{
-#                     "url":url_pattern,
-#                     "handler":full_class_str,
-#                     "kwargs":{'cname':cname,'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}
-#                 })
-#             f.writelines(list(import_module))
-#             f.write('routes=[')
-#             f.writelines(lines)
-#             f.write(end)
-
-            #self.application.add_handler()
-        #     instance=cls()
-        #     if isinstance(instance,MINIUIBaseHandler):
-        #         handlers.append((r'%s'%url_pattern,cls,{'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}))
-        #     else:
-        #         handlers.append((r'%s'%url_pattern,cls))
-
-
-
-            #if template_path and title:
-            #    handlers.append((r'%s'%url_pattern,cls,{'template':template_path,'title':title}))
-            #elif cls==MINIUIBaseHandler:
-            #    handlers.append((r'%s'%url_pattern,cls,{'role_map':role_map,'perm_map':perm_map}))
-            #else:
-            #    handlers.append((r'%s'%url_pattern,cls))
-
-        #self.application.add_handlers(".*$", handlers)
         self.send_message('ok')
+
+class UploadFileService(GridFSHandler,SessionMixin):
+
+    def get_current_user(self):
+        return self.session.get('user',None)
+
+    @authenticated
+    def prepare(self):
+        pass
+
+    #@coroutine
+    #def get(self, path, include_body=True):
+    #    super(UploadFileService,self).get(path=path,include_body=True)
+
+    def get_gridfs_file(self, fs, path):
+        return fs.get(file_id=ObjectId(path))
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        file_list=self.request.files.get('Fdata',[])
+        fs = motor.MotorGridFS(self.database, self.root_collection)
+        catalog_id=self.get_argument('catalog_id',None)
+        if not catalog_id:
+            self.send_error(reason="必须选择目录")
+            return
+        desc=self.get_argument('desc',None)
+        for item in file_list:
+            file_type=mimetypes.guess_type(item.get('filename'))[0] or 'text/plain'
+            _id=ObjectId()
+            kwargs={'filename':item.get('filename'),
+                    'desc':desc,
+                    '_id':_id,
+                    'id':_id,
+                    'catalog_id':catalog_id,
+                    'content_type':item.get('content_type'),
+                    'filetype':file_type}
+            gridin = yield fs.new_file(**kwargs)
+            yield gridin.write(item.get('body'))
+            yield gridin.close()
+
+
 
 routes = [
     # (r'/s/menu',MenuService),
@@ -405,4 +382,6 @@ routes = [
     (r'/s/user/menus', UserMenusService),
     (r'/s/login/roles', LoginRolesService),
     (r'/s/app/urls', URLService),
+    (r'/s/files',UploadFileService,{'database':settings['db']}),
+    (r'/s/files/(.+)',UploadFileService,{'database':settings['db']})
 ]

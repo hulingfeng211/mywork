@@ -167,5 +167,8 @@ routes = [
     # 在线用户
     (r'/s/onlineuser',OnlineUserHandler),
 
+    # 文件查询
+    (r'/s/catalog/files', NUIMongoHandler, {'cname': 'fs.files'}),
+
 ]
 

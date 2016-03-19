@@ -63,13 +63,14 @@
             </table>
         </div>
         <div class="nui-fit">
-            <div class="nui-datagrid" borderStyle="border:0" style="width: 100%;height: 80%">
+            <div id="file_grid" ajaxtype="get" class="nui-datagrid" borderStyle="border:0" style="width: 100%;height: 80%">
                 <div property="columns">
                     <div type="checkcolumn">#</div>
-                    <div field="name">文件名</div>
-                    <div field="name">上传时间</div>
-                    <div field="name">上传人</div>
-                    <div field="name">文件描述</div>
+                    <div field="filename">文件名</div>
+                    <div field="uploadDate">上传时间</div>
+                    <div field="chunkSize">文件大小</div>
+                    <div field="desc">文件描述</div>
+                    <div name="action"  headerAlign="center">操作</div>
 
                 </div>
 
@@ -79,16 +80,25 @@
                     <legend>上传文件</legend>
                     <table>
                         <tr>
+                            <td><label>选择文件:</label></td>
                             <td>
-                                <input id="fileupload1" class="mini-fileupload" name="Fdata" limitType="*.txt"
-                                       flashUrl="swfupload/swfupload.swf"
-                                       uploadUrl="upload.aspx"
+                                <input id="fileupload1" class="nui-fileupload" name="Fdata" limitType="*.txt"
+                                       flashUrl="{{ static_url('nui/resource/swfupload/swfupload.swf') }}"
+                                       uploadUrl="/s/files"
                                        onuploadsuccess="onUploadSuccess"
                                        onuploaderror="onUploadError" onfileselect="onFileSelect"
                                 />
-                                <br/>
-                                <input type="button" value="上传" onclick="startUpload()"/></td>
+                            </td>
+                            <td><label>文件描述：</label></td>
+                            <td><textarea class="nui-textarea" name="desc" id="desc" style="width: 300px"></textarea>
+                            </td>
+                            <td>
+                                <a class="nui-button" onclick="startUpload()">上传</a>
+                            </td>
+
+
                         </tr>
+
                     </table>
                 </fieldset>
             </form>
@@ -97,7 +107,7 @@
     </div>
 
 </div>
-
+<script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script>
 {% end %}
 
 {% block script %}
@@ -106,6 +116,12 @@
 
 
     var tree = nui.get('tree1');
+    var root_node=tree.getRootNode();
+    var file_grid=nui.get('file_grid');
+    file_grid.setUrl('/s/catalog/files');
+    if(root_node){
+        file_grid.load({'catalog_id':root_node.id});
+    }
 
     window.onload = function () {
         $("#tree1").bind("contextmenu", function (e) {
@@ -113,12 +129,32 @@
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });
+        tree.on('nodeselect',function(e){
+
+            if(e.node.id){
+                file_grid.load({'catalog_id': e.node.id});
+            }
+
+        });
         //var tree = nui.get('tree1');
         //var db = new nui.DataBinding();
         //db.bindForm("menu_form", tree);
 
 
     };
+    file_grid.on("drawcell", function (e) {
+            var record = e.record,
+        column = e.column,
+        field = e.field,
+        value = e.value;
+        if(column.name=='action'){
+            e.cellStyle = "text-align:center";
+                e.cellHtml = '<a href="javascript:download_file(\'' + record.id + '\')">下载</a>';
+        }
+    });
+    function download_file(file_id){
+        window.open('/s/files/'+file_id);
+    }
     function onNodeDoubleClick(e) {
         onEditNode(e);
     }
@@ -212,6 +248,34 @@
     }
     function reloadData() {
         tree.reload();
+    }
+
+    function onFileSelect(e) {
+        //alert("选择文件");
+    }
+    function onUploadSuccess(e) {
+
+        nui.alert("上传成功：" + e.serverData);
+        this.setText("");
+        nui.get('desc').setValue('');
+        var select_catalog=tree.getSelectedNode();
+        file_grid.reload();
+    }
+    function onUploadError(e) {
+
+    }
+
+    function startUpload() {
+        var fileupload = mini.get("fileupload1");
+        var select_catalog=tree.getSelectedNode();
+        if(!select_catalog || select_catalog.id==undefined){
+            nui.alert('请选择文件目录');
+            return
+        }
+        fileupload.setPostParam({'_xsrf': nui.Cookie.get('_xsrf'),
+            'catalog_id':select_catalog.id,
+            'desc':nui.get('desc').getValue()});
+        fileupload.startUpload();
     }
 </script>
 

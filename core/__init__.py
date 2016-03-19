@@ -2,6 +2,7 @@
 import hashlib
 from copy import copy
 
+import datetime
 import redis
 from bson import ObjectId
 import motor
@@ -72,6 +73,10 @@ class MongoEncoder(JSONEncoder):
     def default(self, o, **kwargs):
         if isinstance(o, ObjectId):
             return str(o)
+        elif isinstance(o, datetime.datetime):
+            return o.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(o, datetime.date):
+            return o.strftime('%Y-%m-%d')
         else:
             return JSONEncoder.default(self, o)
 
