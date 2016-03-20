@@ -213,7 +213,17 @@ class NUITreeHandler(NUIBaseHandler):
 
     @coroutine
     def get(self, *args, **kwargs):
-        result = yield self.settings['db'][self.cname].find().to_list(length=None)
+        q={}
+        except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
+        for k,v in self.request.query_arguments.items():
+            if k in except_key:
+                continue
+            elif len(v)>1:
+                q[k]={'$in':v}
+            else:
+                q[k]=v[0]
+
+        result = yield self.settings['db'][self.cname].find(q).to_list(length=None)
         # print result
         self.write(bson_encode(result))
 
@@ -231,7 +241,7 @@ class NUITreeHandler(NUIBaseHandler):
         if data:
             print 'data:', data
             data_json = escape.json_decode(data) if type(data) == unicode else data
-            list = to_list(data_json, "-1", "children", "id", "pid")
+            list = to_list(data_json, "-1", "children", "id", "pid",self.current_user.get('userid'))
             print list
             print 'len(list):', len(list)
             for i, item in enumerate(list):
@@ -239,7 +249,7 @@ class NUITreeHandler(NUIBaseHandler):
 
         if remove_data:
             data_json = escape.json_decode(remove_data)
-            list = to_list(data_json, "-1", "children", "id", "pid")
+            list = to_list(data_json, "-1", "children", "id", "pid",self.current_user.get('userid'))
             for item in list:
                 yield self.settings['db'][self.cname].remove({"_id": item['id']})
 
@@ -350,7 +360,7 @@ class NUIMongoHandler(NUIBaseHandler):
         id = body.get('_id', None)
         if id :  # update
             body['update_time'] = format_datetime(datetime.now())
-            body['update_user'] = self.current_user.get('username', '')
+            body['update_user'] = self.current_user.get('userid', '')
 
             yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                 "$set": clone_dict(body)
@@ -384,7 +394,7 @@ class NUIMongoHandler(NUIBaseHandler):
 
             if id and self.is_object_id(id):  # update
                 row['update_time'] = format_datetime(datetime.now())
-                row['update_user'] = self.current_user.get('username', '')
+                row['update_user'] = self.current_user.get('userid', '')
                 yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
                     "$set": clone_dict(row, without=[])
                 })
@@ -395,179 +405,10 @@ class NUIMongoHandler(NUIBaseHandler):
                 obj['_id'] = obj['id']
 
                 obj['create_time'] = format_datetime(datetime.now())
-                obj['create_user'] = self.current_user.get('username', '')
+                obj['create_user'] = self.current_user.get('userid', '')
                 yield db[self.cname].insert(obj)
         # self.write(generate_response(message="保存成功"))
         self.send_message("保存成功")
-
-
-class MongoBaseHandler(BaseHandler):
-    """通用的mongodb的Handler，封装简单的CRUD的操作"""
-
-    def is_object_id(self, id_str):
-        """判断字符串是不是objectid的str"""
-        pattern = '[a-f\d]{24}'
-        return len(re.findall(pattern, id_str)) > 0
-
-        pass
-
-    def prepare(self):
-        """覆盖父类的方法，避免401错误"""
-        pass
-
-    def initialize(self, *args, **kwargs):
-        # cname 为对应的mongodb的集合的名字
-        if kwargs:
-            for key, val in kwargs.items():
-                if not hasattr(self, key):
-                    setattr(self, key, val)
-        super(MongoBaseHandler, self).initialize()
-
-    @coroutine
-    def get(self, *args, **kwargs):
-
-        id = args[0] if len(args) > 0 else None
-        if id:
-            db = self.settings['db']
-
-            obj = yield db[self.cname].find_one({"_id": ObjectId(id) if self.is_object_id(id) else id})
-            self.write(bson_encode(obj))
-            return
-
-        def get_query_args(self):
-            other = {}
-            q = {}  # 查询的规则 {'name':'aaa'}
-            p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
-            s = {}  # 排序的规则
-            try:
-                for k, v in self.request.query_arguments.items():
-                    if k == '_v':
-                        continue
-                    if k == 'q':  # 带查询参数
-                        q = ast.literal_eval(v[0])
-                        continue
-                        pass
-                    if k == 'p':  # 列投影
-                        p = ast.literal_eval(v[0])
-                        continue
-                        pass
-                    if k == 's':  # 排序
-                        s = ast.literal_eval(v[0])
-                        continue
-
-                    if len(v) > 1:
-                        other[k] = {"$in", v}
-                    else:
-                        other[k] = v[0]
-            except ValueError, e:
-                logging.error(e)
-            #
-            # return dict(q,**other), p, s
-            return dict(q, **other), p, s
-
-        q, p, s = get_query_args(self)
-        db = self.settings['db']
-
-        if not p:
-            cursor = db[self.cname].find(q)
-            if not s:
-                objs = yield cursor.to_list(length=None)
-            else:
-                objs = yield cursor.sort(s).to_list(length=None)
-        else:
-            cursor = db[self.cname].find(q, p)
-            if not s:
-                objs = yield cursor.to_list(length=None)
-            else:
-                objs = yield cursor.sort(s).to_list(length=None)
-        self.write(bson_encode(objs))
-
-    @coroutine
-    def put(self, *args, **kwargs):
-        """接受用户的请求对文档进行更新
-        :param args url路径的参数 """
-        if is_json_request(self.request):
-            body = json.loads(self.request.body)
-        else:
-            self.send_error(reason="仅支持Content-type:application/json")
-
-        db = self.settings['db']
-        id = body.get('_id', None)
-        if id:  # update
-            body['update_time'] = format_datetime(datetime.now())
-            body['update_user'] = self.current_user.get('userCd', '')
-
-            yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
-                "$set": clone_dict_without_id(body)
-            })
-        self.send_message("保存成功")
-
-    @coroutine
-    def delete(self, *args, **kwargs):
-        id = args[0] if len(args) > 0 else None
-        if id:
-            db = self.settings['db']
-            yield db[self.cname].remove({"_id": ObjectId(id) if self.is_object_id(id) else id})
-
-    @coroutine
-    def post(self, *args, **kwargs):
-        if is_json_request(self.request):
-            body = json.loads(self.request.body)
-        else:
-            self.send_error(reason="仅支持Content-type:application/json")
-            return
-
-        db = self.settings['db']
-        id = body.get('_id', None)
-        if id:  # update
-            body['update_time'] = format_datetime(datetime.now())
-            body['update_user'] = self.current_user.get('userCd', '')
-            yield db[self.cname].update({"_id": ObjectId(id) if self.is_object_id(id) else id}, {
-                "$set": clone_dict_without_id(body)
-            })
-
-        else:
-            obj = clone_dict_without_id(body)
-            obj['create_time'] = format_datetime(datetime.now())
-            obj['create_user'] = self.current_user.get('userCd', '')
-            yield db[self.cname].insert(obj)
-        # self.write(generate_response(message="保存成功"))
-        self.send_message("保存成功")
-
-
-# def has_roles(roles):
-#     """装饰器
-#     :param roles 角色列表
-#     :return 装饰后的方法"""
-#
-#     def decorator(func):
-#         @functools.wraps(func)
-#         def wrapper(self, *args, **kwargs):
-#             print '%s %s()' % (roles, func.__name__)
-#             # todo 判断当前角色列表roles数据是否在登陆的用户角色列表中，如果存在则执行方法func，否则提示没有权限
-#             return func(self, *args, **kwargs)
-#
-#         return wrapper
-#
-#     return decorator
-#
-#
-# def has_perms(perms):
-#     """装饰器
-#     :param perms 权限列表
-#     :return 装饰后的方法"""
-#
-#     def decorator(func):
-#         @functools.wraps(func)
-#         def wrapper(self, *args, **kwargs):
-#             print '%s %s()' % (perms, func.__name__)
-#             # todo 判断当前权限列表perms数据是否在登陆的用户权限列表中，如果存在则执行方法func，否则提示没有权限
-#             return func(self, *args, **kwargs)
-#
-#         return wrapper
-#
-#     return decorator
-
 
 
 if __name__ == "__main__":

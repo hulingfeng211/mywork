@@ -19,7 +19,7 @@ from tornado.gen import coroutine, Task, Return
 import config
 import constant
 from core import make_password, settings
-from core.common import MongoBaseHandler, NUIMongoHandler, NUITreeHandler, BaseHandler, NUIBaseHandler
+from core.common import  NUIMongoHandler, NUITreeHandler, BaseHandler, NUIBaseHandler
 from core.utils import utc_to_local, format_datetime, create_class
 from handler.service import URLService, TimeoutService, LoginRolesService
 from nui import LoginHandler,LogoutHandler, IndexHandler

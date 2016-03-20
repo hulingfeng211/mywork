@@ -368,6 +368,8 @@ class UploadFileService(GridFSHandler,SessionMixin):
                     'desc':desc,
                     '_id':_id,
                     'id':_id,
+                    'create_user':self.current_user.get('userid'),
+                    'create_time':datetime.now(),
                     'catalog_id':catalog_id,
                     'content_type':item.get('content_type'),
                     'filetype':file_type}

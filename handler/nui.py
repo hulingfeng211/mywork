@@ -104,10 +104,12 @@ class LoginHandler(NUIBaseHandler):
 
                 self.session.set('user',{'username':username,
                                          'role':role_code,
+                                         'userid':str(user['_id']),
                                          'perms':[item['name'] for item in perms],
                                          'remote_ip':self.request.remote_ip,
                                          'login_time':datetime.datetime.now()})
                 self.set_cookie('role',role_code)
+                self.set_cookie('userid',str(user['_id']))
                 user_profile=yield db.user.profile.find_one({'_id':username})
                 skin=user_profile.get('skin','default') if user_profile else 'default'
                 self.set_cookie('miniuiSkin',skin)
