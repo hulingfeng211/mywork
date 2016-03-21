@@ -35,4 +35,17 @@
 -  MONGODB-CR
 - x.509 Certificate Authentication
 
+### 添加用户
+> 非授权模式下启动`mongod`进程
+> `use admin`　　　
+> `db.createUser({user:"admin",pwd:"dev123456",roles:[{role:"userAdminAnyDatabase",db:"admin"}]})`
+
+### 重启`mongod`服务
+> `george@george-pc:~/桌面$ /usr/local/mongodb-3.2/bin/mongod --syslog --fork --dbpath=/home/george/data --auth  `
+> `about to fork child process, waiting until server is ready for connections.`  
+> `forked process: 9912`
+> `child process started successfully, parent exiting`
+
+>  
+
 
