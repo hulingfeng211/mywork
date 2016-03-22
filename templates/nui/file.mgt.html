@@ -69,7 +69,7 @@
                     <div type="checkcolumn">#</div>
                     <div field="filename">文件名</div>
                     <div field="uploadDate">上传时间</div>
-                    <div field="chunkSize">文件大小</div>
+                    <div field="file_size">文件大小</div>
                     <div field="desc">文件描述</div>
                     <div name="action" headerAlign="center">操作</div>
 
@@ -316,6 +316,7 @@
         file_grid.reload();
     }
     function onUploadError(e) {
+        nui.alert("文件上传失败，稍后重试");
 
     }
 

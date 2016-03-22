@@ -213,17 +213,52 @@ class NUITreeHandler(NUIBaseHandler):
 
     @coroutine
     def get(self, *args, **kwargs):
-        q={}
-        except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
-        for k,v in self.request.query_arguments.items():
-            if k in except_key:
-                continue
-            elif len(v)>1:
-                q[k]={'$in':v}
-            else:
-                q[k]=v[0]
 
-        result = yield self.settings['db'][self.cname].find(q).to_list(length=None)
+        def get_query_args(self):
+            """
+            dept_id=569ca74805b6057d184b4f4c&pageIndex=0&pageSize=10&sortField=&sortOrder=&_=1453162105840
+            """
+            other = {}
+            q = {}  # 查询的规则 {'name':'aaa'}
+            p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
+            s = {}  # 排序的规则
+            except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
+            try:
+                for k, v in self.request.query_arguments.items():
+                    if k == '_v':
+                        continue
+                    if k == 'q':  # 带查询参数
+                        q = ast.literal_eval(v[0])
+                        continue
+                        pass
+                    if k == 'p':  # 列投影
+                        p = ast.literal_eval(v[0])
+                        continue
+                        pass
+                    if k == 's':  # 排序
+                        s = ast.literal_eval(v[0])
+                        continue
+                    if k in except_key:
+                        continue
+
+                    if len(v) > 1:
+                        other[k] = {"$in": v}
+                    else:
+                        other[k] = v[0]
+            except ValueError, e:
+                logging.error(e)
+            #
+            # return dict(q,**other), p, s
+            return dict(q, **other), p, s
+        q, p, s = get_query_args(self)
+
+        db = self.settings['db']
+        if p:
+            cursor = db[self.cname].find(q,p)
+        else:
+            cursor=db[self.cname].find(q)
+
+        result = yield cursor.to_list(length=None)
         # print result
         self.write(bson_encode(result))
 
@@ -311,7 +346,7 @@ class NUIMongoHandler(NUIBaseHandler):
                         continue
 
                     if len(v) > 1:
-                        other[k] = {"$in", v}
+                        other[k] = {"$in": v}
                     else:
                         other[k] = v[0]
             except ValueError, e:

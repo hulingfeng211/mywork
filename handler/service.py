@@ -13,6 +13,7 @@ import mimetypes
 import time
 from datetime import datetime
 
+import gridfs
 import motor
 import tornadoredis
 from bson import ObjectId
@@ -25,7 +26,7 @@ from torndsession.session import SessionMixin
 from torndsession.sessionhandler import SessionBaseHandler
 
 import constant
-from core import clone_dict, settings
+from core import clone_dict, settings, make_password
 from core.common import NUIBaseHandler, BaseHandler
 from core.utils import format_datetime, create_class
 
@@ -277,6 +278,35 @@ class LoginRolesService(NUIBaseHandler):
     def check_xsrf_cookie(self):
         pass
 
+
+class ValidPasswordService(NUIBaseHandler):
+    @coroutine
+    def post(self, *args, **kwargs):
+        """验证输入的密码是否与当前用户的密码一致"""
+        db=self.settings['db']
+        userid = self.current_user.get('userid',None)
+        user = yield db.users.find_one({'_id':ObjectId(userid)})
+        pwd=self.get_argument('pwd',None)
+        if pwd and make_password(pwd)==user.get('pwd'):
+            self.send_message("密码正确")
+        else:
+            self.send_message("密码不正确",status_code=1)
+
+
+class ChangePasswordService(NUIBaseHandler):
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        newpwd=self.get_argument('newpwd',None)
+        renewpwd=self.get_argument('renewpwd',None)
+        db=self.settings['db']
+        userid=self.current_user.get('userid')
+        if newpwd and renewpwd and newpwd==renewpwd:
+            yield db.users.update({'_id':ObjectId(userid)},{'$set':{"pwd":make_password(newpwd)}})
+            self.send_message("密码修改成功")
+        else:
+            self.send_message("两次输入的密码不一致",status_code=1)
+
 class LogoutService(NUIBaseHandler):
     """管理员注销其他用户"""
     @coroutine
@@ -364,6 +394,7 @@ class UploadFileService(GridFSHandler,SessionMixin):
         for item in file_list:
             file_type=mimetypes.guess_type(item.get('filename'))[0] or 'text/plain'
             _id=ObjectId()
+            body=item.get('body')
             kwargs={'filename':item.get('filename'),
                     'desc':desc,
                     '_id':_id,
@@ -372,9 +403,10 @@ class UploadFileService(GridFSHandler,SessionMixin):
                     'create_time':datetime.now(),
                     'catalog_id':catalog_id,
                     'content_type':item.get('content_type'),
+                    'file_size':'%sK'%str(len(body)/1024.0),
                     'filetype':file_type}
             gridin = yield fs.new_file(**kwargs)
-            yield gridin.write(item.get('body'))
+            yield gridin.write(body)
             yield gridin.close()
 
 
@@ -390,6 +422,9 @@ routes = [
     (r'/s/user/menus', UserMenusService),
     (r'/s/login/roles', LoginRolesService),
     (r'/s/app/urls', URLService),
+    (r'/s/user/changepassword', ChangePasswordService),
+    (r'/s/common/validpassword', ValidPasswordService),
+
     (r'/s/files',UploadFileService,{'database':settings['db']}),
     (r'/s/files/(.+)',UploadFileService,{'database':settings['db']})
 ]

@@ -37,26 +37,98 @@
         <tr>
             <td style="width:80px;">旧密码：</td>
             <td style="width:100px">
-                <input name="name" class="nui-textbox"/>
+                <input id="oldpwd" name="oldpwd" required="true" class="nui-password"/>
             </td>
         </tr>
         <tr>
             <td>新密码：</td>
             <td>
-                <input name="pwd" class="nui-password"/>
+                <input id="newpwd" name="newpwd" required="true" onvalidation="is_same_password" class="nui-password"/>
             </td>
         </tr>
         <tr>
             <td>重复新密码：</td>
             <td>
-                <input name="birthday" class="nui-password"/>
+                <input id="renewpwd" name="renewpwd" required="true" onvalidation="is_same_password"
+                       class="nui-password"/>
             </td>
         </tr>
         <tr>
             <td colspan="2" style="text-align: center;">
-                <a class="nui-button nui-button-iconRight" iconCls="icon-edit" onclick="onClick">确认修改</a>
+                <a class="nui-button nui-button-iconRight" iconCls="icon-edit" onclick="on_change_pwd">确认修改</a>
             </td>
         </tr>
     </table>
 </fieldset>
+{% end %}
+{% block script %}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //当old密码光标失去时进行密码的验证
+        nui.get('oldpwd').on('blur', function (e) {
+
+            $.ajax({
+                url: '/s/common/validpassword',
+                type: 'post',
+                data: {"pwd": nui.get('oldpwd').getValue(), '_xsrf': nui.Cookie.get('_xsrf')},
+                beforSend: function (xhr) {
+                    xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
+                },
+                success: function (result) {
+                    //nui.get('oldpwd').off('blur');
+                    if (result.status_code == 1)
+                        nui.alert("密码输入错误，请重新输入");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    nui.alert(jqXHR.responseText);
+
+                }
+            });
+        });
+    });
+    function is_same_password(e) {
+        //判断新旧密码是否相同
+        var newpwd = nui.get('newpwd').getValue();
+        var renewpwd = nui.get('renewpwd').getValue();
+        if (e.isValid && newpwd != renewpwd) {
+            e.errorText = "新旧密码必须相同";
+            e.isValid = false;
+        }
+    }
+
+    function on_change_pwd(e) {
+        $.ajax({
+            url: '/s/user/changepassword',
+            type: 'post',
+            data: {
+                'newpwd': nui.get('newpwd').getValue(),
+                'renewpwd': nui.get('renewpwd').getValue(),
+                '_xsrf': nui.Cookie.get('_xsrf')
+            },
+            success: function (result) {
+                if (result.status_code != 0) {
+                    nui.alert(result.data);
+                }
+                else {
+                     nui.alert(result.data);
+                    if (window.CloseOwnerWindow) {
+                        return window.CloseOwnerWindow();
+                    }
+                    else {
+                        window.close();
+                    }
+
+                }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                nui.alert(jqXHR.responseText);
+
+            }
+        });
+
+    }
+</script>
+
 {% end %}
