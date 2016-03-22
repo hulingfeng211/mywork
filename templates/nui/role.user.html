@@ -384,7 +384,7 @@
         }
         var data = {role_id: current_role.id, users: data};
 
-        var msgid = grid.loading("保存中，请稍后......");
+        grid.loading("保存中，请稍后......");
         $.ajax({
             url: "/s/role/users",
             data: nui.encode(data),
@@ -394,11 +394,15 @@
                 xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
             },
             success: function (text) {
-                nui.hideMessageBox(msgid);
+                //nui.hideMessageBox(msgid);
+                grid.unmask();
                 grid.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR.responseText);
+                //nui.hideMessageBox(msgid);
+                grid.unmask();
+                nui.alert(jqXHR.responseText);
+                //alert('保存失败，请联系管理员');
             }
         });
     }

@@ -254,9 +254,10 @@ class RoleUsersService(NUIBaseHandler):
                     user = clone_dict(item)
                     user['update_time'] = format_datetime(datetime.now())
                     user['update_user'] = self.current_user.get('username', '')
-                    if user.get('roles',None):
-                        del user['roles']
-                    yield db.users.update({'_id': ObjectId(item['id'])}, {"$push":{"roles":role['code']},"$set": user})
+                    #if user.get('roles',None):
+                    user['roles'].append(role['code'])
+                    #yield db.users.update({'_id': ObjectId(item['id'])}, {"$push":{"roles":role['code']}})
+                    yield db.users.update({'_id': ObjectId(item['id'])}, {"$set": user})
 
 
 class LoginRolesService(NUIBaseHandler):
@@ -378,7 +379,7 @@ class UploadFileService(GridFSHandler,SessionMixin):
         if  path:
             db=self.database
             yield db.fs.files.remove({'_id':ObjectId(path)})
-            yield db.fs.chunks.remove({'file_id':ObjectId(path)})
+            yield db.fs.chunks.remove({'files_id':ObjectId(path)})
 
 
 

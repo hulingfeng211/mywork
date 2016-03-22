@@ -1,17 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--<!DOCTYPE html>-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
 
-    <title>{{title}}</title>
+    <title>{{ title }}</title>
     <style type="text/css">
-        html,body{
-            height:100%;
-            width:100%;
-            padding:0;
-            margin:0;
+        html, body {
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
         }
+
         body {
             margin: 0;
             padding: 0;
@@ -27,18 +29,46 @@
 </head>
 <body style="display: none; ">
 
-{%block body %}
-{%end%}
+{% block body %}
+{% end %}
 
 
-<script src="{{static_url('nui/nui.js')}}"></script>
+<script src="{{ static_url('nui/nui.js') }}"></script>
 
 <script type="text/javascript">
     nui.parse();
-    $('body').css('display','block');
+    $('body').css('display', 'block');
+    $(function () {
+        //.ajaxError事件定位到document对象，文档内所有元素发生ajax请求异常，都将冒泡到document对象的ajaxError事件执行处理
+        $(document).ajaxError(
+                //所有ajax请求异常的统一处理函数，处理
+                function (event, xhr, options, exc) {
+                    if (xhr.status == 'undefined') {
+                        return;
+                    }
+                    switch (xhr.status) {
+                        case 403:
+                            // 未授权异常
+                            //nui.alert("系统拒绝：您没有访问权限。");
+                            //跳转到首页登录
+                            location.reload();
+                            break;
+
+                        case 401:
+                            // 未授权异常
+                            nui.alert("系统拒绝：您没有访问权限。");
+                            break;
+
+                        case 404:
+                            nui.alert("您访问的资源不存在。");
+                            break;
+                    }
+                }
+        );
+    });
 </script>
-{%block script %}
-{%end%}
+{% block script %}
+{% end %}
 
 </body>
 </html>

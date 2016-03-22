@@ -53,7 +53,7 @@ class BaseHandler(SessionBaseHandler):
         if not current_user:
             # self.redirect('/f/index.html',permanent=False)
             # self.set_status(status_code=401,reason='用户未授权')
-            self.send_error(status_code=401, reason='用户未授权')
+            self.send_error(status_code=403, reason='用户未登录')
             # self.redirect('/f/index.html',permanent=False)
             # raise HTTPError(code=401,message='未授权')
             # self.finish()
