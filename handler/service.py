@@ -338,7 +338,12 @@ class URLService(NUIBaseHandler):
             return False
 
         url_list=self.application.handlers[0][1]
+        db=self.settings['db']
+        exist_in_db_urls=yield db.urls.find({},{'name':1,'_id':0})
+
         result=[]
+        # todo
+        # url_list=filter(lambda x:x.name)
         for s in url_list:
             tmp={}
             if exception_url(s._path):
