@@ -57,6 +57,6 @@ GUEST_ROLE_CODE = 'guest_role_code'
 # 最大的轮询超时时间
 MAX_POLLING_TIMEOUT = 'max_polling_timeout'
 
-# 首页地址
-HOME_URL = 'home_url'
+# 站点URL前缀
+SITE_URL_PREFIX = 'site_url_prefix'
 

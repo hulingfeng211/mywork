@@ -85,7 +85,7 @@
                             <td>
                                 <input id="fileupload1" class="nui-fileupload" name="Fdata" limitType="*.*"
                                        flashUrl="{{ static_url('nui/resource/swfupload/swfupload.swf') }}"
-                                       uploadUrl="/s/files"
+                                       uploadUrl="{{ reverse_url('s.files') }}"
                                        onuploadsuccess="onUploadSuccess"
                                        onuploaderror="onUploadError" onfileselect="onFileSelect"
                                 />
@@ -121,7 +121,7 @@
 
     var root_node = tree.getRootNode();
     var file_grid = nui.get('file_grid');
-    file_grid.setUrl('/s/catalog/files');
+    file_grid.setUrl('{{ reverse_url("s.catalog.files") }}');
     if (root_node) {
         // 默认加载所有文件
         file_grid.load({'create_user': nui.Cookie.get('userid')});
@@ -129,7 +129,7 @@
 
     window.onload = function () {
 
-        tree.setUrl("/s/file/catalogs");
+        tree.setUrl("{{ reverse_url('s.file.catalogs') }}");
         tree.load({'create_user': nui.Cookie.get('userid')});
         $("#tree1").bind("contextmenu", function (e) {
             var menu = nui.get("contextMenu");
@@ -194,7 +194,7 @@
         var selected_row = file_grid.getSelected();
         $.ajax(
                 {
-                    url: '/s/files/' + selected_row.id,
+                    url: "{{ reverse_url('s.files.item','') }}"+ selected_row.id,
                     type: 'delete',
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
@@ -286,7 +286,7 @@
 
 
         $.ajax({
-            url: "/s/file/catalogs",
+            url: "{{ reverse_url('s.file.catalogs') }}",
             data: paramsObj,
             type: "post",
             success: function (text) {

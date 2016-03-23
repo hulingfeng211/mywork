@@ -69,7 +69,7 @@
         nui.get('oldpwd').on('blur', function (e) {
 
             $.ajax({
-                url: '/s/common/validpassword',
+                url:"{{ reverse_url("s.common.validpassword") }}" ,
                 type: 'post',
                 data: {"pwd": nui.get('oldpwd').getValue(), '_xsrf': nui.Cookie.get('_xsrf')},
                 beforSend: function (xhr) {
@@ -99,7 +99,7 @@
 
     function on_change_pwd(e) {
         $.ajax({
-            url: '/s/user/changepassword',
+            url: {{ reverse_url('s.user.changepassword') }},
             type: 'post',
             data: {
                 'newpwd': nui.get('newpwd').getValue(),

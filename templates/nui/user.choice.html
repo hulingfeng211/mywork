@@ -2,7 +2,7 @@
 {% block body %}
 <div class="nui-fit">
     <div class="nui-datagrid" style="width:100%;height:100%;"
-         url="/s/users"
+         url="{{ reverse_url('s.users') }}"
          multiSelect="true"
          selectOnLoad="true"
          ajaxOptions='{type:"get"}'

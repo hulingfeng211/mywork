@@ -2,16 +2,16 @@
 {% block body %}
 <div class="nui-fit">
     <div class="nui-datagrid" style="width:100%;height:100%;"
-         url="/s/urls"
+         url="{{ reverse_url('s.urls') }}"
          ajaxOptions='{type:"get"}'
          id="grid1">
         <div property="columns">
             <div type="checkcolumn"></div>
+            <div field="name" headerAlign="center">菜单名
+            </div>
             <div field="url_pattern" headerAlign="center">菜单URL
-                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
             <div field="desc" headerAlign="center">菜单功能描述
-                <input property="editor" class="nui-textbox" style="width:100%;"/>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
 {% block script %}
 <script type="text/javascript">
     var grid = nui.get('grid1');
-    grid.load({q:'{"url_pattern":{"$regex":"page"}}',p:'{"_id":0,"url_pattern":1,"desc":1}'});
+    grid.load({q:'{"url_pattern":{"$regex":"page"}}',p:'{"_id":0,"url_pattern":1,"name":1,"desc":1}'});
     function search() {
         grid.load();
     }

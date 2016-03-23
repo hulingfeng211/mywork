@@ -15,7 +15,7 @@
             </table>
         </div>
         <!--ajaxOptions='{type:"get"}' -->
-        <ul id="tree1" url="/s/orgns" ajaxOptions='{type:"get"}' class="nui-tree"
+        <ul id="tree1" url="{{ reverse_url('s.orgns') }}" ajaxOptions='{type:"get"}' class="nui-tree"
             style="width:100%;height:100%;padding:5px;"
             showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="false" allowDrop="false"
             allowLeafDropIn="false"
@@ -52,7 +52,7 @@
                  allowCellEdit="true"
                  idField="id"
                  multiSelect="true"
-                 url="/s/employees"
+                 url="{{ reverse_url('s.employees') }}"
                  idField="id"
                  pageSize="20"
                  editNextOnEnterKey="true"
@@ -155,7 +155,7 @@
             var json = nui.encode(data);
             var msgid = grid.loading("保存中，请稍后......");
             $.ajax({
-                url: "/s/employees",
+                url: "{{ reverse_url('s.employees') }}",
                 data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
                 //contentType:'application/json',
                 type: "post",

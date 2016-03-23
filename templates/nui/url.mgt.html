@@ -30,7 +30,7 @@
          allowCellValid="true"
          idField="id"
          multiSelect="false"
-         url="/s/urls"
+         url="{{ reverse_url('s.urls') }}"
          idField="id"
          pageSize="20"
          editNextOnEnterKey="true"
@@ -41,6 +41,9 @@
          style="width:100%;height:100%;">
         <div property="columns">
             <div type="expandcolumn">#</div>
+            <div field="name" width="60" headerAlign="center" allowSort="true">名字
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
+            </div>
             <div field="url_pattern" width="120" headerAlign="center" allowSort="true">URL
                 <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
             </div>
@@ -156,7 +159,7 @@
          showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
         <div id="role_datagrid" class="nui-datagrid" style="width:100%;height:100%;"
              borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
-             url='/s/roles?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
+             url='{{ reverse_url("s.roles") }}?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
             <div property="columns">
                 <div type="checkcolumn">#</div>
                 <div field="code" width="120" headerAlign="center" allowSort="true">编码</div>
@@ -170,7 +173,7 @@
          showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
         <div id="perm_datagrid" class="nui-datagrid" style="width:100%;height:100%;"
              borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
-             url='/s/perms?p={"_id":0,"name":1,"desc":1}' onrowdblclick="onPermRowDblclick">
+             url='{{ reverse_url("s.perms") }}?p={"_id":0,"name":1,"desc":1}' onrowdblclick="onPermRowDblclick">
             <div property="columns">
                 <div type="checkcolumn">#</div>
                 <div field="name" width="120" headerAlign="center" allowSort="true">权限名</div>
@@ -212,7 +215,7 @@
     }
     function apply_url() {
         $.ajax({
-            url: "/s/app/urls",
+            url: "{{ reverse_url('s.app.urls') }}",
             data: {'_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
@@ -246,7 +249,7 @@
         grid.loading("保存中，请稍后......");
         var json = nui.encode(o);
         $.ajax({
-            url: "/s/urls",
+            url: "{{ reverse_url('s.urls') }}",
             type: 'put',
             data: json,
             beforeSend: function (xhr) {
@@ -277,7 +280,7 @@
         else {
             grid.loading();
             $.ajax({
-                url: '/s/urls/' + row.id,
+                url: "{{ reverse_url('s.urls.item','') }}" + row.id,
                 type: 'get',
                 success: function (result) {
                     var o = nui.decode(result);
@@ -290,7 +293,7 @@
     }
     function import_url() {
         $.ajax({
-            url: '/s/app/urls',
+            url: "{{ reverse_url('s.app.urls') }}",
             type: 'get',
             success: function (e) {
                 result = e.data;
@@ -365,7 +368,7 @@
         var json = nui.encode(data);
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
-            url: "/s/urls",
+            url: "{{ reverse_url('s.urls') }}",
             data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",

@@ -21,7 +21,7 @@ from motor.web import GridFSHandler
 from tornado import escape
 from tornado.gen import coroutine, engine, Task
 from tornado.ioloop import IOLoop
-from tornado.web import RequestHandler, asynchronous, authenticated
+from tornado.web import RequestHandler, asynchronous, authenticated, url
 from torndsession.session import SessionMixin
 from torndsession.sessionhandler import SessionBaseHandler
 
@@ -135,7 +135,15 @@ class UserMenusService(NUIBaseHandler):
         role_info = yield db.roles.find_one({'code': role})
         if role_info:
 
-            all_menus = yield db.menus.find().to_list(length=None)
+            menus = yield db.menus.find().to_list(length=None)
+            all_urls=yield db.urls.find().to_list(length=None)
+            all_menus=[]
+            for menu in menus:
+                tmp_urls=[u for u in all_urls if  menu.get('url','').strip()==u.get('name','').strip()]
+                menu['url']=tmp_urls[0].get('url_pattern') if tmp_urls else ''
+                all_menus.append(menu)
+
+
             if role == self.settings[constant.ROOT_ROLE_CODE]:
                 self.send_message(all_menus)
                 self.finish()
@@ -336,6 +344,7 @@ class URLService(NUIBaseHandler):
             if exception_url(s._path):
                 continue
             tmp['url_pattern']=s._path.replace('%s','(.*)')
+            tmp['name']=s.name if s.name else ''
             tmp['handler_class']='%s.%s'%(s.handler_class.__module__,s.handler_class.__name__)
             for k,v in s.kwargs.iteritems():
                 if k=='role_map':
@@ -348,7 +357,9 @@ class URLService(NUIBaseHandler):
                 else:
                     tmp[k]=v
             result.append(tmp)
+        #self.write(escape.json_encode(result[1:5]))
         self.send_message(result)
+
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -362,6 +373,10 @@ class URLService(NUIBaseHandler):
         self.send_message('ok')
 
 class UploadFileService(GridFSHandler,SessionMixin):
+
+    def initialize(self, database=None, root_collection='fs'):
+        database=database if database else self.settings['db']
+        super(UploadFileService,self).initialize(database,root_collection)
 
     def get_current_user(self):
         return self.session.get('user',None)
@@ -415,17 +430,16 @@ class UploadFileService(GridFSHandler,SessionMixin):
 routes = [
     # (r'/s/menu',MenuService),
     # (r'/s/orgn',OrgnService),
-    (r'/s/userperms', UserPermService),
-    (r'/s/sessiontimeout', TimeoutService),
-    (r'/s/role/menus', RoleMenusService),
-    (r'/s/role/perms', RolePermsService),
-    (r'/s/role/users', RoleUsersService),
-    (r'/s/user/menus', UserMenusService),
-    (r'/s/login/roles', LoginRolesService),
-    (r'/s/app/urls', URLService),
-    (r'/s/user/changepassword', ChangePasswordService),
-    (r'/s/common/validpassword', ValidPasswordService),
-
-    (r'/s/files',UploadFileService,{'database':settings['db']}),
-    (r'/s/files/(.+)',UploadFileService,{'database':settings['db']})
+    url(r'/s/userperms', UserPermService,name='s.userperms'),
+    url(r'/s/sessiontimeout', TimeoutService,name='s.sessiontimeout'),
+    url(r'/s/role/menus', RoleMenusService,name='s.role.menus'),
+    url(r'/s/role/perms', RolePermsService,name='s.role.perms'),
+    url(r'/s/role/users', RoleUsersService,name='s.role.users'),
+    url(r'/s/user/menus', UserMenusService,name='s.user.menus'),
+    url(r'/s/login/roles', LoginRolesService,name='s.login.roles'),
+    url(r'/s/app/urls', URLService,name='s.app.urls'),
+    url(r'/s/user/changepassword', ChangePasswordService,name='s.user.changepassword'),
+    url(r'/s/common/validpassword', ValidPasswordService,name='s.common.validpassword'),
+    url(r'/s/files',UploadFileService,name='s.files'),
+    url(r'/s/files/(.+)',UploadFileService,name='s.files.item')
 ]

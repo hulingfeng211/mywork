@@ -65,6 +65,29 @@
                     }
                 }
         );
+        $(document).ajaxComplete(function (event, xhr, options, exc) {
+            if (xhr.status == 'undefined') {
+                return;
+            }
+            switch (xhr.status) {
+                case 403:
+                    // 未授权异常
+                    //nui.alert("系统拒绝：您没有访问权限。");
+                    //跳转到首页登录
+                    location.reload();
+                    break;
+
+                case 401:
+                    // 未授权异常
+                    nui.alert("系统拒绝：您没有访问权限。");
+                    break;
+
+                case 404:
+                    nui.alert("您访问的资源不存在。");
+                    break;
+            }
+
+        });
     });
 </script>
 {% block script %}

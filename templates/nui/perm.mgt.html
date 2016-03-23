@@ -21,7 +21,7 @@
          allowCellSelect="true"
          allowCellEdit="true"
          multiSelect="true"
-         url="/s/perms"
+         url="{{ reverse_url('s.perms') }}"
          class="nui-datagrid">
         <div property="columns">
             <div type="checkcolumn"></div>
@@ -57,7 +57,7 @@
         var json = nui.encode(data);
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
-            url: "/s/perms",
+            url: "{{ reverse_url('s.perms') }}",
             data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",

@@ -3,7 +3,7 @@
 <div class="nui-splitter" style="width:100%;height:100%;">
     <div size="230px" minSize="100px" maxSize="300px" showCollapseButton="true" style="padding:0px;">
         <!--ajaxOptions='{type:"get"}' -->
-        <ul id="roleTree" url="/s/roles" ajaxOptions='{type:"get"}' class="nui-tree"
+        <ul id="roleTree" url="{{ reverse_url('s.roles') }}" ajaxOptions='{type:"get"}' class="nui-tree"
             style="width:100%;height:100%;padding:5px;"
             showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
             allowLeafDropIn="true"
@@ -17,7 +17,7 @@
             <a class="nui-button" onclick="delete_data" iconCls="icon-remove">删除</a>
         </div>
         <div class="nui-fit">
-            <div id="menu_grid" url="/s/role/menus"
+            <div id="menu_grid" url="{{ reverse_url('s.role.menus') }}"
                  multiSelect="true"
                  ajaxOptions="{type:'get'}" class="nui-datagrid" style="width:100%;height:100%">
                 <div property="columns">
@@ -71,7 +71,7 @@
             return false;
         }
         $.ajax({
-                    url: '/s/role/menus',
+                    url: '{{ reverse_url("s.role.menus") }}',
                     type: 'post',
                     contentType: 'application/json',
                     data: nui.encode({'role_id': current_role.id, 'menus': data}),
@@ -96,7 +96,7 @@
             return false;
         }
         nui.open({
-            url: '/page/choice_menus',
+            url:'{{ reverse_url("page.choice_menus")}}',
             title: '选择菜单',
             width: 650,
             height: 380,

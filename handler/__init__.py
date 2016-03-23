@@ -15,6 +15,7 @@ import pickle
 import pymongo
 import tornadoredis
 from tornado.gen import coroutine, Task, Return
+from tornado.web import url
 
 import config
 import constant
@@ -41,54 +42,61 @@ def get_handlers():
     urls=list(cursor)
     if not list(urls):
         # 登录页
-        handlers.append((r'/page/login',LoginHandler))
+        handlers.append(url(r'/page/login',LoginHandler,name='page.login'))
         # 登出服务
-        handlers.append((r'/page/logout',LoginHandler))
+        handlers.append(url(r'/page/logout',LoginHandler,name='page.logout'))
         # 会话超时的服务
-        handlers.append((r'/s/sessiontimeout', TimeoutService))
+        handlers.append(url(r'/s/sessiontimeout', TimeoutService,name='s.sessiontimeout'))
         # 系统首页
-        handlers.append((r'/app/', IndexHandler))
+        handlers.append(url(r'/app/', IndexHandler,name='home.app'))
         # 系统首页
-        handlers.append((r'/', IndexHandler))
+        handlers.append(url(r'/', IndexHandler,name='home'))
+        handlers.append(url(r'$', IndexHandler,name='home2'))
+
         # 登录时的角色服务
-        handlers.append((r'/s/login/roles', LoginRolesService))
-        # 系统首页
-        handlers.append((r'/app$', IndexHandler))
+        handlers.append(url(r'/s/login/roles', LoginRolesService,name='s.login.roles'))
         # url管理页面
-        handlers.append((r'/s/app/urls', URLService,{'role_map':{'post':'root'}}))
+        handlers.append(url(r'/s/app/urls', URLService,{'role_map':{'post':'root'}},name='s.app.urls'))
         # url管理服务
         # URL管理
-        handlers.append((r'/s/urls', NUIMongoHandler, {'cname': 'urls'}))
-        handlers.append((r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'}))
-        handlers.append((r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'}))
+        handlers.append(url(r'/s/urls', NUIMongoHandler, {'cname': 'urls'},name='s.urls'))
+        handlers.append(url(r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'},name='s.urls.item'))
+        handlers.append(url(r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'},name='page.url'))
         return handlers
 
-    for url in urls:
+    for item in urls:
         role_map={}
         perm_map={}
-        url_pattern=url.get('url_pattern',None)
-        template_path=url.get('template',None)
-        title=url.get('title',None)
-        cname=url.get('cname',None)
+        url_pattern=item.get('url_pattern',None)
+        template_path=item.get('template',None)
+        title=item.get('title',None)
+        cname=item.get('cname',None)
+        name=item.get('name',None)
 
-        role_map['get']=url.get('role_get').split(',') if url.get('role_get','') else []
-        role_map['put']=url.get('role_put').split(',') if url.get('role_put','') else []
-        role_map['post']=url.get('role_post').split(',') if url.get('role_post','') else []
-        role_map['delete']=url.get('role_delete').split(',') if url.get('role_delete','') else []
+        role_map['get']=item.get('role_get').split(',') if item.get('role_get','') else []
+        role_map['put']=item.get('role_put').split(',') if item.get('role_put','') else []
+        role_map['post']=item.get('role_post').split(',') if item.get('role_post','') else []
+        role_map['delete']=item.get('role_delete').split(',') if item.get('role_delete','') else []
 
-        perm_map['get']=url.get('perm_get').split(',') if url.get('perm_get','') else []
-        perm_map['put']=url.get('perm_put').split(',') if url.get('perm_put','') else []
-        perm_map['post']=url.get('perm_post').split(',') if url.get('perm_post','') else []
-        perm_map['delete']=url.get('perm_delete').split(',') if url.get('perm_delete','') else []
+        perm_map['get']=item.get('perm_get').split(',') if item.get('perm_get','') else []
+        perm_map['put']=item.get('perm_put').split(',') if item.get('perm_put','') else []
+        perm_map['post']=item.get('perm_post').split(',') if item.get('perm_post','') else []
+        perm_map['delete']=item.get('perm_delete').split(',') if item.get('perm_delete','') else []
 
 
-        full_class_str=url.get('handler_class')
+        full_class_str=item.get('handler_class')
         full_class_str_split=full_class_str.split('.')
         module_name='.'.join(full_class_str_split[:-1])
         class_name=full_class_str_split[-1]
         cls=create_class(module_name,class_name)
 
-        handlers.append((r'%s'%url_pattern,cls,{'cname':cname,'template':template_path,'title':title,'role_map':role_map,'perm_map':perm_map}))
+        handlers.append(url(r'%s'%url_pattern,cls,
+                            {'cname':cname,
+                             'template':template_path,
+                             'title':title,
+                             'role_map':role_map,
+                             'perm_map':perm_map},
+                            name=name))
     return handlers
 
 class OnlineUserHandler(NUIBaseHandler):
@@ -136,39 +144,39 @@ class OnlineUserHandler(NUIBaseHandler):
 routes = [
 
     # md5加密
-    (r'/s/md5',MD5Handler),
+    url(r'/s/md5',MD5Handler,name='s.md5'),
 
     # 员工管理
-    (r'/s/employees', NUIMongoHandler, {'cname': 'employees'}),
-    (r'/s/employees/(.+)', NUIMongoHandler, {'cname': 'employees'}),
+    url(r'/s/employees', NUIMongoHandler, {'cname': 'employees'},name='s.employees'),
+    url(r'/s/employees/(.+)', NUIMongoHandler, {'cname': 'employees'},name='s.employees.item'),
 
     # 用户管理
-    (r'/s/users', NUIMongoHandler, {'cname': 'users'}),
-    (r'/s/users/(.+)', NUIMongoHandler, {'cname': 'users'}),
+    url(r'/s/users', NUIMongoHandler, {'cname': 'users'},name='s.users'),
+    url(r'/s/users/(.+)', NUIMongoHandler, {'cname': 'users'},name='s.users.item'),
 
     # 角色管理
-    (r'/s/roles', NUITreeHandler, {'cname': 'roles'}),
+    url(r'/s/roles', NUITreeHandler, {'cname': 'roles'},name='s.roles'),
 
     # 菜单管理
-    (r'/s/menus', NUITreeHandler, {'cname': 'menus'}),
+    url(r'/s/menus', NUITreeHandler, {'cname': 'menus'},name='s.menus'),
 
     # 组织管理
-    (r'/s/orgns', NUITreeHandler, {'cname': 'orgns'}),
+    url(r'/s/orgns', NUITreeHandler, {'cname': 'orgns'},name='s.orgns'),
 
     # 文件目录
-    (r'/s/file/catalogs', NUITreeHandler, {'cname': 'file.catalogs'}),
+    url(r'/s/file/catalogs', NUITreeHandler, {'cname': 'file.catalogs'},name='s.file.catalogs'),
 
     # 权限管理
-    (r'/s/perms', NUIMongoHandler, {'cname': 'perms'}),
+    url(r'/s/perms', NUIMongoHandler, {'cname': 'perms'},name='s.perms'),
     # URL管理
-    (r'/s/urls', NUIMongoHandler, {'cname': 'urls'}),
-    (r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'}),
+    url(r'/s/urls', NUIMongoHandler, {'cname': 'urls'},name='s.urls'),
+    url(r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'},name='s.urls.item'),
 
     # 在线用户
-    (r'/s/onlineuser',OnlineUserHandler),
+    url(r'/s/onlineuser',OnlineUserHandler,name='s.onlineuser'),
 
     # 文件查询
-    (r'/s/catalog/files', NUIMongoHandler, {'cname': 'fs.files'}),
+    url(r'/s/catalog/files', NUIMongoHandler, {'cname': 'fs.files'},name='s.catalog.files'),
 
 ]
 

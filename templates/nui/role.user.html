@@ -17,7 +17,7 @@
         </div>
         <div class="nui-fit">
             <!--ajaxOptions='{type:"get"}' -->
-            <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="/s/roles" ajaxOptions='{type:"get"}'
+            <ul id="roleTree" onnodedblclick="onNodeDoubleClick()" url="{{ reverse_url('s.roles') }}" ajaxOptions='{type:"get"}'
                 class="nui-tree"
                 style="width:100%;height:100%;padding:5px;"
                 showTreeIcon="true" textField="name" expandOnLoad="0" allowDrag="true" allowDrop="true"
@@ -71,7 +71,7 @@
                  allowCellValid="true"
                  idField="id"
                  multiSelect="true"
-                 url="/s/role/users"
+                 url="{{ reverse_url('s.role.users') }}"
                  idField="id"
                  pageSize="20"
                  editNextOnEnterKey="true"
@@ -162,12 +162,12 @@
                     }
                 }
             ],roles:{$all:[current_role.code]}
-        }
+        };
 
 
         //alert(q);
         //grid.load({q:'{"$or":{"loginname":}'})
-        grid.setUrl('/s/users');
+        grid.setUrl('{{ reverse_url("s.users") }}');
         grid.load({q:nui.encode(q)});
     }
     /**
@@ -179,7 +179,7 @@
     tree.on('nodeselect', function (e) {
         if (e.isLeaf) {
             //nui.alert(e.node.id);
-            grid.setUrl('/s/role/users');
+            grid.setUrl('{{ reverse_url("s.role.users") }}');
             grid.load({role_id: e.node.id});
         } else {
             grid.setData([]);
@@ -199,7 +199,7 @@
             return false;
         }
         nui.open({
-            url: '/page/choice_users',
+            url: '{{ reverse_url("page.choice_users") }}',
             title: '选择用户',
             width: 650,
             height: 380,
@@ -229,7 +229,7 @@
         var data = {'uid': selectUser['id'], 'perms': perms};
         $.ajax(
                 {
-                    url: '/s/userperms',
+                    url: '{{ reverse_url("s.userperms")}}',
                     type: 'post',
                     contentType: 'application/json',
                     data: nui.encode(data),
@@ -252,7 +252,7 @@
         var row = grid.getSelected();
         if (row != null) {
             $.ajax({
-                url: '/s/md5',
+                url: '{{ reverse_url("s.md5")}}',
                 type: 'get',
                 data: {key: row.loginname},
                 success: function (result) {
@@ -331,7 +331,7 @@
 
         var msgid = nui.loading("数据保存中，请稍后......", "保存数据");
         $.ajax({
-            url: "/s/roles",
+            url: "{{ reverse_url('s.roles')}}",
             data: paramsObj,
             type: "post",
             success: function (text) {
@@ -386,7 +386,7 @@
 
         grid.loading("保存中，请稍后......");
         $.ajax({
-            url: "/s/role/users",
+            url: "{{ reverse_url('s.role.users') }}",
             data: nui.encode(data),
             //contentType:'application/json',
             type: "post",
@@ -409,7 +409,7 @@
     function setMd5Value(e) {
         if (e.sender.value != null && e.sender.value != '') {
             $.ajax({
-                url: '/s/md5',
+                url: '{{ reverse_url('s.md5') }}',
                 data: {key: e.sender.value, '_xsrf': nui.Cookie.get('_xsrf')},
                 type: 'get',
                 success: function (result) {
@@ -436,7 +436,7 @@
         var field = e.field;
         if (field == 'loginname') {
             $.ajax({
-                url: '/s/md5',
+                url: '{{ reverse_url("s.md5") }}',
                 type: 'get',
                 data: {key: record.loginname},
                 success: function (result) {

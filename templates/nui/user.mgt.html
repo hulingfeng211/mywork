@@ -28,7 +28,7 @@
          allowCellValid="true"
          idField="id"
          multiSelect="true"
-         url="/s/users"
+         url="{{ reverse_url("s.users") }}"
          idField="id"
          pageSize="20"
          editNextOnEnterKey="true"
@@ -74,7 +74,7 @@
          showToolbar="true" showCloseButton="true" showHeader="true" bodyStyle="padding:0" borderStyle="border:0">
         <div id="role_datagrid" class="nui-datagrid" style="width:100%;height:100%;"
              borderStyle="border:0" showPageSize="false" ajaxOptions='{type:"get"}' showPageIndex="false"
-             url='/s/roles?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
+             url='{{ reverse_url("s.roles") }}?p={"_id":0,"name":1,"code":1}' onrowdblclick="onRoleRowDblclick">
             <div property="columns">
                 <div type="checkcolumn">#</div>
                 <div field="code" width="120" headerAlign="center" allowSort="true">编码</div>
@@ -103,6 +103,8 @@
             menu.showAtPos(e.pageX, e.pageY);
             return false;
         });#}
+
+
     };
     function onRoleShowPopup(e) {
         role_grid.load();
@@ -156,6 +158,7 @@
      */
     function choice_from_employee() {
         //todo
+        nui.alert("该功能正在开发中...");
     }
 
     /**
@@ -165,7 +168,7 @@
         var row = grid.getSelected();
         if (row != null) {
             $.ajax({
-                url: '/s/md5',
+                url: '{{ reverse_url("s.md5") }}',
                 type: 'get',
                 data: {key: row.loginname},
                 success: function (result) {
@@ -216,7 +219,7 @@
 
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
-            url: "/s/users",
+            url: "{{ reverse_url('s.users') }}",
             data: {data: nui.encode(post_data), '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
@@ -232,7 +235,7 @@
     function setMd5Value(e) {
         if (e.sender.value != null && e.sender.value != '') {
             $.ajax({
-                url: '/s/md5',
+                url: '{{ reverse_url("s.md5") }}',
                 data: {key: e.sender.value, '_xsrf': nui.Cookie.get('_xsrf')},
                 type: 'get',
                 success: function (result) {
@@ -259,7 +262,7 @@
         var field = e.field;
         if (field == 'loginname') {
             $.ajax({
-                url: '/s/md5',
+                url: '{{ reverse_url("s.md5") }}',
                 type: 'get',
                 data: {key: record.loginname},
                 success: function (result) {

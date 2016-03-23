@@ -30,7 +30,7 @@
                 <td style="width:80px;text-align: right;"><label>选择角色:</label></td>
                 <td><input id="role_combobox" class="nui-combobox" style="width:150px;" textField="name"
                            valueField="code"
-                           url="/s/login/roles" showNullItem="true" required="true" allowInput="false"
+                           url="{{ reverse_url('s.login.roles') }}" showNullItem="true" required="true" allowInput="false"
                 /></td>
             </tr>
             <tr>
@@ -77,7 +77,7 @@
         loginWindow.hide();
         //nui.loading("正在登录，请稍候...", "登录");
         $.ajax({
-            url: "/page/login",
+            url: "{{ reverse_url('page.login') }}",
             data: {username: username, pwd: pwd, role: role.getValue(), '_xsrf': nui.Cookie.get('_xsrf')},
             type: "post",
             success: function (result) {
@@ -88,10 +88,10 @@
                     setTimeout(function () {
                         //如果有iframe嵌套的话，父页面重新刷新
                         if (parent) {
-                            parent.window.location = "{{ home_url }}"
+                            parent.window.location = "{{ reverse_url('home') }}"
                         }
                         else {
-                            window.location = "{{ home_url }}";
+                            window.location = "{{ reverse_url('home') }}";
                         }
                     }, 1500);
                 }

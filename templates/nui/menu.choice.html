@@ -2,7 +2,7 @@
 {% block body %}
 <div class="nui-fit">
     <div id="treegrid" class="nui-treegrid" style="width:100%;height:100%;"
-    url="/s/menus" showTreeIcon="true" ajaxOptions="{type:'get'}"
+    url="{{ reverse_url('s.menus') }}" showTreeIcon="true" ajaxOptions="{type:'get'}"
          showCheckBox="true" checkRecursive="true"
     treeColumn="name" idField="id" parentField="pid" resultAsTree="false"
 >

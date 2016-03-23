@@ -11,12 +11,13 @@ import logging
 from tornado import gen
 from tornado.ioloop import IOLoop
 from tornado.options import define, options, parse_command_line
-from tornado.web import Application, RequestHandler
+from tornado.web import Application, RequestHandler, url
 from tornado.gen import coroutine
 from tornado.httpclient import AsyncHTTPClient
 from tornado import  autoreload
 import os
 
+import constant
 from core import settings
 from handler import   routes,nui,service,get_handlers
 
@@ -53,6 +54,10 @@ class WorkApplication(Application):
         handlers.extend(nui.routes)
         handlers.extend(service.routes)
         handlers.extend(routes)
+        site_url_prefix=settings.get(constant.SITE_URL_PREFIX,"")
+        if site_url_prefix:
+            # 构建新的URL
+            handlers=map(lambda x:url(site_url_prefix+x.regex.pattern,x.handler_class,x.kwargs,x.name),handlers)
         #handlers =  get_handlers()
         Application.__init__(self, handlers=handlers, **settings)
 
@@ -63,7 +68,7 @@ if __name__ == "__main__":
     addwatchfiles('restart.txt')
     app = WorkApplication()
     logging.info('server at http://*:%s' % options.port)
-    app.listen(options.port)
+    app.listen(options.port,xheaders=True)
     ioloop=IOLoop.current()
     #ioloop.run_sync(session_time_out_check)
     ioloop.start()

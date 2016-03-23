@@ -7,11 +7,11 @@ from bson import ObjectId
 from tornado import gen
 from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
-from tornado.web import RequestHandler
+from tornado.web import RequestHandler, url
 
 import constant
 from core import make_password
-from core.common import NUIBaseHandler
+from core.common import NUIBaseHandler, authenticated
 
 __author__ = 'george'
 
@@ -51,6 +51,7 @@ class IndexHandler(NUIBaseHandler):
 
 
 class LogoutHandler(NUIBaseHandler):
+    @authenticated
     def prepare(self):
         pass
 
@@ -61,7 +62,8 @@ class LogoutHandler(NUIBaseHandler):
         db=self.settings['db']
         yield db.user.profile.save({'_id':self.current_user.get('username'),'skin':skin})
         self.session.delete('user')
-        self.redirect('/app')
+        #self.redirect('/app')
+        self.send_message("成功登出")
 
 class LoginHandler(NUIBaseHandler):
 
@@ -70,7 +72,7 @@ class LoginHandler(NUIBaseHandler):
         pass
 
     def get(self, *args, **kwargs):
-        self.render('nui/login.html',site_name=self.settings['site_name'],title="用户登录",home_url=self.settings[constant.HOME_URL])
+        self.render('nui/login.html',site_name=self.settings['site_name'],title="用户登录")
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -120,41 +122,41 @@ class LoginHandler(NUIBaseHandler):
             self.send_message("用户不存在或密码为空",status_code=1)
 
 routes = [
-    (r'/app/', IndexHandler),
-    (r'/', IndexHandler),
-    (r'/$', IndexHandler),
-    (r'/app$', IndexHandler),
-    (r'/page/home', NUIBaseHandler, {'template': 'nui/home.html', 'title': '首页'}),
-    (r'/page/menu', NUIBaseHandler, {'template': 'nui/menu.mgt.html',
+    url(r'/app/', IndexHandler,name='home_app'),
+    url(r'/', IndexHandler,name='home'),
+    url(r'/$', IndexHandler,name='home'),
+    url(r'$', IndexHandler,name='home_2'),
+    url(r'/page/home', NUIBaseHandler, {'template': 'nui/home.html', 'title': '首页'},name='page.home'),
+    url(r'/page/menu', NUIBaseHandler, {'template': 'nui/menu.mgt.html',
                                        'title':'菜单管理',
                                        'role_map':{
                                            'get':'ptyh','post':'ptyh'
-                                       }}),
-    (r'/page/orgn', NUIBaseHandler, {'template': 'nui/orgn.mgt.html', 'title': '组织管理'}),
-    (r'/page/employee', NUIBaseHandler, {'template': 'nui/employee.mgt.html', 'title': '员工管理'}),
-    (r'/page/user', NUIBaseHandler, {'template': 'nui/user.mgt.html', 'title': '用户管理'}),
-    (r'/page/login', LoginHandler),
-    (r'/page/logout', LogoutHandler),
-    (r'/page/perms', NUIBaseHandler, {'template': 'nui/perm.mgt.html', 'title': '权限管理'}),
+                                       }},name='page.menu'),
+    url(r'/page/orgn', NUIBaseHandler, {'template': 'nui/orgn.mgt.html', 'title': '组织管理'},name='page.orgn'),
+    url(r'/page/employee', NUIBaseHandler, {'template': 'nui/employee.mgt.html', 'title': '员工管理'},name='page.employee'),
+    url(r'/page/user', NUIBaseHandler, {'template': 'nui/user.mgt.html', 'title': '用户管理'},name="page.user"),
+    url(r'/page/login', LoginHandler,name='page.login'),
+    url(r'/page/logout', LogoutHandler,name='page.logout'),
+    url(r'/page/perms', NUIBaseHandler, {'template': 'nui/perm.mgt.html', 'title': '权限管理'},name='page.perms'),
 
     # 仅root角色的用户可以访问此url
-    (r'/page/onlineuser', NUIBaseHandler, {'template': 'nui/onlineuser.mgt.html',
+    url(r'/page/onlineuser', NUIBaseHandler, {'template': 'nui/onlineuser.mgt.html',
                                              'title':'在线用户管理',
                                            #'role_map':{'post':['root','ptyh']},
                                              'perm_map':{'post':['onlineuser:logout'],
-                                                           'get':['onlineuser:logout']}}),
+                                                           'get':['onlineuser:logout']}},name='page.onlineuser'),
 
     #(r'/page/onlineuser', MINIUIBaseHandler,{'template':'miniui/onlineuser.mgt.html','title':'在线用户管理'}),
-    (r'/page/choice_perms', NUIBaseHandler, {'template': 'nui/perm.choice.html', 'title': '选择权限'}),
-    (r'/page/choice_menus', NUIBaseHandler, {'template': 'nui/menu.choice.html', 'title': '选择菜单'}),
-    (r'/page/choice_users', NUIBaseHandler, {'template': 'nui/user.choice.html', 'title': '选择用户'}),
-    (r'/page/choice_urls', NUIBaseHandler, {'template': 'nui/url.choice.html', 'title': '选择URL'}),
+    url(r'/page/choice_perms', NUIBaseHandler, {'template': 'nui/perm.choice.html', 'title': '选择权限'},name='page.choice_perms'),
+    url(r'/page/choice_menus', NUIBaseHandler, {'template': 'nui/menu.choice.html', 'title': '选择菜单'},name='page.choice_menus'),
+    url(r'/page/choice_users', NUIBaseHandler, {'template': 'nui/user.choice.html', 'title': '选择用户'},name='page.choice_users'),
+    url(r'/page/choice_urls', NUIBaseHandler, {'template': 'nui/url.choice.html', 'title': '选择URL'},name='page.choice_urls'),
 
-    (r'/page/role/menu', NUIBaseHandler, {'template': 'nui/role.menu.html', 'title': '角色菜单'}),
-    (r'/page/role/user', NUIBaseHandler, {'template': 'nui/role.user.html', 'title': '角色用户'}),
-    (r'/page/userprofile', NUIBaseHandler, {'template': 'nui/user.profile.html', 'title': '用户配置'}),
-    (r'/page/role', NUIBaseHandler, {'template': 'nui/role.mgt.html', 'title': '角色管理'}),
-    (r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'}),
-    (r'/page/files', NUIBaseHandler, {'template': 'nui/file.mgt.html', 'title': '文件管理'}),
+    url(r'/page/role/menu', NUIBaseHandler, {'template': 'nui/role.menu.html', 'title': '角色菜单'},name='page.role.menu'),
+    url(r'/page/role/user', NUIBaseHandler, {'template': 'nui/role.user.html', 'title': '角色用户'},name='page.role.user'),
+    url(r'/page/userprofile', NUIBaseHandler, {'template': 'nui/user.profile.html', 'title': '用户配置'},name='page.userprofile'),
+    url(r'/page/role', NUIBaseHandler, {'template': 'nui/role.mgt.html', 'title': '角色管理'},name='page.role'),
+    url(r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'},name='page.url'),
+    url(r'/page/files', NUIBaseHandler, {'template': 'nui/file.mgt.html', 'title': '文件管理'},name='page.files'),
 ]
 

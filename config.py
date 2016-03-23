@@ -15,6 +15,11 @@ DEBUG = True
 
 # 指定静态文件的路经
 STATIC_PATH = os.path.join(os.path.dirname(__file__), "static")
+# 静态资源的url前缀，默认是/static/
+STATIC_URL_PREFIX="/mywork/static/"
+# 站点的URL前缀，增加前缀后需要修改菜单中的URL与此进行前缀进行匹配
+# 增加此选项的目的是为了在部署时可以使用二级或多级目录的方式部署
+SITE_URL_PREFIX = "/mywork"
 
 # 指定模版文件的路经
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'templates')
@@ -51,7 +56,7 @@ SESSION = {
 COOKIE_SECRET = '0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='
 
 # 用户登录的URL
-LOGIN_URL = "/page/login"
+LOGIN_URL = SITE_URL_PREFIX +"/page/login"
 
 # 开启跨站点的请求伪造保护
 XSRF_COOKIES = True
@@ -72,5 +77,4 @@ GUEST_ROLE_CODE = 'guest'
 # 最大的轮询超时时间
 MAX_POLLING_TIMEOUT = 20
 
-# 首页的URL
-HOME_URL ='/'
+

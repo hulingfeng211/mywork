@@ -14,6 +14,7 @@ import logging
 
 import functools
 from copy import copy
+from urllib import urlencode
 
 import redis
 import tornadoredis
@@ -21,7 +22,7 @@ from bson import ObjectId
 import re
 from tornado import gen
 from tornado.escape import json_decode
-from tornado.web import escape, authenticated, HTTPError
+from tornado.web import escape, HTTPError, urlparse
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient
 from datetime import datetime
 from torndsession.sessionhandler import SessionBaseHandler
@@ -40,6 +41,38 @@ DEFAULT_HEADERS = {
     'content-type': 'application/json'
 }
 
+def authenticated(method):
+    """Decorate methods with this to require that the user be logged in.
+
+    If the user is not logged in, they will be redirected to the configured
+    `login url <RequestHandler.get_login_url>`.
+
+    If you configure a login url with a query parameter, Tornado will
+    assume you know what you're doing and use it as-is.  If not, it
+    will add a `next` parameter so the login page knows where to send
+    you once you're logged in.
+    """
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if not self.current_user:
+            # 如果是ajax的请求，不使用302的重定向
+            is_ajax=self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+            if self.request.method in ("GET", "HEAD") and not is_ajax:
+                url = self.get_login_url()
+                if "?" not in url:
+                    if urlparse.urlsplit(url).scheme:
+                        # if login url is absolute, make next absolute too
+                        next_url = self.request.full_url()
+                    else:
+                        next_url = self.request.uri
+                    url += "?" + urlencode(dict(next=next_url))
+                self.redirect(url)
+                return
+            self.send_error(status_code=403,reason="未经认证或认证过期，请重新登录进行认证.")
+            #raise HTTPError(403,reason="未经认证或认证过期，请重新登录进行认证.")
+        return method(self, *args, **kwargs)
+    return wrapper
 
 class BaseHandler(SessionBaseHandler):
 
@@ -112,7 +145,8 @@ class BaseHandler(SessionBaseHandler):
         # if isinstance(obj,dict):
         self.set_header("content-type", "application/json")
         if  not total :
-            self.write(bson_encode({"data": obj, "status_code": status_code,"total":len(obj) if type(obj)==list else 0}))
+            data={"data": obj, "status_code": status_code,"total":len(obj) if type(obj)==list else 0}
+            self.write(bson_encode(data))
         else:
             self.write(bson_encode({"data": obj, "status_code": status_code,"total":total }))
 
