@@ -160,7 +160,7 @@ class NUIBaseHandler(BaseHandler):
         # 检查用户的角色和权限，从redis中获取
         self.page_index=int(self.get_query_argument('pageIndex',0))
         self.page_size=int(self.get_query_argument('pageSize',20))
-        self.sort_field=self.get_query_argument('sortFiled','')
+        self.sort_field=self.get_query_argument('sortField','')
         self.sort_order=self.get_query_argument('sortOrder','desc')
 
         method=self.request.method.lower()
@@ -227,7 +227,13 @@ class NUIBaseHandler(BaseHandler):
         :param pageIndex 浏览器传入的当前页码
         :param pageSize 当前页显示的行数"""
         total=yield cursor.count()
-        data=yield cursor.skip(self.page_index*self.page_size).limit(self.page_size).to_list(length=None)
+        s={}
+        if self.sort_field:
+           s[self.sort_field]=1 if self.sort_order =='desc' else -1
+        if s:
+            data=yield cursor.skip(self.page_index*self.page_size).limit(self.page_size).sort(s.items()).to_list(length=None)
+        else:
+            data=yield cursor.skip(self.page_index*self.page_size).limit(self.page_size).to_list(length=None)
         self.set_header('Content-Type', 'application/json;charset=UTF-8')
         self.write(bson_encode({'data':data,'total':total}))
 
@@ -391,20 +397,23 @@ class NUIMongoHandler(NUIBaseHandler):
         pageIndex = int(self.get_query_argument('pageIndex', 0))
         pageSize = int(self.get_query_argument('pageSize', 10))
 
+        if self.sort_field:
+            s[self.sort_field]=1 if self.sort_order=='desc' else -1
+
         db = self.settings['db']
         cursor = db[self.cname].find(q)
         if not p:
             if not s:
                 objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).to_list(length=None)
             else:
-                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).sort(s).to_list(length=None)
+                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).sort(s.items()).to_list(length=None)
 
         else:
             cursor = db[self.cname].find(q, p)
             if not s:
                 objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).to_list(length=None)
             else:
-                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).sort(s).to_list(length=None)
+                objs = yield cursor.skip(pageIndex * pageSize).limit(pageSize).sort(s.items()).to_list(length=None)
 
         total = yield cursor.count()
         result = {

@@ -158,5 +158,6 @@ routes = [
     url(r'/page/role', NUIBaseHandler, {'template': 'nui/role.mgt.html', 'title': '角色管理'},name='page.role'),
     url(r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'},name='page.url'),
     url(r'/page/files', NUIBaseHandler, {'template': 'nui/file.mgt.html', 'title': '文件管理'},name='page.files'),
+    url(r'/page/role/edit', NUIBaseHandler, {'template': 'nui/edit.role.html', 'title': '编辑角色'},name='page.role.edit'),
 ]
 

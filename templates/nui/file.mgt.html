@@ -108,9 +108,12 @@
     </div>
 
 </div>
-<!--<script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script> -->
+<script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script>
+<!--
 <script src="{{ static_url('nui/resource/uploadify/jquery.uploadify.min.js') }}"></script>
 <script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script>
+-->
+
 {% end %}
 
 {% block script %}
@@ -334,7 +337,7 @@
         fileupload.setPostParam({
             '_xsrf': nui.Cookie.get('_xsrf'),
             'catalog_id': select_catalog.id,
-            'msgid':nui.Cookie.get('msid'),
+            'msid':nui.Cookie.get('msid'),
             'desc': nui.get('desc').getValue()
         });
         fileupload.startUpload();

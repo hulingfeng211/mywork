@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block body %}
+<div id="form1">
+    <fieldset>
+        <legend>编辑角色</legend>
+        <table>
+
+            <tr>
+                <td>
+                    <label>角色名称：</label>
+                </td>
+                <td>
+                    <input id="name" name="name" class="mini-textbox" required="true"/>
+                </td>
+                </tr>
+            <tr>
+                <td>
+                    <label>角色编码：</label>
+                </td>
+                <td>
+                    <input id="code" name="code" class="mini-textbox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="确定" onclick="CloseWindow()"/>
+
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+</div>
+{% end %}
+
+{% block script %}
+<script type="text/javascript">
+    var form = new mini.Form("form1");
+
+    function SetData(data) {
+        data = mini.clone(data);
+        form.setData(data);
+    }
+
+    function CloseWindow() {
+        var options = form.getData();
+        window.Owner.upDateNode(options);
+        window.CloseOwnerWindow();
+    }
+</script>
+{% end %}
