@@ -308,11 +308,8 @@ class NUITreeHandler(NUIBaseHandler):
             remove_data = self.get_argument('removed', None)
 
         if data:
-            print 'data:', data
             data_json = escape.json_decode(data) if type(data) == unicode else data
             list = to_list(data_json, "-1", "children", "id", "pid",self.current_user.get('userid'))
-            print list
-            print 'len(list):', len(list)
             for i, item in enumerate(list):
                 yield self.settings['db'][self.cname].save(item)
 

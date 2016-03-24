@@ -21,13 +21,13 @@ from motor.web import GridFSHandler
 from tornado import escape
 from tornado.gen import coroutine, engine, Task
 from tornado.ioloop import IOLoop
-from tornado.web import RequestHandler, asynchronous, authenticated, url
+from tornado.web import RequestHandler, asynchronous,  url
 from torndsession.session import SessionMixin
 from torndsession.sessionhandler import SessionBaseHandler
 
 import constant
 from core import clone_dict, settings, make_password
-from core.common import NUIBaseHandler, BaseHandler
+from core.common import NUIBaseHandler, BaseHandler, authenticated
 from core.utils import format_datetime, create_class
 
 __author__ = 'george'
@@ -386,11 +386,6 @@ class UploadFileService(GridFSHandler,SessionMixin):
     def get_current_user(self):
         return self.session.get('user',None)
 
-    @authenticated
-    def prepare(self):
-        pass
-
-
     def get_gridfs_file(self, fs, path):
         return fs.get(file_id=ObjectId(path))
 
@@ -401,10 +396,13 @@ class UploadFileService(GridFSHandler,SessionMixin):
             yield db.fs.files.remove({'_id':ObjectId(path)})
             yield db.fs.chunks.remove({'files_id':ObjectId(path)})
 
-
+    @authenticated
+    def prepare(self):
+        pass
 
     @coroutine
     def post(self, *args, **kwargs):
+        """不安全，没有身份认证。因firefox不支持swfupload的session"""
         file_list=self.request.files.get('Fdata',[])
         fs = motor.MotorGridFS(self.database, self.root_collection)
         catalog_id=self.get_argument('catalog_id',None)
