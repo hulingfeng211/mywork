@@ -25,7 +25,9 @@
         <div>
             <h2 style="margin:0;padding:15px;cursor:default;font-family:微软雅黑,黑体,宋体;">{{ site_name }}
             </h2>
-            <div style=" position:absolute;top:40px;margin: 0;padding: 1px;">当前登陆人：<a style="cursor: pointer;text-decoration: underline;" onclick="onProfileClick()">{{ current_user.get('username') }}</a> 当前角色:{{ current_role }}</div>
+            <div style=" position:absolute;top:40px;margin: 0;padding: 1px;">当前登陆人:
+                <a style="cursor: pointer;text-decoration: underline;" onclick="onProfileClick()">{{ current_user.get('username') }}</a>
+                当前角色:{% for item in roles %} {% if item['code']==current_role %} {{ item['name'] }}{% end %} {% end %}</div>
         </div>
 
         <div style="position:absolute;top:18px;right:10px;">
