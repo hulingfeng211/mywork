@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block style %}
+<link href="{{ static_url('nui/resource/plupload/jquery.ui.plupload/css/jquery-ui.min.css') }}" rel="stylesheet">
+<link href="{{ static_url('nui/resource/plupload/jquery.ui.plupload/css/jquery.ui.plupload.css') }}" rel="stylesheet">
+
+{% end %}
+
 {% block body %}
 
 {# todo  #}
@@ -64,7 +70,7 @@
         </div>
         <div class="nui-fit">
             <div id="file_grid" ajaxtype="get" class="nui-datagrid" borderStyle="border:0"
-                 style="width: 100%;height: 80%">
+                 style="width: 100%;height: 54%">
                 <div property="columns">
                     <div type="checkcolumn">#</div>
                     <div field="filename">文件名</div>
@@ -76,10 +82,9 @@
                 </div>
 
             </div>
-            <form style="height: 20%">
-                <fieldset>
-                    <legend>上传文件</legend>
-                    <table>
+            <div style="height: 46%">
+
+                {#<table>
                         <tr>
                             <td><label>选择文件:</label></td>
                             <td>
@@ -100,15 +105,18 @@
 
                         </tr>
 
-                    </table>
-                </fieldset>
-            </form>
+                    </table>#}
+                <div id="uploader">
+                    <p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
+                </div>
+                <br/>
+            </div>
         </div>
 
     </div>
 
 </div>
-<script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script>
+{#<script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script>#}
 <!--
 <script src="{{ static_url('nui/resource/uploadify/jquery.uploadify.min.js') }}"></script>
 <script src="{{ static_url('nui/resource/swfupload/swfupload.js') }}"></script>
@@ -117,12 +125,20 @@
 {% end %}
 
 {% block script %}
+<script type="text/javascript" src="{{ static_url('nui/jquery/jquery-1.9.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('nui/jquery/jquery-ui.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('nui/resource/plupload/plupload.full.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ static_url('nui/resource/plupload/jquery.ui.plupload/jquery.ui.plupload.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('nui/resource/plupload/i18n/zh_CN.js') }}"></script>
 
 <script type="text/javascript">
 
 
     var tree = nui.get('tree1');
-
+    var upload_file_url_base = "{{ reverse_url('s.files') }}" + "?_xsrf=" + nui.Cookie.get('_xsrf') + "&catalog_id=";
+    var upload_file_url;
+    var current_selected_catalog;
 
     var root_node = tree.getRootNode();
     var file_grid = nui.get('file_grid');
@@ -130,8 +146,104 @@
     if (root_node) {
         // 默认加载所有文件
         file_grid.load({'create_user': nui.Cookie.get('userid')});
+        current_selected_catalog = root_node;
+        upload_file_url = upload_file_url_base + current_selected_catalog.id;
     }
+    $(function () {
+        var uploader = $("#uploader").plupload({
+            // General settings
+            runtimes: 'html5,flash,silverlight,html4',
+            url: "{{ reverse_url('s.files') }}",
 
+            // User can upload no more then 20 files in one go (sets multiple_queues to false)
+            max_file_count: 20,
+            browse_button: 'uploader_browse',
+            chunk_size: '1mb',
+
+            // Resize images on clientside if we can
+            resize: {
+                width: 200,
+                height: 200,
+                quality: 90,
+                crop: true // crop to exact dimensions
+            },
+
+            filters: {
+                // Maximum file size
+                max_file_size: '1000mb',
+                // Specify what files to browse for
+                mime_types: [
+                    {title: "Image files", extensions: "jpg,gif,png"},
+                    {title: "Zip files", extensions: "zip"},
+                    {title: "程序文件", extensions: "cs,css,js,py,txt,java"},
+                    {title: "常用文件", extensions: "doc,docx,pdf,xls,xlsx,ppt,pptx"}
+                ]
+            },
+
+            // Rename files by clicking on their titles
+            rename: true,
+
+            // Sort files
+            sortable: true,
+
+            // Enable ability to drag'n'drop files onto the widget (currently only HTML5 supports that)
+            dragdrop: true,
+
+            // Views to activate
+            views: {
+                list: true,
+                thumbs: true, // Show thumbs
+                active: 'list'
+            },
+
+            // Flash settings
+            flash_swf_url: '{{ static_url("nui/resource/plupload/Moxie.swf") }}',
+
+            // Silverlight settings
+            silverlight_xap_url: '{{ static_url("nui/resource/plupload/Moxie.xap") }}',
+            multipart_params: {
+                "_xsrf": nui.Cookie.get('_xsrf'),
+                "catalog_id": current_selected_catalog.id
+            },
+            init: {
+                Error: function (up, err) {
+                    nui.alert(err.message);
+                },
+                BeforeUpload: function (up, file) {
+                    var catalog_node = tree.getSelectedNode();
+                    if (catalog_node == undefined) {
+                        nui.alert("请选择目录");
+                        return false;
+                    }
+                    up.settings.url = upload_file_url_base + catalog_node.id;
+                },
+                FileUploaded: function (up, file,response) {
+                    //var res = $.parseJSON(response.response);
+                    //$("input." + file.id).val(res.result);
+                    file_grid.reload();
+                    up.refresh();
+                },
+            }
+        });
+
+        {#$('#form').submit(function(e) {
+		// Files in queue upload them first
+		if ($('#uploader').plupload('getFiles').length > 0) {
+
+			// When all files are uploaded submit form
+			$('#uploader').on('complete', function() {
+				$('#form')[0].submit();
+			});
+
+			$('#uploader').plupload('start');
+		} else {
+			alert("You must have at least one file in the queue.");
+		}
+		return false; // Keep the form from submitting
+	});#}
+
+
+    });
     window.onload = function () {
 
         tree.setUrl("{{ reverse_url('s.file.catalogs') }}");
@@ -142,7 +254,7 @@
             return false;
         });
         tree.on('nodeselect', function (e) {
-
+            current_selected_catalog = e.node;
             if (e.node.id) {
                 var child_nodes = tree.getAllChildNodes(e.node);
                 var catalog_id_list = [e.node.id];
@@ -155,6 +267,8 @@
 
                 file_grid.load({'q': nui.encode(q), 'create_user': nui.Cookie.get('userid')});
             }
+            upload_file_url = upload_file_url_base + current_selected_catalog.id;
+            //upload_file_url=current_selected_catalog.id;
 
         });
         //var tree = nui.get('tree1');
@@ -199,7 +313,7 @@
         var selected_row = file_grid.getSelected();
         $.ajax(
                 {
-                    url: "{{ reverse_url('s.files.item','') }}"+ selected_row.id,
+                    url: "{{ reverse_url('s.files.item','') }}" + selected_row.id,
                     type: 'delete',
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-Xsrftoken', nui.Cookie.get('_xsrf'));
@@ -337,7 +451,7 @@
         fileupload.setPostParam({
             '_xsrf': nui.Cookie.get('_xsrf'),
             'catalog_id': select_catalog.id,
-            'msid':nui.Cookie.get('msid'),
+            'msid': nui.Cookie.get('msid'),
             'desc': nui.get('desc').getValue()
         });
         fileupload.startUpload();

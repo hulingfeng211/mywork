@@ -404,7 +404,7 @@ class UploadFileService(GridFSHandler,SessionMixin):
     @coroutine
     def post(self, *args, **kwargs):
         """不安全，没有身份认证。因firefox不支持swfupload的session"""
-        file_list=self.request.files.get('Fdata',[])
+        file_list=self.request.files.get('file',[])
         fs = motor.MotorGridFS(self.database, self.root_collection)
         catalog_id=self.get_argument('catalog_id',None)
         if not catalog_id:
