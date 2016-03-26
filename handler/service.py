@@ -420,7 +420,7 @@ class UploadFileService(GridFSHandler,SessionMixin):
                     '_id':_id,
                     'id':_id,
                     'create_user':self.current_user.get('userid'),
-                    'create_time':datetime.now(),
+                    'create_time':format_datetime(datetime.now()),
                     'catalog_id':catalog_id,
                     'content_type':item.get('content_type'),
                     'file_size':'%sK'%str(len(body)/1024.0),
