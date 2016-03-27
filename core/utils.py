@@ -13,6 +13,8 @@ import base64
 import uuid
 from dateutil import  tz
 
+import xlrd
+
 
 def format_datetime(dt,format='%Y-%m-%d %H:%M:%S'):
     """
@@ -56,6 +58,20 @@ def create_class(module_name,class_name):
     cls=getattr(module,class_name)
     return cls
 
+def read_xls(file_path,sheet_name):
+    """读取xls中的数据
+    :param file_path 文件路径
+    :param sheet_name sheet名
+    :return header,rows
+
+    """
+    workbook = xlrd.open_workbook('成绩单.xls')
+    for booksheet in workbook.sheets():
+        print booksheet.name
+        for row in xrange(booksheet.nrows):
+            for col in xrange(booksheet.ncols):
+                print xlrd.cellname(row, col)
+                print booksheet.cell(row, col).value
 
 
 if __name__=="__main__":

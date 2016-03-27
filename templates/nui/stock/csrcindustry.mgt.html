@@ -1,0 +1,169 @@
+{% extends '../base.html' %}
+{% block body %}
+
+<div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+    <table style="width: 100%">
+        <tr>
+            <td style="width:100%;">
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="add_row()">新增</a>
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_row()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_csrc_data()">保存</a>
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="import_from_server">从服务器导入</a>
+            </td>
+            <td style="white-space:nowrap;">
+                <input id="key" class="nui-textbox" emptyText="请输入公司代码" style="width:150px;"
+                       onenter="onKeyEnter"/>
+                <a class="nui-button" onclick="search()">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="nui-fit">
+
+    <div id="csrc_grid" class="nui-datagrid" borderStyle="border:0"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         allowCellValid="true"
+         idField="id"
+         multiSelect="true"
+         url="{{ reverse_url("s.csrcindustry") }}"
+         idField="id"
+         pageSize="20"
+         editNextOnEnterKey="true"
+         ajaxOptions='{type:"get"}'
+         oncellbeginedit="OnCellBeginEdit"
+         oncellendedit="onCellEndEdit"
+         style="width:100%;height:100%;">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="effective_date" vtype="minLength:6" width="80" headerAlign="center" allowSort="true">生效日期
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="securities_code" align="center" width="70" headerAlign="center" allowSort="true">证券代码
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="securities_name" required="true" vtype="email" width="100" allowSort="true" align="left"
+                 headerAlign="center">证券名称
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="securities_name(eng)" readOnly="true" width="100" allowSort="true">证券英文名称
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="exchange" readOnly="true" width="100" allowSort="true">交易所
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="csrc_industry_code" align="center" readOnly="true" width="100" allowSort="true">证监会行业\n分类代码
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="csrc_industry_name" readOnly="true" width="100" allowSort="true">证监会行业分类名称
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="csrc_industry_name(eng)" align="center" readOnly="true" width="100" allowSort="true">证监会行业分类英文名称
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="csrc_industry_code(full)" readOnly="true" width="100" allowSort="true">证监会行业分类代码(全)
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="csrc_industry_name(full)" readOnly="true" width="100" allowSort="true">证监会行业分类名称(全)
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="csrc_industry_name(full)(eng)" readOnly="true" width="100" allowSort="true">证监会行业分类英文名称(全)
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div name="action" headerAlign="center">操作</div>
+
+        </div>
+
+    </div>
+</div>
+{% end %}
+{% block script %}
+<script type="text/javascript">
+    var grid = nui.get('csrc_grid');
+    grid.load();
+    $(document).ready(function () {
+        grid.on("drawcell", function (e) {
+            var record = e.record,
+                    column = e.column,
+                    field = e.field,
+                    value = e.value;
+            if (column.name == 'action') {
+                e.cellStyle = "text-align:center";
+                e.cellHtml = '<a href="javascript:download_file(\'' + record.securities_code + '\')">下载</a>';
+            }
+        });
+    });
+    function download_file(securities_code){
+        nui.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '正在下载...'
+        });
+        $.ajax({
+            url:'{{ reverse_url("s.download.company.tables")}}'+'?code='+securities_code,
+            type:'get',
+            success:function(e){
+                nui.unmask(document.body);
+                nui.alert('下载成功')
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                mini.unmask(document.body);
+                alert(jqXHR.responseText);
+            }
+        })
+    }
+    function import_from_server() {
+        nui.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '正在导入...'
+        });
+        $.ajax({
+            url: "{{ reverse_url('s.csrcindustry.download') }}",
+            type: "get",
+            success: function (e) {
+                for (var i = 0; i < e.data.length; i++) {
+                    grid.addRow(e.data[i]);
+                }
+                mini.unmask(document.body);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                mini.unmask(document.body);
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+    ;
+    function add_row() {
+        var newRow = {};
+        grid.addRow(newRow, 0);
+    }
+    function remove_row() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+    function save_csrc_data() {
+        var data = grid.getChanges();
+
+        var msgid = grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "{{ reverse_url('s.csrcindustry') }}",
+            data: {data: nui.encode(data), '_xsrf': nui.Cookie.get('_xsrf')},
+            //contentType:'application/json',
+            type: "post",
+            success: function (text) {
+
+                grid.unmask();
+                grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                grid.unmask();
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+
+</script>
+{% end %}

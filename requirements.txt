@@ -1,9 +1,13 @@
 pycurl = 7.19.5.3
 pymongo = 2.8
 motor = 0.5
-redis= 2.10.5
+redis = 2.10.5
 tornado-redis = 2.4.18
 torndsession = 1.1.2
-python-dateutil=1.4.2
+python-dateutil = 1.4.2
 requests = 2.9.1
+xlrd = 0.9.4
+pandas = 0.18.0
+html5lib = 0.9999999
+beautifulsoup4 = 4.4.1
 #pytz = 2015.7
