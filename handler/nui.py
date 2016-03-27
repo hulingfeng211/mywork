@@ -60,7 +60,7 @@ class LogoutHandler(NUIBaseHandler):
         skin=self.get_cookie('miniuiSkin')
         # 保存用户设置
         db=self.settings['db']
-        yield db.user.profile.save({'_id':self.current_user.get('username'),'skin':skin})
+        yield db.user.profile.save({'_id':self.current_user.get('userid'),'skin':skin})
         self.session.delete('user')
         #self.redirect('/app')
         self.send_message("成功登出")
@@ -112,7 +112,7 @@ class LoginHandler(NUIBaseHandler):
                                          'login_time':datetime.datetime.now()})
                 self.set_cookie('role',role_code)
                 self.set_cookie('userid',str(user['_id']))
-                user_profile=yield db.user.profile.find_one({'_id':username})
+                user_profile=yield db.user.profile.find_one({'_id':str(user['_id'])})
                 skin=user_profile.get('skin','default') if user_profile else 'default'
                 self.set_cookie('miniuiSkin',skin)
                 self.send_message("登录成功")

@@ -318,11 +318,20 @@ class ChangePasswordService(NUIBaseHandler):
 
 class LogoutService(NUIBaseHandler):
     """管理员注销其他用户"""
+
+    def initialize(self, *args, **kwargs):
+        self.client = tornadoredis.Client(connection_pool=self.settings[constant.CONNECTION_POOL],
+                                          selected_db=self.settings[constant.SESSION_DB])
+        self.client.connect()
+
     @coroutine
     def post(self, *args, **kwargs):
-        # todo
+        user_session_id=self.get_argument('sid')
+        yield Task(self.client.delete,user_session_id)
 
-        pass
+
+    def on_finish(self):
+        super(LogoutService,self).on_finish()
 
 class URLService(NUIBaseHandler):
     """URL服务，获取所有系统的url"""
@@ -445,5 +454,6 @@ routes = [
     url(r'/s/user/changepassword', ChangePasswordService,name='s.user.changepassword'),
     url(r'/s/common/validpassword', ValidPasswordService,name='s.common.validpassword'),
     url(r'/s/files',UploadFileService,name='s.files'),
-    url(r'/s/files/(.+)',UploadFileService,name='s.files.item')
+    url(r'/s/files/(.+)',UploadFileService,name='s.files.item'),
+    url(r'/s/user/logout',LogoutService,name='s.user.logout'),
 ]

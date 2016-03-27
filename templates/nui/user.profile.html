@@ -33,29 +33,29 @@
 </fieldset>
 <fieldset>
     <legend>密码修改</legend>
-    <table border="0" cellpadding="1" cellspacing="2">
+    <table border="0" cellpadding="1" cellspacing="2" style="width: 100%">
         <tr>
             <td style="width:80px;">旧密码：</td>
-            <td style="width:100px">
+            <td style="width:100px;text-align: left">
                 <input id="oldpwd" name="oldpwd" required="true" class="nui-password"/>
             </td>
         </tr>
         <tr>
-            <td>新密码：</td>
-            <td>
+            <td style="width:80px;">新密码：</td>
+            <td style="width: 100px;text-align: left">
                 <input id="newpwd" name="newpwd" required="true" onvalidation="is_same_password" class="nui-password"/>
             </td>
         </tr>
         <tr>
-            <td>重复新密码：</td>
-            <td>
+            <td style="width: 80px">重复新密码：</td>
+            <td style="width: 100px">
                 <input id="renewpwd" name="renewpwd" required="true" onvalidation="is_same_password"
                        class="nui-password"/>
             </td>
         </tr>
-        <tr>
+        <tr style="width: 100%">
             <td colspan="2" style="text-align: center;">
-                <a class="nui-button nui-button-iconRight" iconCls="icon-edit" onclick="on_change_pwd">确认修改</a>
+                <a style="float: right;" class="nui-button nui-button-iconRight" iconCls="icon-edit" onclick="on_change_pwd">确认修改</a>
             </td>
         </tr>
     </table>
