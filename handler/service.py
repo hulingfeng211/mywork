@@ -15,6 +15,7 @@ from datetime import datetime
 
 import gridfs
 import motor
+import os
 import tornadoredis
 from bson import ObjectId
 from motor.web import GridFSHandler
@@ -412,31 +413,78 @@ class UploadFileService(GridFSHandler,SessionMixin):
 
     @coroutine
     def post(self, *args, **kwargs):
-        """不安全，没有身份认证。因firefox不支持swfupload的session"""
         file_list=self.request.files.get('file',[])
         fs = motor.MotorGridFS(self.database, self.root_collection)
-        catalog_id=self.get_argument('catalog_id',None)
-        if not catalog_id:
-            self.send_error(reason="必须选择目录")
-            return
-        desc=self.get_argument('desc',None)
-        for item in file_list:
-            file_type=mimetypes.guess_type(item.get('filename'))[0] or 'text/plain'
-            _id=ObjectId()
-            body=item.get('body')
-            kwargs={'filename':item.get('filename'),
-                    'desc':desc,
-                    '_id':_id,
-                    'id':_id,
-                    'create_user':self.current_user.get('userid'),
-                    'create_time':format_datetime(datetime.now()),
-                    'catalog_id':catalog_id,
-                    'content_type':item.get('content_type'),
-                    'file_size':'%sK'%str(len(body)/1024.0),
-                    'filetype':file_type}
-            gridin = yield fs.new_file(**kwargs)
-            yield gridin.write(body)
-            yield gridin.close()
+        name = self.get_argument('name','')
+
+        chunk=int(self.get_argument('chunk',0))
+        chunks=int(self.get_argument('chunks',0))
+        print 'chunk:',chunk
+        print 'chunks:',chunks
+        print 'name:',self.get_argument('name','')
+
+        if chunks and name: #存在多块数据
+            file_data=file_list[0]
+            dir_path=os.path.dirname(__file__).split('/')[:-1]
+            dir_path.append('upload')
+            upload_path='/'.join(dir_path)
+            upload_path=upload_path+'/'+self.session.id
+            if not os.path.exists(upload_path):
+                os.mkdir(upload_path)
+            file_path=upload_path+'/'+name
+            with open(file_path,'a+') as f:
+                f.write(file_data.get('body'))
+            if not chunks or chunk==chunks-1:
+                catalog_id=self.get_argument('catalog_id',None)
+                if not catalog_id:
+                    self.send_error(reason="必须选择目录")
+                    return
+                file_type=mimetypes.guess_type(name)[0] or 'text/plain'
+                _id=ObjectId()
+                with open(file_path,'r') as f:
+                    body=f.read()
+                #body=file_data.get('body')
+                kwargs={'filename':name,
+                        '_id':_id,
+                        'id':_id,
+                        'create_user':self.current_user.get('userid'),
+                        'create_time':format_datetime(datetime.now()),
+                        'catalog_id':catalog_id,
+                        'content_type':file_data.get('content_type'),
+                        'file_size':'%sK'%str(len(body)/1024.0),
+                        'filetype':file_type}
+                gridin = yield fs.new_file(**kwargs)
+                yield gridin.write(body)
+                yield gridin.close()
+
+                os.remove(file_path)
+                pass
+
+        else:
+            self.send_error(status_code='500',reason='内部错误')
+
+            # catalog_id=self.get_argument('catalog_id',None)
+            # if not catalog_id:
+            #     self.send_error(reason="必须选择目录")
+            #     return
+            # desc=self.get_argument('desc',None)
+            # for item in file_list:
+            #     file_type=mimetypes.guess_type(item.get('filename'))[0] or 'text/plain'
+            #     _id=ObjectId()
+            #     body=item.get('body')
+            #     kwargs={'filename':item.get('filename'),
+            #             'desc':desc,
+            #             '_id':_id,
+            #             'id':_id,
+            #             'create_user':self.current_user.get('userid'),
+            #             'create_time':format_datetime(datetime.now()),
+            #             'catalog_id':catalog_id,
+            #             'content_type':item.get('content_type'),
+            #             'file_size':'%sK'%str(len(body)/1024.0),
+            #             'filetype':file_type}
+            #     gridin = yield fs.new_file(**kwargs)
+            #     yield gridin.write(body)
+            #     yield gridin.close()
 
 
 

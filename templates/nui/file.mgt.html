@@ -53,16 +53,15 @@
     </div>
     <div showCollapseButton="false">
 
+        <div class="mini-panel" title="点击展开上传" style="width:100%;"
+             showCollapseButton="true" bodyStyle="padding:0;" collapseOnTitleClick="true"
+             expanded="false">
+            <div id="uploader">
+                <p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
+            </div>
+        </div>
         <div class="nui-toolbar">
             <table style="width:100%;">
-                <tr>
-                    <div style="height: 46%">
-                        <div id="uploader">
-                            <p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
-                        </div>
-                        <br/>
-                    </div>
-                </tr>
                 <tr>
                     <td style="width:100%;">
                         {#<a class="nui-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
@@ -82,7 +81,7 @@
                 <div property="columns">
                     <div type="checkcolumn">#</div>
                     <div field="filename">文件名</div>
-                    <div field="uploadDate"  dateFormat="yyyy-MM-dd HH:mm:ss">上传时间</div>
+                    <div field="uploadDate" dateFormat="yyyy-MM-dd HH:mm:ss">上传时间</div>
                     <div field="file_size">文件大小</div>
                     <div field="desc">文件描述</div>
                     <div name="action" headerAlign="center">操作</div>
