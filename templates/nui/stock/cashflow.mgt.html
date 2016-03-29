@@ -1,0 +1,91 @@
+{% extends '../base.html' %}
+{% block body %}
+
+<div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+    <table style="width: 100%">
+        <tr>
+            <td style="width:100%;">
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="add_row()">新增</a>
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_row()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_csrc_data()">保存</a>
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="import_from_server">从服务器导入</a>
+            </td>
+            <td style="white-space:nowrap;">
+                <input id="key" class="nui-textbox" emptyText="请输入公司代码" style="width:150px;"
+                       onenter="onKeyEnter"/>
+                <a class="nui-button" onclick="search()">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="nui-fit">
+
+    <div id="csrc_grid" class="nui-datagrid" borderStyle="border:0"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         allowCellValid="true"
+         showColumnsMenu="true"
+         idField="id"
+         multiSelect="true"
+         url="{{ reverse_url("s.cashflow") }}"
+         idField="id"
+         pageSize="20"
+         editNextOnEnterKey="true"
+         ajaxOptions='{type:"get"}'
+         oncellbeginedit="OnCellBeginEdit"
+         oncellendedit="onCellEndEdit"
+         style="width:100%;height:100%;">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="报表日期" vtype="minLength:6" width="80" headerAlign="center" allowSort="true">报表日期
+            </div>
+            <div field="code" align="center" width="70" headerAlign="center" allowSort="true">证券代码
+            </div>
+            <div field="单位" required="true"  width="100" allowSort="true" align="left"
+                 headerAlign="center">单位
+            </div>
+            <div field="客户贷款及垫款净减少额" readOnly="true" width="100" allowSort="true">客户贷款及垫款净减少额
+            </div>
+            <div field="向央行借款净增加额" readOnly="true" width="100" allowSort="true">向央行借款净增加额
+            </div>
+            <div field="客户存款和同业存放款项净增加额" align="center" readOnly="true" width="100" allowSort="true">客户存款和同业存放款项净增加额
+            </div>
+            <div field="收取利息、手续费及佣金的现金" readOnly="true" width="100" allowSort="true">收取利息、手续费及佣金的现金
+            </div>
+            <div field="csrc_industry_name(eng)" align="center" readOnly="true" width="100" allowSort="true">证监会行业分类英文名称
+            </div>
+            <div field="csrc_industry_code(full)" readOnly="true" width="100" allowSort="true">证监会行业分类代码(全)
+            </div>
+            <div field="csrc_industry_name(full)" readOnly="true" width="100" allowSort="true">证监会行业分类名称(全)
+            </div>
+            <div field="csrc_industry_name(full)(eng)" readOnly="true" width="100" allowSort="true">证监会行业分类英文名称(全)
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% end %}
+{% block script %}
+<script type="text/javascript">
+    var grid = nui.get('csrc_grid');
+    grid.load();
+    $(document).ready(function () {
+
+    });
+
+
+    function add_row() {
+        var newRow = {};
+        grid.addRow(newRow, 0);
+    }
+    function remove_row() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+
+
+</script>
+{% end %}
