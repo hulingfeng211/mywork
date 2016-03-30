@@ -3,6 +3,7 @@
 
 <div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
     <table style="width: 100%">
+
         <tr>
             <td style="width:100%;">
                 <a class="nui-button" iconCls="icon-add" plain="true" onclick="add_row()">新增</a>
@@ -10,10 +11,19 @@
                 <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_csrc_data()">保存</a>
                 <a class="nui-button" iconCls="icon-add" plain="true" onclick="import_from_server">从服务器导入</a>
             </td>
-            <td style="white-space:nowrap;">
+            <td rowspan="2" style="white-space:nowrap;">
                 <input id="key" class="nui-textbox" emptyText="请输入公司代码" style="width:150px;"
                        onenter="onKeyEnter"/>
                 <a class="nui-button" onclick="search()">查询</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id="hanye_combobox" value="J" class="mini-combobox" style="width:150px;" nullItemText="选择行业"
+                       textField="csrc_industry_name" valueField="csrc_industry_code"
+                       url='{{ reverse_url("s.csrcindustry") }}?p={"_id":0,"csrc_industry_name":1,"csrc_industry_code":1}'
+                       showNullItem="true" allowInput="true"/>
+
             </td>
         </tr>
     </table>
@@ -81,7 +91,9 @@
 {% block script %}
 <script type="text/javascript">
     var grid = nui.get('csrc_grid');
-    grid.load();
+    var hanye_combobox = nui.get('hanye_combobox');
+    var industry_code = hanye_combobox.getValue();
+    grid.load({csrc_industry_code: industry_code});
     $(document).ready(function () {
         grid.on("drawcell", function (e) {
             var record = e.record,
@@ -90,20 +102,51 @@
                     value = e.value;
             if (column.name == 'action') {
                 e.cellStyle = "text-align:center";
-                e.cellHtml = '<a href="javascript:download_file(\'' + record.securities_code + '\')">下载</a>';
+                e.cellHtml = '<a href="javascript:download_file(\'' + record.securities_code + '\',\'' + record.csrc_industry_code + '\')">下载</a>';
             }
         });
+        hanye_combobox.on('itemclick', function (e) {
+            grid.load({csrc_industry_code: e.item.csrc_industry_code});
+            industry_code=e.item.csrc_industry_code;
+        });
     });
-    function download_file(securities_code){
+    function onKeyEnter(e) {
+        search();
+    }
+    function search() {
+        var key = nui.get('key').getValue();
+        //q='{"$or":[{"loginname":{"$regex":"{0}"}},{"name":{"$regex":"{0}"}},{"email":{"$regex":"{0}"}}]}';
+        //q=String.format(q,key);
+        // monogodb的查询表达式
+        q = {
+            $or: [{
+                csrc_industry_name: {
+                    $regex: key
+                }
+            }, {
+                securities_name: {
+                    $regex: key
+                }
+            }, {
+                securities_code: {
+                    $regex: key
+                }
+            }],
+            create_user: nui.Cookie.get('userid')
+        };
+        grid.load({csrc_industry_code: industry_code, q: nui.encode(q)});
+    }
+
+    function download_file(securities_code, industry_code) {
         nui.mask({
             el: document.body,
             cls: 'mini-mask-loading',
             html: '正在下载...'
         });
         $.ajax({
-            url:'{{ reverse_url("s.download.company.tables")}}'+'?code='+securities_code,
-            type:'get',
-            success:function(e){
+            url: '{{ reverse_url("s.download.company.tables")}}' + '?code=' + securities_code + '&industry_code=' + industry_code,
+            type: 'get',
+            success: function (e) {
                 nui.unmask(document.body);
                 nui.alert('下载成功')
             },
@@ -133,8 +176,7 @@
                 alert(jqXHR.responseText);
             }
         });
-    }
-    ;
+    };
     function add_row() {
         var newRow = {};
         grid.addRow(newRow, 0);

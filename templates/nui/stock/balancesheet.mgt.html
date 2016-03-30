@@ -29,7 +29,7 @@
          showColumnsMenu="true"
          idField="id"
          multiSelect="true"
-         url="{{ reverse_url("s.cashflow") }}"
+         url="{{ reverse_url("s.balancesheet") }}"
          idField="id"
          pageSize=200
          editNextOnEnterKey="true"
@@ -37,7 +37,6 @@
          oncellbeginedit="OnCellBeginEdit"
          oncellendedit="onCellEndEdit"
          style="width:100%;height:100%;">
-
 
     </div>
 </div>
@@ -48,8 +47,7 @@
 
     //grid.load();
     var company_combobox = nui.get('company_combobox');
-    var csrc_industry_code="J";//=
-    var company_no= company_combobox.getValue();
+    var csrc_industry_code="J";//=company_combobox.getValue();
 
     company_combobox.on('itemclick', function (e) {
         var code = e.item.securities_code;
@@ -66,7 +64,7 @@
 
     function create_grid(csrc_industry_code){
         $.ajax({
-          url:"{{ reverse_url('s.stock.columns') }}"+"?type=cashflow&industry_code="+csrc_industry_code,
+          url:"{{ reverse_url('s.stock.columns') }}"+"?type=balancesheet&industry_code="+csrc_industry_code,
             type:'get',
             success:function(result){
                 var columns=[];

@@ -29,6 +29,8 @@ class DownloadCompanyThreeTable(NUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
         code=self.get_argument('code','')
+        industry_code=self.get_argument('industry_code','')
+
         # 下载现金流总表
         urls=[
             ('balancesheet','http://money.finance.sina.com.cn/corp/go.php/vDOWN_BalanceSheet/displaytype/4/stockid/%s/ctrl/all.phtml'%code),
@@ -53,6 +55,9 @@ class DownloadCompanyThreeTable(NUIBaseHandler):
 
             df=df.T
             df['code']=code
+
+            columns={'industry_code':industry_code,'type':cname,'columns':df.columns.tolist()}
+
             for i in range(len(df)):
                  data=df.ix[i+1].to_dict()
                  _id=ObjectId()
@@ -61,6 +66,8 @@ class DownloadCompanyThreeTable(NUIBaseHandler):
                  data['create_user']=self.current_user.get('userid')
                  data['create_time']=format_datetime(datetime.now())
                  yield db[cname].insert(data)
+            yield db.stock.columns.update({'industry_code':industry_code,'type':cname},{'$set':columns},True)
+
             del df
 
         yield db.csrcindustry.update({'securities_code':code},{'$set':{'download_flag':1}})
@@ -128,10 +135,17 @@ class DownloadCsrcindustry(NUIBaseHandler):
 routes = [
     url(r'/s/csrcindustry', NUIMongoHandler, {'cname': 'csrcindustry'},name='s.csrcindustry'),
     url(r'/s/cashflow', NUIMongoHandler, {'cname': 'cashflow'},name='s.cashflow'),
+    url(r'/s/balancesheet', NUIMongoHandler, {'cname': 'balancesheet'},name='s.balancesheet'),
+    url(r'/s/profitstatement', NUIMongoHandler, {'cname': 'profitstatement'},name='s.profitstatement'),
+
+    url(r'/s/stock/columns', NUIMongoHandler, {'cname': 'stock.columns'},name='s.stock.columns'),
     url(r'/s/csrcindustry/download', DownloadCsrcindustry,name='s.csrcindustry.download'),
     url(r'/s/download/company/tables', DownloadCompanyThreeTable,name='s.download.company.tables'),
+
      url(r'/page/csrcindustry', NUIBaseHandler, {'template': 'nui/stock/csrcindustry.mgt.html', 'title': '上市公司总表'},name='page.csrcindustry'),
     url(r'/page/cashflow', NUIBaseHandler, {'template': 'nui/stock/cashflow.mgt.html', 'title': '现金流量表'},name='page.cashflow'),
+    url(r'/page/balancesheet', NUIBaseHandler, {'template': 'nui/stock/balancesheet.mgt.html', 'title': '资产负载表'},name='page.balancesheet'),
+    url(r'/page/profitstatement', NUIBaseHandler, {'template': 'nui/stock/profitstatement.mgt.html', 'title': '利润表'},name='page.profitstatement'),
 ]
 
 
