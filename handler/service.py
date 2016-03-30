@@ -419,9 +419,6 @@ class UploadFileService(GridFSHandler,SessionMixin):
 
         chunk=int(self.get_argument('chunk',0))
         chunks=int(self.get_argument('chunks',0))
-        print 'chunk:',chunk
-        print 'chunks:',chunks
-        print 'name:',self.get_argument('name','')
 
         if chunks and name: #存在多块数据
             file_data=file_list[0]
@@ -487,6 +484,15 @@ class UploadFileService(GridFSHandler,SessionMixin):
             #     yield gridin.close()
 
 
+class ProfileService(NUIBaseHandler):
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        skin=self.get_argument('skin','default')
+        # 保存用户设置
+        db=self.settings['db']
+        yield db.user.profile.save({'_id':self.current_user.get('userid'),'skin':skin})
+        self.send_message('保存成功')
 
 routes = [
     # (r'/s/menu',MenuService),
@@ -504,4 +510,5 @@ routes = [
     url(r'/s/files',UploadFileService,name='s.files'),
     url(r'/s/files/(.+)',UploadFileService,name='s.files.item'),
     url(r'/s/user/logout',LogoutService,name='s.user.logout'),
+    url(r'/s/user/profile',ProfileService,name='s.user.profile'),
 ]

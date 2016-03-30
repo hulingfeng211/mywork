@@ -65,6 +65,8 @@ class LogoutHandler(NUIBaseHandler):
         #self.redirect('/app')
         self.send_message("成功登出")
 
+
+
 class LoginHandler(NUIBaseHandler):
 
     def prepare(self):

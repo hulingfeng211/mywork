@@ -9,7 +9,8 @@
                 <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_row()">删除</a>
                 <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_csrc_data()">保存</a>
                 <a class="nui-button" iconCls="icon-add" plain="true" onclick="import_from_server">从服务器导入</a>#}
-
+            <input id="company_combobox" class="mini-combobox" style="width:150px;" nullItemText="选择公司筛选" textField="securities_name" valueField="securities_code"
+    url='{{ reverse_url("s.csrcindustry") }}?q={"download_flag":1}&p={"_id":0,"securities_name":1,"securities_code":1}'  showNullItem="true" allowInput="true"/>
             </td>
             <td style="white-space:nowrap;">
                 <input id="key" class="nui-textbox" emptyText="请输入公司代码" style="width:150px;"
@@ -137,6 +138,11 @@
 <script type="text/javascript">
     var grid = nui.get('csrc_grid');
     grid.load();
+    var company_combobox=nui.get('company_combobox');
+    company_combobox.on('itemclick',function(e){
+        var code=e.item.securities_code;
+        grid.load({'code':code});
+    });
     $(document).ready(function () {
 
     });

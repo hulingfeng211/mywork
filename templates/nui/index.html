@@ -138,7 +138,14 @@
         var skin = node.text;
         nui.Cookie.set('miniuiSkin', skin);
         //nui.Cookie.set('miniuiSkin', skin, 100);//100天过期的话，可以保持皮肤切换
-        window.location.reload()
+        $.ajax({
+            url:"{{ reverse_url('s.user.profile') }}",
+            data:{'skin':skin,'_xsrf':nui.Cookie.get('_xsrf')},
+            type:'post',
+            success:function(result){
+                window.location.reload()
+            }
+        });
     }
 
 

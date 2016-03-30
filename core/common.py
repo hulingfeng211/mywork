@@ -237,6 +237,9 @@ class NUIBaseHandler(BaseHandler):
         self.set_header('Content-Type', 'application/json;charset=UTF-8')
         self.write(bson_encode({'data':data,'total':total}))
 
+    def write_error(self, status_code=500, **kwargs):
+        self.finish('%s:%s'%(status_code,self._reason))
+
 
 class NUITreeHandler(NUIBaseHandler):
     """
