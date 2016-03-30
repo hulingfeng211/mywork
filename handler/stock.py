@@ -18,6 +18,7 @@ from tornado.gen import coroutine
 from tornado.web import url
 import  os
 
+import constant
 from core.common import NUIMongoHandler, NUIBaseHandler
 from core.utils import format_datetime
 
@@ -69,8 +70,8 @@ class DownloadCompanyThreeTable(NUIBaseHandler):
 
         self.send_message('下载成功')
 
-    def download_file(self, url,code):
-        res = requests.get(url)
+    def download_file(self, url,code,**kwargs):
+        res = requests.get(url,proxies= self.settings[constant.NETWORK_PROXY],verify=False)
         file_name = res.headers.get('content-disposition', '')
         file_name = file_name.split(';')[1].split('=')[1]
         file_name = file_name.decode('gbk')

@@ -26,7 +26,7 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'templates')
 # TEMPLATE_PATH=os.path.join(os.path.dirname(__file__),'front')
 
 # REDIS Server相关配置
-REDIS_HOST = 'localhost'
+REDIS_HOST = '192.168.2.14'
 REDIS_PORT = 6379
 MAX_CONNECTIONS = 1024
 REDIS_DB = 5
@@ -58,11 +58,12 @@ COOKIE_SECRET = '0jVZzvkPTLi8d7UN5twSrTIb247XcEwklP2O3hiLAoM='
 # 用户登录的URL
 LOGIN_URL = SITE_URL_PREFIX +"/page/login"
 
+
 # 开启跨站点的请求伪造保护
 XSRF_COOKIES = True
 
 # MONGODB设置
-MONGO_URI = "mongodb://localhost:27017/"
+MONGO_URI = "mongodb://192.168.2.14:27017/"
 DB_NAME = 'mywork'
 
 # 站点设置
@@ -76,5 +77,10 @@ GUEST_ROLE_CODE = 'guest'
 
 # 最大的轮询超时时间
 MAX_POLLING_TIMEOUT = 20
+
+# 网络代理设置
+NETWORK_PROXY={'https':'https://192.168.2.7:3128',
+               'http':'http://192.168.2.7:3128'}
+
 
 

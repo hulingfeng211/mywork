@@ -60,3 +60,5 @@ MAX_POLLING_TIMEOUT = 'max_polling_timeout'
 # 站点URL前缀
 SITE_URL_PREFIX = 'site_url_prefix'
 
+# 网络代理
+NETWORK_PROXY='network_proxy'
