@@ -53,26 +53,15 @@
     </div>
     <div showCollapseButton="false">
 
-        <div class="mini-panel" title="展开上传文件" style="width:100%;"
-             showCollapseButton="true" bodyStyle="padding:0;"
+        <div class="mini-panel" title="点击展开上传" style="width:100%;"
+             showCollapseButton="true" bodyStyle="padding:0;" collapseOnTitleClick="true"
              expanded="false">
             <div id="uploader">
-                                <p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
-             </div>
-
+                <p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
+            </div>
         </div>
         <div class="nui-toolbar">
             <table style="width:100%;">
-                {#<tr>
-                    <td>
-                        <div>
-                            <div id="uploader">
-                                <p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
-                            </div>
-                        </div>
-                    </td>
-
-                </tr>#}
                 <tr>
                     <td style="width:100%;">
                         {#<a class="nui-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
@@ -102,7 +91,6 @@
             </div>
 
         </div>
-
 
     </div>
 
