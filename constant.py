@@ -62,3 +62,7 @@ SITE_URL_PREFIX = 'site_url_prefix'
 
 # 网络代理
 NETWORK_PROXY='network_proxy'
+
+# 默认的数据库
+DEFAULT_DB = 'mywork'
+

@@ -5,7 +5,7 @@
 +Author: george
 +mail:hulingfeng211@163.com
 +Created Time:2015年07月22日 星期三 10时48分55秒
-+Description:应用程序配置文件
++Description:应用程序配置文件,所有大写的属性将会被传递给RequestHandler的settings,可通过settings['name']进行获取
 +============================================================"""
 import os
 from tornadoredis import ConnectionPool

@@ -208,19 +208,19 @@
     function saveUserData() {
         var data = grid.getChanges();
         //var json = nui.encode(data);
-        var post_data=[];
+       {# var post_data=[];
         var tmp;
         for (var i=0;i<data.length;i++){
             tmp=nui.clone(data[i]);
-            tmp.roles=tmp.roles.split(',');
+            tmp.roles=tmp.roles;
             post_data.push(tmp);
-        }
+        }#}
 
 
         var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "{{ reverse_url('s.users') }}",
-            data: {data: nui.encode(post_data), '_xsrf': nui.Cookie.get('_xsrf')},
+            data: {data: nui.encode(data), '_xsrf': nui.Cookie.get('_xsrf')},
             //contentType:'application/json',
             type: "post",
             success: function (text) {

@@ -97,9 +97,9 @@
         }
     }
 
-    function on_change_pwd(e) {
+    function on_change_pwd() {
         $.ajax({
-            url: {{ reverse_url('s.user.changepassword') }},
+            url: "{{ reverse_url('s.user.changepassword') }}",
             type: 'post',
             data: {
                 'newpwd': nui.get('newpwd').getValue(),
