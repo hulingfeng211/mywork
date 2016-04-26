@@ -1,0 +1,144 @@
+{% extends "../base.html" %}
+
+{% block body %}
+<div class="nui-toolbar" style="padding:2px;border-top:0;border-left:0;border-right: 0;">
+    <table style="width: 100%">
+        <tr>
+            <td style="width:100%;">
+                <a class="nui-button" iconCls="icon-add" plain="true" onclick="add_row()">新增</a>
+                <a class="nui-button" iconCls="icon-remove" plain="true" onclick="remove_row()">删除</a>
+                <a class="nui-button" iconCls="icon-save" plain="true" onclick="save_server_data()">保存</a>
+
+            </td>
+            <td style="white-space:nowrap;">
+                <input id="key" class="nui-textbox" emptyText="请输入服务器用途或ip地址" style="width:150px;"
+                       onenter="onKeyEnter"/>
+                <a class="nui-button" onclick="search()">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="nui-fit">
+
+    <div id="server_grid" class="nui-datagrid" borderStyle="border:0"
+         allowCellSelect="true"
+         allowCellEdit="true"
+         allowCellValid="true"
+         showColumnsMenu="true"
+         idField="id"
+         multiSelect="true"
+         url='{{ reverse_url("s.servers") }}'
+         idField="id"
+         pageSize=20
+         editNextOnEnterKey="true"
+         ajaxOptions='{type:"get"}'
+         {#oncellbeginedit="OnCellBeginEdit"
+         oncellendedit="onCellEndEdit" #}
+         style="width:100%;height:100%;">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="ipaddr" vtype="minLength:6" width="120" headerAlign="center" allowSort="true">IP
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="desc" width="120" headerAlign="center" allowSort="true">用途
+                <input property="editor" required="true" class="nui-textarea" style="width:100%;"/>
+            </div>
+            <div field="account" required="true" vtype="email" width="100" allowSort="true" align="left"
+                 headerAlign="center">管理员账号
+                <input property="editor" required="true" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div field="pwd" width="100" allowSort="true">管理员密码
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <!--displayField="roles_name"-->
+            <div field="nettype" width="100" name="nettype" headerAlign="center" displayField="nettype">内网/外网
+                <input property="editor" class="nui-combobox" style="width:100%;" data="netType"/>
+            </div>
+
+            <div field="ostype" width="100" name="ostype" headerAlign="center" displayField="ostype">操作系统
+                <input property="editor" class="nui-combobox" style="width:100%;" data="osType"/>
+            </div>
+
+            <div field="zrr" width="100" headerAlign="center" allowSort="true">责任人
+                <input property="editor" class="nui-textbox" style="width:100%;"/>
+            </div>
+            <div type="checkboxcolumn" field="is_domain" trueValue="1" falseValue="0" width="60"
+                 headerAlign="center">是否加入域
+            </div>
+            <div field="remark" width="120" headerAlign="center" allowSort="true">其他
+                <input property="editor"  class="nui-textarea" style="width:100%;"/>
+                </div>
+
+        </div>
+
+
+    </div>
+</div>
+{%end%}
+{%block script %}
+<script type="text/javascript">
+    var netType = [{id: 1, text: '内网'}, {id: 2, text: '外网'}];
+    var osType = [{id: 1, text: 'window2003'},
+        {id: 2, text: 'window2008 r2 x64'},
+        {id: 3, text: 'window2012 r2'},
+        {id: 4, text: 'Linux/Unix'}];
+    var server_grid = nui.get('server_grid');
+    server_grid.load({create_user: nui.Cookie.get('userid')});
+
+    function add_row() {
+        var newRow = {
+            ipaddr: '127.0.0.1',
+            is_domain: 1
+
+        };
+        server_grid.addRow(newRow, 0);
+
+    }
+   function onKeyEnter() {
+        search();
+    }
+    function search() {
+        var key = nui.get('key').getValue();
+        var q = {
+            $or: [{
+                ipaddr: {
+                    $regex: key
+                }
+            }, {
+                desc: {
+                    $regex: key
+                }
+            }],
+            create_user: nui.Cookie.get('userid')
+        };
+        server_grid.load({q: nui.encode(q)});
+
+    }
+    function remove_row() {
+        var rows = server_grid.getSelecteds();
+        if (rows.length > 0) {
+            server_grid.removeRows(rows, true);
+        }
+
+    }
+    function save_server_data() {
+        var data = server_grid.getChanges();
+        var json = nui.encode(data);
+        var msgid = server_grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "{{ reverse_url('s.servers') }}",
+            data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
+            //contentType:'application/json',
+            type: "post",
+            success: function (text) {
+                //nui.hideMessageBox(msgid);
+                server_grid.unmask();
+                server_grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+</script>
+{%end%}

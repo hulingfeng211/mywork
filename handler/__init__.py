@@ -178,5 +178,8 @@ routes = [
     # 文件查询
     url(r'/s/catalog/files', NUIMongoHandler, {'cname': 'fs.files'},name='s.catalog.files'),
 
+    url(r'/s/servers', NUIMongoHandler, {'cname': 'servers'},name='s.servers'),
+    url(r'/s/servers/(.+)', NUIMongoHandler, {'cname': 'servers'},name='s.servers.item'),
+
 ]
 
