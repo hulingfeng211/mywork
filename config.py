@@ -66,6 +66,9 @@ XSRF_COOKIES = True
 MONGO_URI = "mongodb://192.168.2.14:27017/"
 DB_NAME = 'mywork'
 
+#短信中心的数据库名词
+SMSCENTER_DB_NAME='smscenter'
+
 # 站点设置
 SITE_NAME = "XXX管理系统"
 

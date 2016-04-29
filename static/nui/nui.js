@@ -19,7 +19,7 @@ __CreateJSPath = function (js) {
         path = href + "/" + path;
     }
     return path;
-}
+};
 
 //bootPath
 var bootPATH = __CreateJSPath("nui.js");

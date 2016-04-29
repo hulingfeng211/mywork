@@ -82,8 +82,8 @@
         {id: 2, text: 'window2008 r2 x64'},
         {id: 3, text: 'window2012 r2'},
         {id: 4, text: 'Linux/Unix'}];
-    var server_grid = nui.get('server_grid');
-    server_grid.load({create_user: nui.Cookie.get('userid')});
+    var grid = nui.get('grid');
+    grid.load({create_user: nui.Cookie.get('userid')});
 
     function add_row() {
         var newRow = {
@@ -91,7 +91,7 @@
             is_domain: 1
 
         };
-        server_grid.addRow(newRow, 0);
+        grid.addRow(newRow, 0);
 
     }
    function onKeyEnter() {
@@ -111,20 +111,20 @@
             }],
             create_user: nui.Cookie.get('userid')
         };
-        server_grid.load({q: nui.encode(q)});
+        grid.load({q: nui.encode(q)});
 
     }
     function remove_row() {
-        var rows = server_grid.getSelecteds();
+        var rows = grid.getSelecteds();
         if (rows.length > 0) {
-            server_grid.removeRows(rows, true);
+            grid.removeRows(rows, true);
         }
 
     }
     function save_server_data() {
-        var data = server_grid.getChanges();
+        var data = grid.getChanges();
         var json = nui.encode(data);
-        var msgid = server_grid.loading("保存中，请稍后......");
+        var msgid = grid.loading("保存中，请稍后......");
         $.ajax({
             url: "{{ reverse_url('s.servers') }}",
             data: {data: json, '_xsrf': nui.Cookie.get('_xsrf')},
@@ -132,8 +132,8 @@
             type: "post",
             success: function (text) {
                 //nui.hideMessageBox(msgid);
-                server_grid.unmask();
-                server_grid.reload();
+                grid.unmask();
+                grid.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert(jqXHR.responseText);

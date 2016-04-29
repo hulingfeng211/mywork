@@ -109,9 +109,19 @@ def get_database():
     db = client[config.DB_NAME]
     return db
 
+def get_database_client():
+    """
+        获取mongodb的database对象
+        :return 返回mongodb的database对象
+    """
+    client = motor.MotorClient(config.MONGO_URI)
+    #db = client[config.DB_NAME]
+    return client
+
 settings = load_setting()
 
 settings['db'] = get_database()
+settings['mongo_client']=get_database_client()
 
 if __name__ == "__main__":
     print load_setting()

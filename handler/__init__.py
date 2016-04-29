@@ -147,39 +147,39 @@ routes = [
     url(r'/s/md5',MD5Handler,name='s.md5'),
 
     # 员工管理
-    url(r'/s/employees', NUIMongoHandler, {'cname': 'employees'},name='s.employees'),
-    url(r'/s/employees/(.+)', NUIMongoHandler, {'cname': 'employees'},name='s.employees.item'),
+    url(r'/s/employees', NUIMongoHandler, {'cname': 'employees','db':config.DB_NAME},name='s.employees'),
+    url(r'/s/employees/(.+)', NUIMongoHandler, {'cname': 'employees','db':config.DB_NAME},name='s.employees.item'),
 
     # 用户管理
-    url(r'/s/users', NUIMongoHandler, {'cname': 'users'},name='s.users'),
-    url(r'/s/users/(.+)', NUIMongoHandler, {'cname': 'users'},name='s.users.item'),
+    url(r'/s/users', NUIMongoHandler, {'cname': 'users','db':config.DB_NAME},name='s.users'),
+    url(r'/s/users/(.+)', NUIMongoHandler, {'cname': 'users','db':config.DB_NAME},name='s.users.item'),
 
     # 角色管理
-    url(r'/s/roles', NUITreeHandler, {'cname': 'roles'},name='s.roles'),
+    url(r'/s/roles', NUITreeHandler, {'cname': 'roles','db':config.DB_NAME},name='s.roles'),
 
     # 菜单管理
-    url(r'/s/menus', NUITreeHandler, {'cname': 'menus'},name='s.menus'),
+    url(r'/s/menus', NUITreeHandler, {'cname': 'menus','db':config.DB_NAME},name='s.menus'),
 
     # 组织管理
-    url(r'/s/orgns', NUITreeHandler, {'cname': 'orgns'},name='s.orgns'),
+    url(r'/s/orgns', NUITreeHandler, {'cname': 'orgns','db':config.DB_NAME},name='s.orgns'),
 
     # 文件目录
-    url(r'/s/file/catalogs', NUITreeHandler, {'cname': 'file.catalogs'},name='s.file.catalogs'),
+    url(r'/s/file/catalogs', NUITreeHandler, {'cname': 'file.catalogs','db':config.DB_NAME},name='s.file.catalogs'),
 
     # 权限管理
-    url(r'/s/perms', NUIMongoHandler, {'cname': 'perms'},name='s.perms'),
+    url(r'/s/perms', NUIMongoHandler, {'cname': 'perms','db':config.DB_NAME},name='s.perms'),
     # URL管理
-    url(r'/s/urls', NUIMongoHandler, {'cname': 'urls'},name='s.urls'),
-    url(r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'},name='s.urls.item'),
+    url(r'/s/urls', NUIMongoHandler, {'cname': 'urls','db':config.DB_NAME},name='s.urls'),
+    url(r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls','db':config.DB_NAME},name='s.urls.item'),
 
     # 在线用户
     url(r'/s/onlineuser',OnlineUserHandler,name='s.onlineuser'),
 
     # 文件查询
-    url(r'/s/catalog/files', NUIMongoHandler, {'cname': 'fs.files'},name='s.catalog.files'),
+    url(r'/s/catalog/files', NUIMongoHandler, {'cname': 'fs.files','db':config.DB_NAME},name='s.catalog.files'),
 
-    url(r'/s/servers', NUIMongoHandler, {'cname': 'servers'},name='s.servers'),
-    url(r'/s/servers/(.+)', NUIMongoHandler, {'cname': 'servers'},name='s.servers.item'),
+    url(r'/s/servers', NUIMongoHandler, {'cname': 'servers','db':config.DB_NAME},name='s.servers'),
+    url(r'/s/servers/(.+)', NUIMongoHandler, {'cname': 'servers','db':config.DB_NAME},name='s.servers.item'),
 
 ]
 

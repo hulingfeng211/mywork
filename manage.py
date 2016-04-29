@@ -19,9 +19,9 @@ import os
 
 import constant
 from core import settings
-from handler import   routes,nui,service,get_handlers,stock
+from handler import   routes,nui,service,get_handlers,stock,smscenter
 
-define('port', default=10000, type=int, help="在此端口接收用户请求")
+define('port', default=10001, type=int, help="在此端口接收用户请求")
 
 def add(a,b):
     return a+b
@@ -54,6 +54,7 @@ class WorkApplication(Application):
         handlers.extend(nui.routes)
         handlers.extend(service.routes)
         handlers.extend(stock.routes)
+        handlers.extend(smscenter.routes)
         handlers.extend(routes)
         site_url_prefix=settings.get(constant.SITE_URL_PREFIX,"")
         if site_url_prefix:

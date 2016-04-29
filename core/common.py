@@ -294,8 +294,8 @@ class NUITreeHandler(NUIBaseHandler):
             # return dict(q,**other), p, s
             return dict(q, **other), p, s
         q, p, s = get_query_args(self)
+        db = self.settings['mongo_client'][self.db]
 
-        db = self.settings['db']
         if p:
             cursor = db[self.cname].find(q,p)
         else:
@@ -307,6 +307,7 @@ class NUITreeHandler(NUIBaseHandler):
 
     @coroutine
     def post(self, *args, **kwargs):
+        db = self.settings['mongo_client'][self.db]
         if 'application/json' in self.request.headers['content-Type']:
             body = json_decode(self.request.body)
             if body:
@@ -320,13 +321,13 @@ class NUITreeHandler(NUIBaseHandler):
             data_json = escape.json_decode(data) if type(data) == unicode else data
             list = to_list(data_json, "-1", "children", "id", "pid",self.current_user.get('userid'))
             for i, item in enumerate(list):
-                yield self.settings['db'][self.cname].save(item)
+                yield db[self.cname].save(item)
 
         if remove_data:
             data_json = escape.json_decode(remove_data)
             list = to_list(data_json, "-1", "children", "id", "pid",self.current_user.get('userid'))
             for item in list:
-                yield self.settings['db'][self.cname].remove({"_id": item['id']})
+                yield db[self.cname].remove({"_id": item['id']})
 
 
 class NUIMongoHandler(NUIBaseHandler):
@@ -352,8 +353,8 @@ class NUIMongoHandler(NUIBaseHandler):
 
         id = args[0] if len(args) > 0 else None
         if id:
-            db = self.settings['db']
-
+            #db = self.settings['db']
+            db = self.settings['mongo_client'][self.db]
             obj = yield db[self.cname].find_one({"_id": ObjectId(id) if self.is_object_id(id) else id})
             self.write(bson_encode(obj))
             return
@@ -403,7 +404,7 @@ class NUIMongoHandler(NUIBaseHandler):
         if self.sort_field:
             s[self.sort_field]=1 if self.sort_order=='desc' else -1
 
-        db = self.settings['db']
+        db = self.settings['mongo_client'][self.db]
         cursor = db[self.cname].find(q)
         if not p:
             if not s:
@@ -434,7 +435,7 @@ class NUIMongoHandler(NUIBaseHandler):
         else:
             self.send_error(reason="仅支持Content-type:application/json")
 
-        db = self.settings['db']
+        db = self.settings['mongo_client'][self.db]
         id = body.get('_id', None)
         if id :  # update
             body['update_time'] = format_datetime(datetime.now())
@@ -449,8 +450,7 @@ class NUIMongoHandler(NUIBaseHandler):
     def delete(self, *args, **kwargs):
         id = args[0] if len(args) > 0 else None
         if id:
-            db = self.settings['db']
-            yield db[self.cname].remove({"_id": ObjectId(id) if self.is_object_id(id) else id})
+            yield self.db[self.cname].remove({"_id": ObjectId(id) if self.is_object_id(id) else id})
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -463,7 +463,7 @@ class NUIMongoHandler(NUIBaseHandler):
             # self.send_error(reason="仅支持Content-type:application/json")
             # return
 
-        db = self.settings['db']
+        db = self.settings['mongo_client'][self.db]
         for row in body:
             id = row.get('id', None)
             if row.get('_state', None) == 'removed':
