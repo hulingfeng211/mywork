@@ -8,23 +8,11 @@
      showToolbar="true" url="/page/onlineuser" showCloseButton="true" showFooter="true">
 </div>
 #}
-<div id="server_portal">
-
-    <fieldset>
-        <legend>密码修改</legend>
-        <table border="0" cellpadding="1" cellspacing="2" style="width: 100%">
-            <tr>
-                <td>1</td>
-                <td>2</td>
-            </tr>
-        </table>
-    </fieldset>
-</div>
 
 {% end %}
 
 
-{% block end %}
+{% block script %}
 <link href="{{ static_url('nui/portal.css') }}" rel="stylesheet" type="text/css">
 <script src="{{ static_url('nui/Portal.js') }}"></script>
 
@@ -50,17 +38,19 @@
         },
         //{column: 1, id: "p3", title: "在线用户", showCloseButton: true,height:410},
         //{column: 1, id: "p4", title: "panel4", showCollapseButton: true},
-        {column: 1, id: "p8", title: "成本统计", showCollapseButton: true},
+        {column: 1, id: "p8", title: "短信错误",height:300, showCollapseButton: true,url:"{{reverse_url('page.error.list')}}"},
 
-        {column: 2, id: "p5", title: "我的服务器", showCloseButton: true},
+        {column: 2, id: "p5", title: "短信看版", showCloseButton: true,url:"{{reverse_url('portal.queue.count')}}"},
         {column: 2, id: "p6", title: "panel6", showCollapseButton: true},
         {column: 2, id: "p9", title: "panel2", showCollapseButton: true}
     ]);
+
+
+
     portal.render(document.body);
 
-    var bodyEl = portal.getPanelBodyEl("p5");
-    bodyEl.appendChild(document.getElementById("server_portal"));
-
+    //var bodyEl = portal.getPanelBodyEl("p5");
+    //bodyEl.appendChild(document.getElementById("queue_portal"));
 
 
 </script>

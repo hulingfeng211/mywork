@@ -1,0 +1,44 @@
+{% extends "../base.html" %}
+
+{% block body %}
+<div id="queue_portal">
+
+    <table border="0" cellpadding="1" cellspacing="2" style="width: 100%">
+        <tr>
+            <td salign="right" style="width: 80px;"><span>发送队列长度:</span></td>
+            <td><span id="message_count" style="font-size: 14px;color: green;">4</span></td>
+        </tr>
+        <tr>
+            <td align="right">备份队列长度:</td>
+            <td><span id="backup_message_count" style="font-size: 14px;color: red;">4</span></td>
+        </tr>
+
+    </table>
+</div>
+{%end%}
+{%block script %}
+<script type="text/javascript">
+    var message_count_el = $('#message_count');
+    var backup_message_count_el = $('#backup_message_count');
+    $(function () {
+        $.ajax({
+        url: "{{ reverse_url('s.message.queue.count') }}",
+        //contentType:'application/json',
+        type: "get",
+        success: function (result) {
+            //nui.hideMessageBox(msgid);
+            message_count_el.text(result.message_count);
+            backup_message_count_el.text(result.backup_message_count);
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            nui.alert(jqXHR.responseText);
+        }
+    });
+    });
+
+
+
+</script>
+{%end%}
