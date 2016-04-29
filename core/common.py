@@ -22,6 +22,7 @@ from bson import ObjectId
 import re
 from tornado import gen
 from tornado.escape import json_decode
+from tornado.log import gen_log
 from tornado.web import escape, HTTPError, urlparse
 from tornado.httpclient import HTTPRequest, AsyncHTTPClient
 from datetime import datetime
@@ -40,6 +41,48 @@ __author__ = 'george'
 DEFAULT_HEADERS = {
     'content-type': 'application/json'
 }
+
+
+def get_query_args(request):
+    """
+    dept_id=569ca74805b6057d184b4f4c&pageIndex=0&pageSize=10&sortField=&sortOrder=&_=1453162105840
+    """
+    other = {}
+    q = {}  # 查询表达式 {'name':'aaa'} 参见mongodb的查询规范
+    p = {}  # 文档选取的字段{field1:1,field2:1,field3:0}等
+    s = {}  # 排序规则
+    except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
+    try:
+        for k, v in request.query_arguments.items():
+            if k == '_v':
+                continue
+            if k == 'q':  # ?????
+                # q = ast.literal_eval(v[0])
+                q = json.loads(v[0])
+                continue
+                pass
+            if k == 'p':  # ???
+                # p = ast.literal_eval(v[0])
+                p = json.loads(v[0])
+                continue
+                pass
+            if k == 's':  # ??
+                # s = ast.literal_eval(v[0])
+                s = json.loads(v[0])
+                continue
+            if k in except_key:
+                continue
+
+            if len(v) > 1:
+                other[k] = {"$in": v}
+            else:
+                other[k] = v[0]
+    except ValueError, e:
+        gen_log.error(e)
+    #
+    # return dict(q,**other), p, s
+    return dict(q, **other), p, s
+
 
 def authenticated(method):
     """Decorate methods with this to require that the user be logged in.
@@ -257,43 +300,8 @@ class NUITreeHandler(NUIBaseHandler):
     @coroutine
     def get(self, *args, **kwargs):
 
-        def get_query_args(self):
-            """
-            dept_id=569ca74805b6057d184b4f4c&pageIndex=0&pageSize=10&sortField=&sortOrder=&_=1453162105840
-            """
-            other = {}
-            q = {}  # 查询的规则 {'name':'aaa'}
-            p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
-            s = {}  # 排序的规则
-            except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
-            try:
-                for k, v in self.request.query_arguments.items():
-                    if k == '_v':
-                        continue
-                    if k == 'q':  # 带查询参数
-                        q = ast.literal_eval(v[0])
-                        continue
-                        pass
-                    if k == 'p':  # 列投影
-                        p = ast.literal_eval(v[0])
-                        continue
-                        pass
-                    if k == 's':  # 排序
-                        s = ast.literal_eval(v[0])
-                        continue
-                    if k in except_key:
-                        continue
 
-                    if len(v) > 1:
-                        other[k] = {"$in": v}
-                    else:
-                        other[k] = v[0]
-            except ValueError, e:
-                logging.error(e)
-            #
-            # return dict(q,**other), p, s
-            return dict(q, **other), p, s
-        q, p, s = get_query_args(self)
+        q, p, s = get_query_args(self.request)
         db = self.settings['mongo_client'][self.db]
 
         if p:
@@ -359,44 +367,7 @@ class NUIMongoHandler(NUIBaseHandler):
             self.write(bson_encode(obj))
             return
 
-        def get_query_args(self):
-            """
-            dept_id=569ca74805b6057d184b4f4c&pageIndex=0&pageSize=10&sortField=&sortOrder=&_=1453162105840
-            """
-            other = {}
-            q = {}  # 查询的规则 {'name':'aaa'}
-            p = {}  # 文档字段的选择规则 如：只选取id {id:1},不选取id为 {id:0}
-            s = {}  # 排序的规则
-            except_key = ['pageIndex', 'pageSize', 'sortField', 'sortOrder', '_']
-            try:
-                for k, v in self.request.query_arguments.items():
-                    if k == '_v':
-                        continue
-                    if k == 'q':  # 带查询参数
-                        q = ast.literal_eval(v[0])
-                        continue
-                        pass
-                    if k == 'p':  # 列投影
-                        p = ast.literal_eval(v[0])
-                        continue
-                        pass
-                    if k == 's':  # 排序
-                        s = ast.literal_eval(v[0])
-                        continue
-                    if k in except_key:
-                        continue
-
-                    if len(v) > 1:
-                        other[k] = {"$in": v}
-                    else:
-                        other[k] = v[0]
-            except ValueError, e:
-                logging.error(e)
-            #
-            # return dict(q,**other), p, s
-            return dict(q, **other), p, s
-
-        q, p, s = get_query_args(self)
+        q, p, s = get_query_args(self.request)
 
         pageIndex = int(self.get_query_argument('pageIndex', 0))
         pageSize = int(self.get_query_argument('pageSize', 10))
