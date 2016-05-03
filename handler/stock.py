@@ -18,6 +18,7 @@ from tornado.gen import coroutine
 from tornado.web import url
 import  os
 
+import config
 import constant
 from core.common import NUIMongoHandler, NUIBaseHandler
 from core.utils import format_datetime
@@ -133,12 +134,12 @@ class DownloadCsrcindustry(NUIBaseHandler):
 
 
 routes = [
-    url(r'/s/csrcindustry', NUIMongoHandler, {'cname': 'csrcindustry'},name='s.csrcindustry'),
-    url(r'/s/cashflow', NUIMongoHandler, {'cname': 'cashflow'},name='s.cashflow'),
-    url(r'/s/balancesheet', NUIMongoHandler, {'cname': 'balancesheet'},name='s.balancesheet'),
-    url(r'/s/profitstatement', NUIMongoHandler, {'cname': 'profitstatement'},name='s.profitstatement'),
+    url(r'/s/csrcindustry', NUIMongoHandler, {'cname': 'csrcindustry','db':config.DB_NAME},name='s.csrcindustry'),
+    url(r'/s/cashflow', NUIMongoHandler, {'cname': 'cashflow','db':config.DB_NAME},name='s.cashflow'),
+    url(r'/s/balancesheet', NUIMongoHandler, {'cname': 'balancesheet','db':config.DB_NAME},name='s.balancesheet'),
+    url(r'/s/profitstatement', NUIMongoHandler, {'cname': 'profitstatement','db':config.DB_NAME},name='s.profitstatement'),
 
-    url(r'/s/stock/columns', NUIMongoHandler, {'cname': 'stock.columns'},name='s.stock.columns'),
+    url(r'/s/stock/columns', NUIMongoHandler, {'cname': 'stock.columns','db':config.DB_NAME},name='s.stock.columns'),
     url(r'/s/csrcindustry/download', DownloadCsrcindustry,name='s.csrcindustry.download'),
     url(r'/s/download/company/tables', DownloadCompanyThreeTable,name='s.download.company.tables'),
 
