@@ -175,7 +175,7 @@
     function onLogoutClick(e) {
         $.ajax({
             type: 'get',
-            url: '{{ reverse_url('page.logout') }}',
+            url: "{{ reverse_url('page.logout') }}",
             success: function (e) {
                 location.reload();// = "/app"
             }
@@ -215,7 +215,7 @@
      * */
     function onProfileClick() {
         nui.open({
-            url: '{{ reverse_url('page.userprofile') }}',
+            url: "{{ reverse_url('page.userprofile') }}",
             title: '用户信息设置',
             width: 650,
             height: 360,
