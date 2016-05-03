@@ -59,8 +59,8 @@ def get_handlers():
         handlers.append(url(r'/s/app/urls', URLService,{'role_map':{'post':'root'}},name='s.app.urls'))
         # url管理服务
         # URL管理
-        handlers.append(url(r'/s/urls', NUIMongoHandler, {'cname': 'urls'},name='s.urls'))
-        handlers.append(url(r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls'},name='s.urls.item'))
+        handlers.append(url(r'/s/urls', NUIMongoHandler, {'cname': 'urls','db':config.DB_NAME},name='s.urls'))
+        handlers.append(url(r'/s/urls/(.+)', NUIMongoHandler, {'cname': 'urls','db':config.DB_NAME},name='s.urls.item'))
         handlers.append(url(r'/page/url', NUIBaseHandler, {'template': 'nui/url.mgt.html', 'title': 'URL管理'},name='page.url'))
         return handlers
 
@@ -71,6 +71,7 @@ def get_handlers():
         template_path=item.get('template',None)
         title=item.get('title',None)
         cname=item.get('cname',None)
+        db=item.get('db',None)
         name=item.get('name',None)
 
         role_map['get']=item.get('role_get').split(',') if item.get('role_get','') else []
@@ -92,6 +93,7 @@ def get_handlers():
 
         handlers.append(url(r'%s'%url_pattern,cls,
                             {'cname':cname,
+                             'db':db,
                              'template':template_path,
                              'title':title,
                              'role_map':role_map,
