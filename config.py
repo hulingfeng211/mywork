@@ -73,7 +73,7 @@ SMSCENTER_MESSAGE_CHANNEL='message_channel'
 SMSCENTER_BACKUP_MESSAGE_CHANNEL='backup_message_channel'
 
 # 站点设置
-SITE_NAME = "XXX管理系统"
+SITE_NAME = "短信查询中心"
 
 # 超级管理员的角色编码
 ROOT_ROLE_CODE = 'root'

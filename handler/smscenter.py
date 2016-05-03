@@ -13,6 +13,7 @@
 # 公共的路由
 import tornadoredis
 from tornado.gen import coroutine, Task
+from tornado.log import gen_log
 from tornado.web import url
 
 import config
@@ -35,6 +36,7 @@ class SendQueueHandler(NUIBaseHandler):
         })
     def on_finish(self):
         if self.redis_client.connection.connected():
+            gen_log.info('disconnect redis client')
             self.redis_client.disconnect()
         super(SendQueueHandler,self).on_finish()
 
