@@ -58,13 +58,14 @@
     function refresh_panel() {
         var panels=portal.getPanels();
         for(var i=0;i<panels.length;i++){
-            if(panels[i].url!="" && panels[i].url!=undefined){
+            if(panels[i].url!="" && panels[i].url!=undefined&&panels[i].visible&&panels[i].expanded){
                 panels[i].reload();
             }
         }
+        window.setTimeout(refresh_panel,30000);
 
     }
-    window.setInterval(refresh_panel,30000);
+    window.setTimeout(refresh_panel,30000);
     //var bodyEl = portal.getPanelBodyEl("p5");
     //bodyEl.appendChild(document.getElementById("queue_portal"));
 

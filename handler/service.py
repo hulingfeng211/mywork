@@ -144,9 +144,22 @@ class UserMenusService(NUIBaseHandler):
                 menu['url']=tmp_urls[0].get('url_pattern') if tmp_urls else ''
                 all_menus.append(menu)
 
+            def filter_menu(menus):
+                """过滤菜单数据，没有子菜单的节点将不发送给用户"""
+                nodes=[menu for menu in menus if menu.get('url','')=='']
+                for item in nodes:
+                    has_child_node=False
+                    for x in menus:
+                        if x.get('pid')==item.get('id'):
+                            has_child_node=True
+                            break
+                    if(not has_child_node):
+                        menus.remove(item)
+                return menus
 
             if role == self.settings[constant.ROOT_ROLE_CODE]:
-                self.send_message(all_menus)
+
+                self.send_message(filter_menu(all_menus))
                 self.finish()
                 return
             #role_menus = yield db.role_menus.find_one({'role_id': str(role_info.get('_id'))})
@@ -156,7 +169,7 @@ class UserMenusService(NUIBaseHandler):
                 result.append(m)
                 if str(m.get('_id')) not in role_menus and m.get('url', None):
                     result.remove(m)
-            self.send_message(result)
+            self.send_message(filter_menu(result))
 
 
 class RoleMenusService(NUIBaseHandler):
