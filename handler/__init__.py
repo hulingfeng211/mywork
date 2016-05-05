@@ -71,7 +71,7 @@ def get_handlers():
         template_path=item.get('template',None)
         title=item.get('title',None)
         cname=item.get('cname',None)
-        db=item.get('db',None)
+        db=item.get('db',config.DB_NAME)
         name=item.get('name',None)
 
         role_map['get']=item.get('role_get').split(',') if item.get('role_get','') else []

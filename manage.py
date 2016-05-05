@@ -48,9 +48,6 @@ class WorkApplication(Application):
         #      # }),
         #  ]
         handlers=[]
-        #handlers.extend(auth.routes)
-        #handlers.extend(oa.routes)
-        #handlers.extend(chat.routes)
         handlers.extend(nui.routes)
         handlers.extend(service.routes)
         handlers.extend(stock.routes)
@@ -60,7 +57,8 @@ class WorkApplication(Application):
         if site_url_prefix:
             # 构建新的URL
             handlers=map(lambda x:url(site_url_prefix+x.regex.pattern,x.handler_class,x.kwargs,x.name),handlers)
-        #handlers =  get_handlers()
+
+        handlers =  get_handlers()
         Application.__init__(self, handlers=handlers, **settings)
 
 
