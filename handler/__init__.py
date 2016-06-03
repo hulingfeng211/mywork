@@ -13,9 +13,10 @@
 import pickle
 #import  pytz
 import pymongo
+import tornado
 import tornadoredis
 from tornado.gen import coroutine, Task, Return
-from tornado.web import url
+from tornado.web import url, RequestHandler
 
 import config
 import constant
@@ -32,6 +33,16 @@ class MD5Handler(NUIBaseHandler):
         key=self.get_argument('key',None)
         md5=make_password(key if key else '111111')
         self.send_message(md5)
+
+class ErrorHandler(tornado.web.ErrorHandler):
+    """统一的错误处理Handler"""
+
+    def write_error(self, status_code, **kwargs):
+        #print status_code
+        #self.write('status_code:%s'%status_code)
+        if str(status_code)[:2]=='40':
+            self.render('page40x.html',status_code=status_code)
+        #super(BaseHandler, self).write_error(status_code, **kwargs)
 
 #@coroutine
 def get_handlers():
