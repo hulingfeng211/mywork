@@ -1,0 +1,181 @@
+{%extends base.html %}}
+
+{%block body %}
+<div class="weui-pull-to-refresh-layer">
+    <div class="pull-to-refresh-arrow"></div> <!-- 上下拉动的时候显示的箭头 -->
+    <div class="pull-to-refresh-preloader"></div> <!-- 正在刷新的菊花 -->
+    <div class="down">下拉刷新</div><!-- 下拉过程显示的文案 -->
+    <div class="up">释放刷新</div><!-- 下拉超过50px显示的文案 -->
+    <div class="refresh">正在刷新...</div><!-- 正在刷新时显示的文案 -->
+</div>
+<div>
+    <div class="weui_tab">
+        <div class="weui_navbar">
+            <a class="weui_navbar_item weui_bar_item_on">
+                北京畅卓
+            </a>
+            <a class="weui_navbar_item">
+                上海第翼信息
+            </a>
+            <a class="weui_navbar_item">
+                微信
+            </a>
+        </div>
+        <div class="weui_tab_bd">
+            <div class="weui_search_bar" id="search_bar">
+                <form class="weui_search_outer">
+                    <div class="weui_search_inner">
+                        <i class="weui_icon_search"></i>
+                        <input type="search" class="weui_search_input" id="search_input" placeholder="搜索" required/>
+                        <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+                    </div>
+                    <label for="search_input" class="weui_search_text" id="search_text">
+                        <i class="weui_icon_search"></i>
+                        <span>搜索</span>
+                    </label>
+                </form>
+                <a href="javascript:" class="weui_search_cancel" id="search_ok">搜索</a>
+            </div>
+            <div id="message_list" class="weui_cells weui_cells_access ">
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>cell standard</p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        说明文字
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>cell standard</p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        说明文字
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>cell standard</p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        说明文字
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>cell standard</p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        说明文字
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>cell standard</p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        说明文字
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>cell standard</p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        说明文字
+                    </div>
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+<div class="weui-infinite-scroll" style="display: None">
+    <div class="infinite-preloader"></div><!-- 菊花 -->
+    正在加载2... <!-- 文案，可以自行修改 -->
+</div>
+{%end%}
+{%block script %}
+<script type="text/javascript">
+
+    $(document.body).pullToRefresh();
+    var loading = false;  //状态标记
+    $(function () {
+        $(document.body).infinite();
+
+        $('.weui_navbar_item').bind('click', function (e) {
+            $('.weui_navbar_item').each(function (item) {
+                $(this).removeClass('weui_bar_item_on');
+                //console.info('foreach');
+
+            });
+            //#weui_bar_item_on
+            $(this).addClass("weui_bar_item_on");
+        });
+        $(document.body).on("pull-to-refresh", function () {
+            console.info('pull-to-refresh');
+
+            //todo load data from service
+            setTimeout(function () {
+
+                var e = '<a class="weui_cell" href="javascript:;">' +
+                        '                    <div class="weui_cell_hd">' +
+                        '  <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">         ' +
+                        '</div>                    <div class="weui_cell_bd weui_cell_primary">' +
+                        '          <p>cell standard</p>            </div>' +
+                        '            <div class="weui_cell_ft">                    说明文字2       </div>        </a>';
+                $('#message_list').append(e);
+                for (var i = 0; i < 10; i++) {
+                    $('#message_list').append(e);
+                }
+            }, 3000);
+
+            //end reset
+            $(document.body).pullToRefreshDone();
+        });
+        $(document.body).infinite().on("infinite", function () {
+            $('.weui-infinite-scroll').css('display','block');
+            if (loading) return;
+            loading = true;
+            setTimeout(function () {
+                //$("#message_list").append("<p> 我是新加载的内容 </p>");
+                //$.alert('test');
+                var e = '<a class="weui_cell" href="javascript:;">' +
+                        '                    <div class="weui_cell_hd">' +
+                        '  <img src="" alt="icon" style="width:20px;margin-right:5px;display:block">         ' +
+                        '</div>                    <div class="weui_cell_bd weui_cell_primary">' +
+                        '          <p>cell standard</p>            </div>' +
+                        '            <div class="weui_cell_ft">                    说明文字2       </div>        </a>';
+                for (var i = 0; i < 10; i++) {
+                    $('#message_list').append(e);
+                }
+                loading = false;
+            }, 1500);   //模拟延迟
+        });
+
+    });
+
+</script>
+
+{%end%}

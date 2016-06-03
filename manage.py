@@ -19,7 +19,7 @@ import os
 
 import constant
 from core import settings
-from handler import   routes,nui,service,get_handlers,stock,smscenter, ErrorHandler
+from handler import   routes,nui,service,get_handlers,stock,smscenter,weui, ErrorHandler
 
 define('port', default=10001, type=int, help="在此端口接收用户请求")
 
@@ -52,13 +52,14 @@ class WorkApplication(Application):
         handlers.extend(service.routes)
         handlers.extend(stock.routes)
         handlers.extend(smscenter.routes)
+        handlers.extend(weui.routes)
         handlers.extend(routes)
         site_url_prefix=settings.get(constant.SITE_URL_PREFIX,"")
         if site_url_prefix:
             # 构建新的URL
             handlers=map(lambda x:url(site_url_prefix+x.regex.pattern,x.handler_class,x.kwargs,x.name),handlers)
 
-        handlers = get_handlers()
+        #handlers = get_handlers()
 
         # 配置默认的错误处理类
         settings.update({'default_handler_class':ErrorHandler,
