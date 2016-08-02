@@ -410,8 +410,8 @@ class UploadFileService(GridFSHandler,SessionMixin):
     def get_current_user(self):
         return self.session.get('user',None)
 
-    def get_gridfs_file(self, fs, path):
-        return fs.get(file_id=ObjectId(path))
+    #def get_gridfs_file(self, fs, path):
+    #    return fs.get(file_id=ObjectId(path))
 
     @coroutine
     def delete(self, path):

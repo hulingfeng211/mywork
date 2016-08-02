@@ -259,7 +259,7 @@
                 value = e.value;
         if (column.name == 'action') {
             e.cellStyle = "text-align:center";
-            e.cellHtml = '<a href="javascript:download_file(\'' + record.id + '\')">下载</a>&nbsp;&nbsp;&nbsp;' + '<a href="javascript:remove_file(\'' + record.id + '\')">删除</a>';
+            e.cellHtml = '<a href="javascript:download_file(\'' + record.filename + '\')">下载</a>&nbsp;&nbsp;&nbsp;' + '<a href="javascript:remove_file(\'' + record.id + '\')">删除</a>';
         }
     });
     function onKeyEnter(e) {
